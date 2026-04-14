@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Client Workflow Tracker</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <style>
+    body { font-family: Arial; margin: 20px; background:#f5f7fa; }
+    input, select, button { margin:5px; padding:8px; }
+    .card { background:white; padding:15px; margin:10px 0; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);} 
+    .progress { height:20px; background:#ddd; border-radius:10px; overflow:hidden; }
+    .bar { height:100%; transition:0.3s; }
+    .login { max-width:300px; margin:auto; }
+  </style>
+</head>
+<body>
+
+<div id="loginDiv" class="login">
+  <h2>Login</h2>
+  <input id="loginEmail" placeholder="Email"><br>
+  <input id="loginPass" type="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="app" style="display:none;">
+<h2>Client Entry</h2>
+
+<input id="name" placeholder="Name">
+<input id="pb" placeholder="PB No">
+<input id="pan" placeholder="PAN">
+<input id="mobile" placeholder="Mobile">
+<input id="email" placeholder="Email">
+
+<select id="itr" onchange="setFee()">
+  <option value="ITR1">ITR-1</option>
+  <option value="ITR2">ITR-2/3/4</option>
+</select>
+
+<input id="fee" placeholder="Fee" readonly>
+
+<select id="payment">
+  <option>Cash</option>
+  <option>UPI</option>
+  <option>Bank Transfer</option>
+</select>
+
+<select id="stage">
+  <option>Client registration at office</option>
+  <option>Partial submission by client</option>
+  <option>Full submission by client</option>
+  <option>Work initiated at office</option>
+  <option>In progress</option>
+  <option>For client approval</option>
+  <option>Completed</option>
+</select>
+
+<input type="file" id="snapshot" style="display:none;">
+
+<button onclick="addClient()">Add Client</button>
+
+<h2>Clients</h2>
+<div id="list"></div>
+</div>
+
+<script>
+// 🔥 ADD YOUR FIREBASE CONFIG HERE
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let stages = [
+"Client registration at office",
+"Partial submission by client",
+"Full submission by client",
+"Work initiated at office",
+"In progress",
+"For client approval",
+"Completed"
+];
+
+function login(){
+  auth.signInWithEmailAndPassword(loginEmail.value, loginPass.value)
+  .then(()=>{
+    loginDiv.style.display='none';
+    app.style.display='block';
+    loadClients();
+  })
+  .catch(err=>alert(err.message));
+}
+
+function setFee(){
+  fee.value = itr.value === 'ITR1' ? 849 : 1349;
+}
+
+function addClient(){
+  let stageVal = stage.value;
+
+  if(stageVal === "Completed" && !snapshot.files[0]){
+    alert("Upload snapshot for completion");
+    return;
+  }
+
+  db.collection("clients").add({
+    name: name.value,
+    pb: pb.value,
+    pan: pan.value,
+    mobile: mobile.value,
+    email: email.value,
+    itr: itr.value,
+    fee: fee.value,
+    payment: payment.value,
+    stage: stageVal,
+    created: new Date()
+  });
+}
+
+function loadClients(){
+  db.collection("clients").onSnapshot(snapshot=>{
+    list.innerHTML='';
+    snapshot.forEach(doc=>{
+      let c = doc.data();
+      let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
+
+      let color = percent<40?"red":percent<80?"orange":"green";
+
+      list.innerHTML += `
+      <div class="card">
+        <b>${c.name}</b> (${c.pan})<br>
+        Fee: ₹${c.fee}<br>
+        Stage: ${c.stage}
+        <div class="progress">
+          <div class="bar" style="width:${percent}%; background:${color}"></div>
+        </div>
+      </div>`;
+    });
+  });
+}
+</script>
+
+</body>
+</html>
