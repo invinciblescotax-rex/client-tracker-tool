@@ -8,12 +8,11 @@
     .card { background:white; padding:15px; margin:10px 0; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);} 
     .progress { height:20px; background:#ddd; border-radius:10px; overflow:hidden; }
     .bar { height:100%; transition:0.3s; }
-    .login { max-width:300px; margin:auto; }
   </style>
 </head>
 <body>
 
-<div id="loginDiv" class="login">
+<div id="loginDiv">
   <h2>Login</h2>
   <input id="loginEmail" placeholder="Email"><br>
   <input id="loginPass" type="password" placeholder="Password"><br>
@@ -54,7 +53,8 @@
   <option>Completed</option>
 </select>
 
-<button onclick="addClient()">Add Client</button>
+<button onclick="addOrUpdateClient()">Add / Update Client</button>
+<button onclick="logout()">Logout</button>
 
 <h2>Clients</h2>
 <div id="list"></div>
@@ -62,8 +62,8 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
@@ -85,18 +85,27 @@ let stages = [
 "Completed"
 ];
 
+// AUTO LOGIN
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginDiv.style.display = "none";
+    appDiv.style.display = "block";
+    loadClients();
+  } else {
+    loginDiv.style.display = "block";
+    appDiv.style.display = "none";
+  }
+});
+
 // LOGIN
 window.login = function () {
-  const email = document.getElementById("loginEmail").value;
-  const pass = document.getElementById("loginPass").value;
-
-  signInWithEmailAndPassword(auth, email, pass)
-    .then(() => {
-      document.getElementById("loginDiv").style.display = "none";
-      document.getElementById("appDiv").style.display = "block";
-      loadClients();
-    })
+  signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value)
     .catch(err => alert(err.message));
+};
+
+// LOGOUT
+window.logout = function () {
+  signOut(auth);
 };
 
 // AUTO FEE
@@ -105,26 +114,44 @@ window.setFee = function(){
   document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
 };
 
-// ADD CLIENT (FINAL FIXED)
-window.addClient = async function(){
+// ADD OR UPDATE CLIENT
+window.addOrUpdateClient = async function(){
 
-  const name = document.getElementById("name").value;
-  const pb = document.getElementById("pb").value;
-  const pan = document.getElementById("pan").value;
-  const mobile = document.getElementById("mobile").value;
-  const email = document.getElementById("email").value;
-  const itr = document.getElementById("itr").value;
-  const fee = document.getElementById("fee").value;
-  const payment = document.getElementById("payment").value;
-  const stage = document.getElementById("stage").value;
+  const name = nameEl.value;
+  const pb = pbEl.value;
+  const pan = panEl.value;
+  const mobile = mobileEl.value;
+  const email = emailEl.value;
+  const itr = itrEl.value;
+  const fee = feeEl.value;
+  const payment = paymentEl.value;
+  const stage = stageEl.value;
 
-  // VALIDATION (prevents undefined)
   if(!name || !pan || !itr || !fee || !payment){
-    alert("Please fill all required fields properly");
+    alert("Fill required fields");
     return;
   }
 
-  try {
+  // Check duplicates
+  const q = query(collection(db, "clients"),
+    where("pan", "==", pan)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if(!snapshot.empty){
+    // UPDATE EXISTING
+    const docRef = snapshot.docs[0].ref;
+
+    await updateDoc(docRef, {
+      stage: stage,
+      payment: payment
+    });
+
+    alert("Existing client updated");
+
+  } else {
+    // ADD NEW
     await addDoc(collection(db, "clients"), {
       name,
       pb,
@@ -138,29 +165,29 @@ window.addClient = async function(){
       created: new Date()
     });
 
-    alert("Client Added Successfully");
-
-  } catch (err) {
-    alert("Error: " + err.message);
-    console.error(err);
+    alert("New client added");
   }
 };
 
 // LOAD CLIENTS
 function loadClients(){
   onSnapshot(collection(db, "clients"), (snapshot)=>{
-    document.getElementById("list").innerHTML = "";
+    list.innerHTML = "";
 
-    snapshot.forEach(doc=>{
-      let c = doc.data();
+    snapshot.forEach(d=>{
+      let c = d.data();
       let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
       let color = percent<40?"red":percent<80?"orange":"green";
 
-      document.getElementById("list").innerHTML += `
+      list.innerHTML += `
       <div class="card">
         <b>${c.name}</b> (${c.pan})<br>
         Fee: ₹${c.fee}<br>
-        Stage: ${c.stage}
+        
+        <select onchange="updateStage('${d.id}', this.value)">
+          ${stages.map(s => `<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
+        </select>
+
         <div class="progress">
           <div class="bar" style="width:${percent}%; background:${color}"></div>
         </div>
@@ -168,6 +195,12 @@ function loadClients(){
     });
   });
 }
+
+// UPDATE STAGE
+window.updateStage = async function(id, newStage){
+  const ref = doc(db, "clients", id);
+  await updateDoc(ref, { stage: newStage });
+};
 </script>
 
 </body>
