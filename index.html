@@ -30,6 +30,7 @@
 <input id="email" placeholder="Email">
 
 <select id="itr" onchange="setFee()">
+  <option value="">Select ITR</option>
   <option value="ITR1">ITR-1</option>
   <option value="ITR2">ITR-2/3/4</option>
 </select>
@@ -37,6 +38,7 @@
 <input id="fee" placeholder="Fee" readonly>
 
 <select id="payment">
+  <option value="">Select Payment</option>
   <option>Cash</option>
   <option>UPI</option>
   <option>Bank Transfer</option>
@@ -67,10 +69,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
   authDomain: "client-tracker-tool-5bdf6.firebaseapp.com",
   projectId: "client-tracker-tool-5bdf6",
-  storageBucket: "client-tracker-tool-5bdf6.firebasestorage.app",
-  messagingSenderId: "233861795720",
-  appId: "1:233861795720:web:dbc0d8a45acb607e9ff43d",
-  measurementId: "G-BEKZH9DFBV"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -104,25 +102,48 @@ window.login = function () {
 // AUTO FEE
 window.setFee = function(){
   let itr = document.getElementById("itr").value;
-  document.getElementById("fee").value = itr === "ITR1" ? 849 : 1349;
+  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
 };
 
-// ADD CLIENT (FIXED)
+// ADD CLIENT (FINAL FIXED)
 window.addClient = async function(){
-  await addDoc(collection(db, "clients"), {
-    name: document.getElementById("name").value,
-    pb: document.getElementById("pb").value,
-    pan: document.getElementById("pan").value,
-    mobile: document.getElementById("mobile").value,
-    email: document.getElementById("email").value,
-    itr: document.getElementById("itr").value,
-    fee: document.getElementById("fee").value,
-    payment: document.getElementById("payment").value,
-    stage: document.getElementById("stage").value,
-    created: new Date()
-  });
 
-  alert("Client Added Successfully");
+  const name = document.getElementById("name").value;
+  const pb = document.getElementById("pb").value;
+  const pan = document.getElementById("pan").value;
+  const mobile = document.getElementById("mobile").value;
+  const email = document.getElementById("email").value;
+  const itr = document.getElementById("itr").value;
+  const fee = document.getElementById("fee").value;
+  const payment = document.getElementById("payment").value;
+  const stage = document.getElementById("stage").value;
+
+  // VALIDATION (prevents undefined)
+  if(!name || !pan || !itr || !fee || !payment){
+    alert("Please fill all required fields properly");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "clients"), {
+      name,
+      pb,
+      pan,
+      mobile,
+      email,
+      itr,
+      fee: Number(fee),
+      payment,
+      stage,
+      created: new Date()
+    });
+
+    alert("Client Added Successfully");
+
+  } catch (err) {
+    alert("Error: " + err.message);
+    console.error(err);
+  }
 };
 
 // LOAD CLIENTS
