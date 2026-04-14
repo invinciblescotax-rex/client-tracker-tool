@@ -63,7 +63,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// YOUR FIREBASE CONFIG (ALREADY CORRECT)
 const firebaseConfig = {
   apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
   authDomain: "client-tracker-tool-5bdf6.firebaseapp.com",
@@ -88,7 +87,7 @@ let stages = [
 "Completed"
 ];
 
-// LOGIN FUNCTION
+// LOGIN
 window.login = function () {
   const email = document.getElementById("loginEmail").value;
   const pass = document.getElementById("loginPass").value;
@@ -108,33 +107,35 @@ window.setFee = function(){
   document.getElementById("fee").value = itr === "ITR1" ? 849 : 1349;
 };
 
-// ADD CLIENT
+// ADD CLIENT (FIXED)
 window.addClient = async function(){
   await addDoc(collection(db, "clients"), {
-    name: name.value,
-    pb: pb.value,
-    pan: pan.value,
-    mobile: mobile.value,
-    email: email.value,
-    itr: itr.value,
-    fee: fee.value,
-    payment: payment.value,
-    stage: stage.value,
+    name: document.getElementById("name").value,
+    pb: document.getElementById("pb").value,
+    pan: document.getElementById("pan").value,
+    mobile: document.getElementById("mobile").value,
+    email: document.getElementById("email").value,
+    itr: document.getElementById("itr").value,
+    fee: document.getElementById("fee").value,
+    payment: document.getElementById("payment").value,
+    stage: document.getElementById("stage").value,
     created: new Date()
   });
+
+  alert("Client Added Successfully");
 };
 
 // LOAD CLIENTS
 function loadClients(){
   onSnapshot(collection(db, "clients"), (snapshot)=>{
-    list.innerHTML = "";
+    document.getElementById("list").innerHTML = "";
+
     snapshot.forEach(doc=>{
       let c = doc.data();
       let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
-
       let color = percent<40?"red":percent<80?"orange":"green";
 
-      list.innerHTML += `
+      document.getElementById("list").innerHTML += `
       <div class="card">
         <b>${c.name}</b> (${c.pan})<br>
         Fee: ₹${c.fee}<br>
