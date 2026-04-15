@@ -5,53 +5,95 @@
 
   <style>
     body {
-      font-family: Arial;
-      margin: 0;
-      background:#f4f6f9;
+      margin:0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:#f5f6f8;
     }
 
-    /* HEADER (matches your website theme) */
-    .header {
-      background:#1f1f1f;
+    /* NAVBAR */
+    .navbar {
+      background:#111;
       color:white;
-      padding:15px 30px;
-      font-size:20px;
-      font-weight:bold;
+      padding:15px 40px;
+      font-size:18px;
+      font-weight:600;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
     }
 
     .container {
+      max-width:1200px;
+      margin:auto;
       padding:20px;
     }
 
-    input, select, button {
-      margin:5px;
-      padding:8px;
+    h2 {
+      margin-top:30px;
+      color:#222;
+      border-bottom:2px solid #ddd;
+      padding-bottom:5px;
+    }
+
+    /* FORM GRID */
+    .form-grid {
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+
+    input, select {
+      padding:10px;
       border-radius:6px;
       border:1px solid #ccc;
+      font-size:14px;
+      width:100%;
     }
 
+    /* BUTTONS */
     button {
+      padding:10px 14px;
+      border:none;
+      border-radius:6px;
       cursor:pointer;
+      font-weight:500;
     }
 
+    .btn-primary { background:#000; color:white; }
+    .btn-danger { background:#e74c3c; color:white; }
+    .btn-success { background:#27ae60; color:white; }
+    .btn-export { background:#007bff; color:white; }
+
+    /* CARDS */
     .card {
       background:white;
       padding:15px;
       margin:10px 0;
       border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      box-shadow:0 2px 6px rgba(0,0,0,0.08);
+      line-height:1.6;
     }
 
-    .danger { background:#e74c3c; color:white; border:none; }
-    .approve { background:#27ae60; color:white; border:none; }
-    .export { background:#3498db; color:white; border:none; }
+    .deleted {
+      background:#f0f0f0;
+      opacity:0.6;
+    }
 
-    .pending { color:#f39c12; font-weight:bold; }
-    .deleted { background:#eee; opacity:0.6; }
+    .pending {
+      color:#e67e22;
+      font-weight:600;
+    }
 
-    h2 {
-      margin-top:25px;
-      color:#333;
+    /* SEARCH */
+    .search-box {
+      width:300px;
+      padding:10px;
+    }
+
+    /* EXPORT */
+    .export-group {
+      margin-top:10px;
     }
   </style>
 
@@ -65,59 +107,69 @@
 
 <body>
 
-<div class="header">Invincibles Co - Client Tracker</div>
+<div class="navbar">
+  <div>Invincibles Co</div>
+  <div>Client Tracker</div>
+</div>
 
 <div class="container">
 
 <div id="loginDiv">
   <h2>Login</h2>
-  <input id="loginEmail" placeholder="Email"><br>
-  <input id="loginPass" type="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
+  <input id="loginEmail" placeholder="Email"><br><br>
+  <input id="loginPass" type="password" placeholder="Password"><br><br>
+  <button class="btn-primary" onclick="login()">Login</button>
 </div>
 
 <div id="appDiv" style="display:none;">
 
 <h2>Search</h2>
-<input id="search" placeholder="Search..." onkeyup="filterClients()">
+<input class="search-box" id="search" placeholder="Search clients..." onkeyup="filterClients()">
 
 <h2>Export</h2>
-<button class="export" onclick="exportExcel()">Export to Excel</button>
-<button class="export" onclick="exportPDF()">Export to PDF</button>
+<div class="export-group">
+  <button class="btn-export" onclick="exportExcel()">Excel</button>
+  <button class="btn-export" onclick="exportPDF()">PDF</button>
+</div>
 
 <h2>Client Entry</h2>
-<input id="name" placeholder="Name">
-<input id="pb" placeholder="PB No">
-<input id="pan" placeholder="PAN">
-<input id="mobile" placeholder="Mobile">
-<input id="email" placeholder="Email">
 
-<select id="itr" onchange="setFee()">
-<option value="">Select ITR</option>
-<option value="ITR1">ITR-1</option>
-<option value="ITR2">ITR-2/3/4</option>
-<option value="CONSULT">Consultation</option>
-</select>
+<div class="form-grid">
+  <input id="name" placeholder="Name">
+  <input id="pb" placeholder="PB No">
+  <input id="pan" placeholder="PAN">
+  <input id="mobile" placeholder="Mobile">
 
-<input id="fee" placeholder="Fee" readonly>
+  <input id="email" placeholder="Email">
 
-<select id="payment">
-<option>Cash</option>
-<option>UPI</option>
-<option>Bank</option>
-</select>
+  <select id="itr" onchange="setFee()">
+    <option value="">Select ITR</option>
+    <option value="ITR1">ITR-1</option>
+    <option value="ITR2">ITR-2/3/4</option>
+    <option value="CONSULT">Consultation</option>
+  </select>
 
-<select id="stage">
-<option>Client registration at office</option>
-<option>Partial submission by client</option>
-<option>Full submission by client</option>
-<option>Work initiated at office</option>
-<option>In progress</option>
-<option>For client approval</option>
-<option>Completed</option>
-</select>
+  <input id="fee" placeholder="Fee" readonly>
 
-<button onclick="saveClient()">Save</button>
+  <select id="payment">
+    <option>Cash</option>
+    <option>UPI</option>
+    <option>Bank</option>
+  </select>
+
+  <select id="stage">
+    <option>Client registration at office</option>
+    <option>Partial submission by client</option>
+    <option>Full submission by client</option>
+    <option>Work initiated at office</option>
+    <option>In progress</option>
+    <option>For client approval</option>
+    <option>Completed</option>
+  </select>
+</div>
+
+<br>
+<button class="btn-primary" onclick="saveClient()">Save</button>
 <button onclick="logout()">Logout</button>
 
 <h2>Clients</h2>
@@ -165,7 +217,6 @@ appDiv.style.display="none";
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
-// UPDATED FEE LOGIC
 window.setFee=()=>{
 if(itr.value==="ITR1") fee.value=849;
 else if(itr.value==="ITR2") fee.value=1349;
@@ -195,9 +246,7 @@ updated:new Date()
 },{merge:true});
 
 if(isNew && stage.value==="Client registration at office"){
-emailjs.send("service_ns9w7qv","template_87k6k2w",{
-name:name.value,pan:pan.value,mobile:mobile.value,itr:itr.value,fee:fee.value
-});
+emailjs.send("service_ns9w7qv","template_87k6k2w",{name:name.value,pan:pan.value});
 }
 
 alert("Saved");
@@ -209,12 +258,7 @@ deleteRequested:true,
 requestedBy:currentUserEmail
 },{merge:true});
 
-emailjs.send("service_ns9w7qv","template_rigq89q",{
-pan:pan,
-requestedBy:currentUserEmail
-});
-
-alert("Delete request sent");
+emailjs.send("service_ns9w7qv","template_rigq89q",{pan,requestedBy:currentUserEmail});
 };
 
 window.approveDelete=async(pan,requestedBy)=>{
@@ -222,14 +266,10 @@ if(requestedBy===currentUserEmail){
 alert("Cannot approve your own request");
 return;
 }
-
 await setDoc(doc(db,"clients",pan),{
 isDeleted:true,
-deletedBy:currentUserEmail,
-deletedAt:new Date()
+deletedBy:currentUserEmail
 },{merge:true});
-
-alert("Marked as deleted");
 };
 
 function loadClients(){
@@ -246,9 +286,7 @@ let q=search.value.toLowerCase();
 filteredClients=allClients.filter(c=>
 (c.name||"").toLowerCase().includes(q) ||
 (c.pan||"").toLowerCase().includes(q) ||
-(c.mobile||"").toLowerCase().includes(q) ||
-(c.email||"").toLowerCase().includes(q) ||
-(c.pb||"").toLowerCase().includes(q)
+(c.mobile||"").toLowerCase().includes(q)
 );
 renderClients(filteredClients);
 };
@@ -260,7 +298,6 @@ list.innerHTML+=`
 <div class="card ${c.isDeleted?'deleted':''}">
 <b>${c.name}</b> (${c.pan})<br>
 Mobile: ${c.mobile}<br>
-Email: ${c.email}<br>
 ITR: ${c.itr}<br>
 Fee: ₹${c.fee}<br>
 Stage: ${c.stage}<br>
@@ -269,22 +306,18 @@ ${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
 
 ${
 !c.deleteRequested && !c.isDeleted
-? `<button class="danger" onclick="requestDelete('${c.pan}')">Delete</button>`
+? `<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`
 : c.deleteRequested && !c.isDeleted
 ? `<div class="pending">Pending (${c.requestedBy})</div>
-<button class="approve" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
+<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
 : ""
 }
 </div>`;
 });
 }
 
-// EXPORT
 window.exportExcel=()=>{
-let data=(filteredClients.length?filteredClients:allClients).map(c=>({
-Name:c.name,PAN:c.pan,Mobile:c.mobile,Email:c.email,ITR:c.itr,Fee:c.fee,Stage:c.stage
-}));
-let ws=XLSX.utils.json_to_sheet(data);
+let ws=XLSX.utils.json_to_sheet(filteredClients);
 let wb=XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb,ws,"Clients");
 XLSX.writeFile(wb,"clients.xlsx");
@@ -294,13 +327,10 @@ window.exportPDF=()=>{
 const { jsPDF } = window.jspdf;
 let doc=new jsPDF();
 let y=10;
-
-(filteredClients.length?filteredClients:allClients).forEach((c,i)=>{
-doc.text(`${i+1}. ${c.name} | ${c.pan} | ${c.mobile}`,10,y);
-y+=8;
-if(y>280){doc.addPage();y=10;}
+filteredClients.forEach((c,i)=>{
+doc.text(`${i+1}. ${c.name} - ${c.pan}`,10,y);
+y+=10;
 });
-
 doc.save("clients.pdf");
 };
 
