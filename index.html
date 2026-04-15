@@ -87,22 +87,25 @@ let stages = [
 "Completed"
 ];
 
-// AUTH STATE FIX
+// AUTH SESSION
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    loginDiv.style.display = "none";
-    appDiv.style.display = "block";
+    document.getElementById("loginDiv").style.display = "none";
+    document.getElementById("appDiv").style.display = "block";
     loadClients();
   } else {
-    loginDiv.style.display = "block";
-    appDiv.style.display = "none";
+    document.getElementById("loginDiv").style.display = "block";
+    document.getElementById("appDiv").style.display = "none";
     if (unsubscribe) unsubscribe();
   }
 });
 
 // LOGIN
 window.login = function () {
-  signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value)
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPass").value;
+
+  signInWithEmailAndPassword(auth, email, pass)
     .catch(err => alert(err.message));
 };
 
@@ -111,45 +114,53 @@ window.logout = function () {
   signOut(auth);
 };
 
-// FEE
+// AUTO FEE (FIXED)
 window.setFee = function(){
-  let itr = itrEl.value;
-  feeEl.value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
+  const itr = document.getElementById("itr").value;
+  const feeField = document.getElementById("fee");
+
+  if(itr === "ITR1") feeField.value = 849;
+  else if(itr === "ITR2") feeField.value = 1349;
+  else feeField.value = "";
 };
 
-// DUPLICATE CHECK FUNCTION
+// DUPLICATE CHECK
 async function findExistingClient(pan, pb, mobile, email) {
 
-  const queries = [];
+  const fields = [
+    {field:"pan", value:pan},
+    {field:"pb", value:pb},
+    {field:"mobile", value:mobile},
+    {field:"email", value:email}
+  ];
 
-  if (pan) queries.push(query(collection(db,"clients"), where("pan","==",pan)));
-  if (pb) queries.push(query(collection(db,"clients"), where("pb","==",pb)));
-  if (mobile) queries.push(query(collection(db,"clients"), where("mobile","==",mobile)));
-  if (email) queries.push(query(collection(db,"clients"), where("email","==",email)));
+  for (let f of fields) {
+    if(!f.value) continue;
 
-  for (let q of queries) {
+    const q = query(collection(db,"clients"), where(f.field,"==",f.value));
     const snap = await getDocs(q);
-    if (!snap.empty) return snap.docs[0];
+
+    if(!snap.empty) return snap.docs[0];
   }
 
   return null;
 }
 
-// ADD / UPDATE CLIENT
+// ADD OR UPDATE
 window.addOrUpdateClient = async function(){
 
-  const name = nameEl.value;
-  const pb = pbEl.value;
-  const pan = panEl.value;
-  const mobile = mobileEl.value;
-  const email = emailEl.value;
-  const itr = itrEl.value;
-  const fee = feeEl.value;
-  const payment = paymentEl.value;
-  const stage = stageEl.value;
+  const name = document.getElementById("name").value;
+  const pb = document.getElementById("pb").value;
+  const pan = document.getElementById("pan").value;
+  const mobile = document.getElementById("mobile").value;
+  const email = document.getElementById("email").value;
+  const itr = document.getElementById("itr").value;
+  const fee = document.getElementById("fee").value;
+  const payment = document.getElementById("payment").value;
+  const stage = document.getElementById("stage").value;
 
   if(!name || !pan || !itr || !fee || !payment){
-    alert("Fill required fields");
+    alert("Fill all required fields");
     return;
   }
 
@@ -160,32 +171,32 @@ window.addOrUpdateClient = async function(){
       stage,
       payment
     });
-    alert("Client Updated (Duplicate prevented)");
+    alert("Client Updated");
   } else {
     await addDoc(collection(db,"clients"), {
       name, pb, pan, mobile, email, itr,
-      fee: Number(fee),
+      fee:Number(fee),
       payment, stage,
-      created: new Date()
+      created:new Date()
     });
     alert("New Client Added");
   }
 };
 
-// LOAD CLIENTS (FIXED LISTENER)
+// LOAD CLIENTS
 function loadClients(){
 
   if (unsubscribe) unsubscribe();
 
   unsubscribe = onSnapshot(collection(db,"clients"), (snapshot)=>{
-    list.innerHTML = "";
+    document.getElementById("list").innerHTML = "";
 
     snapshot.forEach(d=>{
       let c = d.data();
       let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
       let color = percent<40?"red":percent<80?"orange":"green";
 
-      list.innerHTML += `
+      document.getElementById("list").innerHTML += `
       <div class="card">
         <b>${c.name}</b> (${c.pan})<br>
         Fee: ₹${c.fee}<br>
