@@ -19,6 +19,7 @@
 
   <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body>
@@ -97,12 +98,14 @@ const app = initializeApp({
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let currentUserEmail="";
 let allClients=[];
 let filteredClients=[];
 
 // AUTH
 onAuthStateChanged(auth,(user)=>{
 if(user){
+currentUserEmail=user.email;
 loginDiv.style.display="none";
 appDiv.style.display="block";
 loadClients();
@@ -116,9 +119,18 @@ appDiv.style.display="none";
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
+// FEE
+window.setFee=()=>{
+fee.value= itr.value==="ITR1"?849: itr.value==="ITR2"?1349:"";
+};
+
 // SAVE
 window.saveClient=async()=>{
-await setDoc(doc(db,"clients",pan.value),{
+let ref=doc(db,"clients",pan.value);
+let snap=await getDoc(ref);
+let isNew=!snap.exists();
+
+await setDoc(ref,{
 name:name.value,
 pb:pb.value,
 pan:pan.value,
@@ -129,9 +141,49 @@ fee:Number(fee.value),
 payment:payment.value,
 stage:stage.value,
 isDeleted:false,
+deleteRequested:false,
+requestedBy:"",
 updated:new Date()
 },{merge:true});
+
+if(isNew && stage.value==="Client registration at office"){
+emailjs.send("service_ns9w7qv","template_87k6k2w",{
+name:name.value,pan:pan.value,mobile:mobile.value,itr:itr.value,fee:fee.value
+});
+}
+
 alert("Saved");
+};
+
+// DELETE REQUEST
+window.requestDelete=async(pan)=>{
+await setDoc(doc(db,"clients",pan),{
+deleteRequested:true,
+requestedBy:currentUserEmail
+},{merge:true});
+
+emailjs.send("service_ns9w7qv","template_rigq89q",{
+pan:pan,
+requestedBy:currentUserEmail
+});
+
+alert("Delete request sent");
+};
+
+// APPROVE DELETE (SOFT)
+window.approveDelete=async(pan,requestedBy)=>{
+if(requestedBy===currentUserEmail){
+alert("Cannot approve your own request");
+return;
+}
+
+await setDoc(doc(db,"clients",pan),{
+isDeleted:true,
+deletedBy:currentUserEmail,
+deletedAt:new Date()
+},{merge:true});
+
+alert("Marked as deleted");
 };
 
 // LOAD
@@ -160,9 +212,11 @@ renderClients(filteredClients);
 // RENDER
 function renderClients(data){
 list.innerHTML="";
+
 data.forEach(c=>{
 list.innerHTML+=`
-<div class="card">
+<div class="card ${c.isDeleted?'deleted':''}">
+
 <b>Name:</b> ${c.name}<br>
 <b>PB:</b> ${c.pb}<br>
 <b>PAN:</b> ${c.pan}<br>
@@ -172,13 +226,25 @@ list.innerHTML+=`
 <b>Fee:</b> ₹${c.fee}<br>
 <b>Payment:</b> ${c.payment}<br>
 <b>Stage:</b> ${c.stage}<br>
+
+${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
+
+${
+!c.deleteRequested && !c.isDeleted
+? `<button class="danger" onclick="requestDelete('${c.pan}')">Delete</button>`
+: c.deleteRequested && !c.isDeleted
+? `<div class="pending">Pending (${c.requestedBy})</div>
+<button class="approve" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
+: ""
+}
+
 </div>`;
 });
 }
 
 // EXPORT EXCEL
 window.exportExcel=()=>{
-let data=filteredClients.map(c=>({
+let data=(filteredClients.length?filteredClients:allClients).map(c=>({
 Name:c.name,
 PB:c.pb,
 PAN:c.pan,
@@ -187,7 +253,8 @@ Email:c.email,
 ITR:c.itr,
 Fee:c.fee,
 Payment:c.payment,
-Stage:c.stage
+Stage:c.stage,
+Deleted:c.isDeleted?"Yes":"No"
 }));
 
 let ws=XLSX.utils.json_to_sheet(data);
@@ -200,12 +267,11 @@ XLSX.writeFile(wb,"clients.xlsx");
 window.exportPDF=()=>{
 const { jsPDF } = window.jspdf;
 let doc=new jsPDF();
-
 let y=10;
 
-filteredClients.forEach((c,i)=>{
-doc.text(`${i+1}. ${c.name} | ${c.pan} | ${c.mobile}`,10,y);
-y+=10;
+(filteredClients.length?filteredClients:allClients).forEach((c,i)=>{
+doc.text(`${i+1}. ${c.name} | ${c.pan} | ${c.mobile} | ${c.stage}`,10,y);
+y+=8;
 if(y>280){doc.addPage();y=10;}
 });
 
