@@ -72,7 +72,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
@@ -94,24 +94,21 @@ let stages = [
 "Completed"
 ];
 
-// AUTH STATE (FIXES VANISH ISSUE)
+// AUTH STATE
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    document.getElementById("loginDiv").style.display = "none";
-    document.getElementById("appDiv").style.display = "block";
+    loginDiv.style.display = "none";
+    appDiv.style.display = "block";
     loadClients();
   } else {
-    document.getElementById("loginDiv").style.display = "block";
-    document.getElementById("appDiv").style.display = "none";
+    loginDiv.style.display = "block";
+    appDiv.style.display = "none";
   }
 });
 
 // LOGIN
 window.login = function () {
-  const email = document.getElementById("loginEmail").value;
-  const pass = document.getElementById("loginPass").value;
-
-  signInWithEmailAndPassword(auth, email, pass)
+  signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value)
     .catch(err => alert(err.message));
 };
 
@@ -126,7 +123,7 @@ window.setFee = function(){
   document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
 };
 
-// SAVE CLIENT (NO DUPLICATES + EMAIL)
+// SAVE CLIENT WITH CONTROLLED EMAIL
 window.saveClient = async function(){
 
   const name = document.getElementById("name").value;
@@ -144,32 +141,44 @@ window.saveClient = async function(){
     return;
   }
 
-  // SAVE (PAN as unique ID → NO DUPLICATES)
-  await setDoc(doc(db, "clients", pan), {
+  const clientRef = doc(db, "clients", pan);
+
+  // 🔍 CHECK IF EXISTS
+  const snapshot = await getDoc(clientRef);
+  const isNew = !snapshot.exists();
+
+  // 💾 SAVE DATA
+  await setDoc(clientRef, {
     name, pb, pan, mobile, email, itr,
     fee:Number(fee),
     payment, stage,
     updated: new Date()
-  });
+  }, { merge: true });
 
-  // SEND EMAIL
-  emailjs.send("service_ns9w7qv", "template_87k6k2w", {
-    name: name,
-    pan: pan,
-    mobile: mobile,
-    itr: itr,
-    fee: fee
-  })
-  .then(() => {
-    alert("Saved + Email Sent");
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Saved but email failed");
-  });
+  // 📧 SEND EMAIL ONLY ON FIRST ENTRY + INITIAL STAGE
+  if(isNew && stage === "Client registration at office"){
+
+    emailjs.send("service_ns9w7qv", "template_87k6k2w", {
+      name,
+      pan,
+      mobile,
+      itr,
+      fee
+    })
+    .then(() => {
+      alert("Saved + Email Sent (Initial Entry)");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Saved but email failed");
+    });
+
+  } else {
+    alert("Saved (No email triggered)");
+  }
 };
 
-// LOAD CLIENTS (STABLE)
+// LOAD CLIENTS
 function loadClients(){
   onSnapshot(collection(db,"clients"), (snapshot)=>{
     document.getElementById("list").innerHTML = "";
