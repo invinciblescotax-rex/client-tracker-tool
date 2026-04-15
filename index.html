@@ -4,27 +4,49 @@
   <title>Client Workflow Tracker</title>
 
   <style>
-    body { margin:0; font-family:Tahoma, Arial; background:#f7f9fc; }
+    body { margin:0; font-family:Tahoma, Arial; background:#f7f9fc; color:#333; }
     .navbar { background:#fff; padding:15px 30px; display:flex; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
     .container { max-width:1200px; margin:auto; padding:20px; }
     h2 { margin-top:30px; border-left:4px solid #007bff; padding-left:10px; }
 
     .form-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; }
 
-    input, select { padding:10px; border-radius:6px; border:1px solid #ccc; width:100%; }
+    input, select {
+      padding:10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      width:100%;
+      background:white;
+    }
 
-    button { padding:10px 14px; border:none; border-radius:6px; cursor:pointer; margin:5px; }
+    button {
+      padding:10px 14px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      margin:5px;
+    }
+
     .btn-primary { background:#007bff; color:white; }
     .btn-danger { background:#dc3545; color:white; }
     .btn-success { background:#28a745; color:white; }
+    .btn-export { background:#6f42c1; color:white; }
 
-    .card { background:white; padding:15px; margin:10px 0; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+    .card {
+      background:white;
+      padding:15px;
+      margin:10px 0;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    }
+
     .deleted { background:#f1f1f1; opacity:0.6; }
     .pending { color:#ff9800; font-weight:bold; }
   </style>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body>
@@ -45,6 +67,13 @@
 
 <div id="appDiv" style="display:none;">
 
+<h2>Search</h2>
+<input id="search" placeholder="Search..." onkeyup="filterClients()">
+
+<h2>Export</h2>
+<button class="btn-export" onclick="exportExcel()">Excel</button>
+<button class="btn-export" onclick="exportPDF()">PDF</button>
+
 <h2>Client Entry</h2>
 
 <div class="form-grid">
@@ -61,7 +90,7 @@
     <option value="CONSULT">Consultation</option>
   </select>
 
-  <input id="fee" readonly>
+  <input id="fee" readonly placeholder="Fee">
 
   <select id="payment">
     <option>Cash</option>
@@ -81,6 +110,7 @@
 </div>
 
 <button class="btn-primary" onclick="saveClient()">Save</button>
+<button onclick="logout()">Logout</button>
 
 <h2>Clients</h2>
 <div id="list"></div>
@@ -96,7 +126,7 @@ emailjs.init("oCSNm-4jMM9RJpB35");
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -108,18 +138,26 @@ const app = initializeApp({
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let currentUserEmail="";
 let allClients=[];
+let filteredClients=[];
 
 onAuthStateChanged(auth,(user)=>{
 if(user){
+currentUserEmail=user.email;
 loginDiv.style.display="none";
 appDiv.style.display="block";
 loadClients();
+}else{
+loginDiv.style.display="block";
+appDiv.style.display="none";
 }
 });
 
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
+window.logout=()=>signOut(auth);
 
+// FEE
 window.setFee=()=>{
 const itr=document.getElementById("itr").value;
 if(itr==="ITR1") fee.value=849;
@@ -128,6 +166,7 @@ else if(itr==="CONSULT") fee.value=199;
 else fee.value="";
 };
 
+// SAVE (EMAIL FIXED)
 window.saveClient=async()=>{
 const name=nameInput("name");
 const pb=nameInput("pb");
@@ -145,10 +184,13 @@ let ref=doc(db,"clients",pan);
 let snap=await getDoc(ref);
 let isNew=!snap.exists();
 
-await setDoc(ref,{name,pb,pan,mobile,email,itr,fee:Number(fee),payment,stage},{merge:true});
+await setDoc(ref,{
+name,pb,pan,mobile,email,itr,
+fee:Number(fee),payment,stage,
+isDeleted:false,deleteRequested:false,requestedBy:""
+},{merge:true});
 
-
-// ✅ FIXED EMAIL (ALL FIELDS SENT)
+// ✅ FULL EMAIL DATA
 if(isNew && stage==="Client registration at office"){
 emailjs.send("service_ns9w7qv","template_87k6k2w",{
 name:name,
@@ -166,26 +208,91 @@ function nameInput(id){
 return document.getElementById(id).value.trim();
 }
 
+// DELETE FLOW
+window.requestDelete=async(pan)=>{
+await setDoc(doc(db,"clients",pan),{
+deleteRequested:true,
+requestedBy:currentUserEmail
+},{merge:true});
+};
+
+window.approveDelete=async(pan,requestedBy)=>{
+if(requestedBy===currentUserEmail){
+alert("Cannot approve your own request");
+return;
+}
+await setDoc(doc(db,"clients",pan),{
+isDeleted:true,
+deletedBy:currentUserEmail
+},{merge:true});
+};
+
+// LOAD
 function loadClients(){
 onSnapshot(collection(db,"clients"),(snapshot)=>{
 allClients=[];
 snapshot.forEach(d=>allClients.push(d.data()));
-renderClients(allClients);
+filteredClients=[...allClients];
+renderClients(filteredClients);
 });
 }
 
+// SEARCH
+window.filterClients=()=>{
+let q=search.value.toLowerCase();
+filteredClients=allClients.filter(c=>
+(c.name||"").toLowerCase().includes(q) ||
+(c.pan||"").toLowerCase().includes(q) ||
+(c.mobile||"").toLowerCase().includes(q)
+);
+renderClients(filteredClients);
+};
+
+// RENDER FULL DETAILS
 function renderClients(data){
 list.innerHTML="";
 data.forEach(c=>{
 list.innerHTML+=`
-<div class="card">
+<div class="card ${c.isDeleted?'deleted':''}">
 <b>${c.name}</b> (${c.pan})<br>
 Mobile: ${c.mobile}<br>
+Email: ${c.email}<br>
 ITR: ${c.itr}<br>
-Fee: ₹${c.fee}
+Fee: ₹${c.fee}<br>
+Stage: ${c.stage}<br>
+
+${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
+
+${
+!c.deleteRequested && !c.isDeleted
+? `<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`
+: c.deleteRequested && !c.isDeleted
+? `<div class="pending">Pending (${c.requestedBy})</div>
+<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
+: ""
+}
 </div>`;
 });
 }
+
+// EXPORT
+window.exportExcel=()=>{
+let ws=XLSX.utils.json_to_sheet(filteredClients);
+let wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,"Clients");
+XLSX.writeFile(wb,"clients.xlsx");
+};
+
+window.exportPDF=()=>{
+const { jsPDF } = window.jspdf;
+let doc=new jsPDF();
+let y=10;
+filteredClients.forEach((c,i)=>{
+doc.text(`${i+1}. ${c.name} - ${c.pan}`,10,y);
+y+=10;
+});
+doc.save("clients.pdf");
+};
 
 </script>
 
