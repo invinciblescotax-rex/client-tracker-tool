@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                                          <!DOCTYPE html>
 <html>
 <head>
   <title>Client Workflow Tracker</title>
@@ -255,12 +255,12 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserEmail="";
-let currentUserRole="user"; // 🔥 NEW
+let currentUserRole="user";
 let allClients=[];
 let filteredClients=[];
 
 // =========================
-// 🔥 ROLE FETCH FUNCTION
+// ROLE FETCH
 // =========================
 async function getUserRole(email){
   try{
@@ -290,13 +290,11 @@ function getISTTime(){
 }
 
 // =========================
-// AUTH STATE
+// AUTH
 // =========================
 onAuthStateChanged(auth, async (user)=>{
 if(user){
 currentUserEmail=user.email;
-
-// 🔥 FETCH ROLE FIRST
 await getUserRole(user.email);
 
 loginDiv.style.display="none";
@@ -325,7 +323,7 @@ else fee.value="";
 };
 
 // =========================
-// SAVE CLIENT (UNCHANGED)
+// SAVE CLIENT (UPDATED)
 // =========================
 window.saveClient=async()=>{
 const name=nameInput("name");
@@ -344,10 +342,27 @@ let ref=doc(db,"clients",pan);
 let snap=await getDoc(ref);
 let isNew=!snap.exists();
 
+// 🔒 COMPLETION INTERCEPT
+if(stage==="Completed" && currentUserRole !== "admin"){
+await setDoc(doc(db,"requests", pan + "_completion"),{
+type:"completion",
+pan:pan,
+requestedBy:currentUserEmail,
+status:"pending",
+createdAt:getISTTime()
+});
+alert("Request sent for admin approval");
+return;
+}
+
+// NORMAL SAVE FLOW
 let data={
 name,pb,pan,mobile,email,itr,
-fee:Number(fee),payment,stage,
-isDeleted:false,deleteRequested:false,requestedBy:"",
+fee:Number(fee),
+payment,stage,
+isDeleted:false,
+deleteRequested:false,
+requestedBy:"",
 createdBy: currentUserEmail
 };
 
@@ -356,14 +371,14 @@ if(isNew){
 data.createdAt = getISTTime();
 }
 
-// COMPLETION TIME
+// COMPLETION TIME (admin only)
 if(stage==="Completed" && !snap.data()?.completedAt){
 data.completedAt = getISTTime();
 }
 
 await setDoc(ref,data,{merge:true});
 
-// EMAIL (CREATION)
+// EMAIL FOR CREATION
 if(isNew && stage==="Client registration at office"){
 emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
 }
@@ -376,7 +391,7 @@ return document.getElementById(id).value.trim();
 }
 
 // =========================
-// DELETE FLOW (UNCHANGED)
+// DELETE FLOW (UPDATED)
 // =========================
 window.requestDelete=async(pan)=>{
 await setDoc(doc(db,"clients",pan),{
@@ -384,7 +399,6 @@ deleteRequested:true,
 requestedBy:currentUserEmail
 },{merge:true});
 
-// EMAIL FOR DELETE
 emailjs.send("service_ns9w7qv","template_rigq89q",{
 pan: pan,
 requestedBy: currentUserEmail
@@ -392,6 +406,13 @@ requestedBy: currentUserEmail
 };
 
 window.approveDelete=async(pan,requestedBy)=>{
+
+// 🔒 ADMIN ONLY
+if(currentUserRole !== "admin"){
+alert("Only admin can approve deletion");
+return;
+}
+
 if(requestedBy===currentUserEmail){
 alert("Cannot approve your own request");
 return;
@@ -401,6 +422,8 @@ await setDoc(doc(db,"clients",pan),{
 isDeleted:true,
 deletedBy:currentUserEmail
 },{merge:true});
+
+alert("Deletion approved");
 };
 
 // =========================
@@ -460,7 +483,7 @@ ${
 }
 
 // =========================
-// EXPORT (UNCHANGED)
+// EXPORT
 // =========================
 window.exportExcel=()=>{
 let formatted=(filteredClients.length?filteredClients:allClients).map((c,i)=>({
@@ -497,7 +520,6 @@ doc.autoTable({head:headers,body:rows});
 doc.save("Client_Report.pdf");
 };
 
-</script>
-  
+</script>  
 </body>
 </html>
