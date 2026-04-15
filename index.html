@@ -75,6 +75,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let unsubscribe = null;
+
 let stages = [
 "Client registration at office",
 "Partial submission by client",
@@ -85,7 +87,7 @@ let stages = [
 "Completed"
 ];
 
-// AUTO LOGIN
+// AUTH STATE FIX
 onAuthStateChanged(auth, (user) => {
   if (user) {
     loginDiv.style.display = "none";
@@ -94,6 +96,7 @@ onAuthStateChanged(auth, (user) => {
   } else {
     loginDiv.style.display = "block";
     appDiv.style.display = "none";
+    if (unsubscribe) unsubscribe();
   }
 });
 
@@ -108,13 +111,31 @@ window.logout = function () {
   signOut(auth);
 };
 
-// AUTO FEE
+// FEE
 window.setFee = function(){
-  let itr = document.getElementById("itr").value;
-  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
+  let itr = itrEl.value;
+  feeEl.value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
 };
 
-// ADD OR UPDATE CLIENT
+// DUPLICATE CHECK FUNCTION
+async function findExistingClient(pan, pb, mobile, email) {
+
+  const queries = [];
+
+  if (pan) queries.push(query(collection(db,"clients"), where("pan","==",pan)));
+  if (pb) queries.push(query(collection(db,"clients"), where("pb","==",pb)));
+  if (mobile) queries.push(query(collection(db,"clients"), where("mobile","==",mobile)));
+  if (email) queries.push(query(collection(db,"clients"), where("email","==",email)));
+
+  for (let q of queries) {
+    const snap = await getDocs(q);
+    if (!snap.empty) return snap.docs[0];
+  }
+
+  return null;
+}
+
+// ADD / UPDATE CLIENT
 window.addOrUpdateClient = async function(){
 
   const name = nameEl.value;
@@ -132,46 +153,31 @@ window.addOrUpdateClient = async function(){
     return;
   }
 
-  // Check duplicates
-  const q = query(collection(db, "clients"),
-    where("pan", "==", pan)
-  );
+  const existing = await findExistingClient(pan, pb, mobile, email);
 
-  const snapshot = await getDocs(q);
-
-  if(!snapshot.empty){
-    // UPDATE EXISTING
-    const docRef = snapshot.docs[0].ref;
-
-    await updateDoc(docRef, {
-      stage: stage,
-      payment: payment
-    });
-
-    alert("Existing client updated");
-
-  } else {
-    // ADD NEW
-    await addDoc(collection(db, "clients"), {
-      name,
-      pb,
-      pan,
-      mobile,
-      email,
-      itr,
-      fee: Number(fee),
-      payment,
+  if(existing){
+    await updateDoc(existing.ref, {
       stage,
+      payment
+    });
+    alert("Client Updated (Duplicate prevented)");
+  } else {
+    await addDoc(collection(db,"clients"), {
+      name, pb, pan, mobile, email, itr,
+      fee: Number(fee),
+      payment, stage,
       created: new Date()
     });
-
-    alert("New client added");
+    alert("New Client Added");
   }
 };
 
-// LOAD CLIENTS
+// LOAD CLIENTS (FIXED LISTENER)
 function loadClients(){
-  onSnapshot(collection(db, "clients"), (snapshot)=>{
+
+  if (unsubscribe) unsubscribe();
+
+  unsubscribe = onSnapshot(collection(db,"clients"), (snapshot)=>{
     list.innerHTML = "";
 
     snapshot.forEach(d=>{
@@ -183,9 +189,9 @@ function loadClients(){
       <div class="card">
         <b>${c.name}</b> (${c.pan})<br>
         Fee: ₹${c.fee}<br>
-        
+
         <select onchange="updateStage('${d.id}', this.value)">
-          ${stages.map(s => `<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
+          ${stages.map(s=>`<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
         </select>
 
         <div class="progress">
@@ -198,8 +204,7 @@ function loadClients(){
 
 // UPDATE STAGE
 window.updateStage = async function(id, newStage){
-  const ref = doc(db, "clients", id);
-  await updateDoc(ref, { stage: newStage });
+  await updateDoc(doc(db,"clients",id), { stage:newStage });
 };
 </script>
 
