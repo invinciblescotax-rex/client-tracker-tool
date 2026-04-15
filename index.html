@@ -255,28 +255,67 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserEmail="";
+let currentUserRole="user"; // 🔥 NEW
 let allClients=[];
 let filteredClients=[];
 
+// =========================
+// 🔥 ROLE FETCH FUNCTION
+// =========================
+async function getUserRole(email){
+  try{
+    const ref = doc(db, "roles", email);
+    const snap = await getDoc(ref);
+
+    if(snap.exists()){
+      currentUserRole = snap.data().role;
+    } else {
+      currentUserRole = "user";
+    }
+
+    console.log("Logged in as:", email);
+    console.log("Role:", currentUserRole);
+
+  } catch(err){
+    console.error("Role fetch error:", err);
+    currentUserRole = "user";
+  }
+}
+
+// =========================
+// IST TIME
+// =========================
 function getISTTime(){
   return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 }
 
-onAuthStateChanged(auth,(user)=>{
+// =========================
+// AUTH STATE
+// =========================
+onAuthStateChanged(auth, async (user)=>{
 if(user){
 currentUserEmail=user.email;
+
+// 🔥 FETCH ROLE FIRST
+await getUserRole(user.email);
+
 loginDiv.style.display="none";
 appDiv.style.display="block";
 loadClients();
+
 }else{
 loginDiv.style.display="block";
 appDiv.style.display="none";
 }
 });
 
+// LOGIN / LOGOUT
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
+// =========================
+// FEE AUTO
+// =========================
 window.setFee=()=>{
 const itr=document.getElementById("itr").value;
 if(itr==="ITR1") fee.value=849;
@@ -285,6 +324,9 @@ else if(itr==="CONSULT") fee.value=199;
 else fee.value="";
 };
 
+// =========================
+// SAVE CLIENT (UNCHANGED)
+// =========================
 window.saveClient=async()=>{
 const name=nameInput("name");
 const pb=nameInput("pb");
@@ -309,13 +351,19 @@ isDeleted:false,deleteRequested:false,requestedBy:"",
 createdBy: currentUserEmail
 };
 
-if(isNew){ data.createdAt = getISTTime(); }
+// ENTRY TIME
+if(isNew){
+data.createdAt = getISTTime();
+}
+
+// COMPLETION TIME
 if(stage==="Completed" && !snap.data()?.completedAt){
 data.completedAt = getISTTime();
 }
 
 await setDoc(ref,data,{merge:true});
 
+// EMAIL (CREATION)
 if(isNew && stage==="Client registration at office"){
 emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
 }
@@ -327,14 +375,16 @@ function nameInput(id){
 return document.getElementById(id).value.trim();
 }
 
-// 🔥 FIXED DELETE WITH EMAIL
+// =========================
+// DELETE FLOW (UNCHANGED)
+// =========================
 window.requestDelete=async(pan)=>{
 await setDoc(doc(db,"clients",pan),{
 deleteRequested:true,
 requestedBy:currentUserEmail
 },{merge:true});
 
-// EMAIL TRIGGER ADDED
+// EMAIL FOR DELETE
 emailjs.send("service_ns9w7qv","template_rigq89q",{
 pan: pan,
 requestedBy: currentUserEmail
@@ -346,12 +396,16 @@ if(requestedBy===currentUserEmail){
 alert("Cannot approve your own request");
 return;
 }
+
 await setDoc(doc(db,"clients",pan),{
 isDeleted:true,
 deletedBy:currentUserEmail
 },{merge:true});
 };
 
+// =========================
+// LOAD DATA
+// =========================
 function loadClients(){
 onSnapshot(collection(db,"clients"),(snapshot)=>{
 allClients=[];
@@ -361,6 +415,9 @@ renderClients(filteredClients);
 });
 }
 
+// =========================
+// SEARCH
+// =========================
 window.filterClients=()=>{
 let q=search.value.toLowerCase();
 filteredClients=allClients.filter(c=>
@@ -370,6 +427,9 @@ filteredClients=allClients.filter(c=>
 renderClients(filteredClients);
 };
 
+// =========================
+// RENDER
+// =========================
 function renderClients(data){
 list.innerHTML="";
 data.forEach(c=>{
@@ -399,13 +459,25 @@ ${
 });
 }
 
+// =========================
+// EXPORT (UNCHANGED)
+// =========================
 window.exportExcel=()=>{
 let formatted=(filteredClients.length?filteredClients:allClients).map((c,i)=>({
-"Sl. No.":i+1,"Name":c.name,"PB No.":c.pb,"PAN":c.pan,
-"Mobile Number":c.mobile,"Mail Address":c.email,
-"Type of ITR":c.itr,"Fees":c.fee,"Status":c.stage,
-"Created By":c.createdBy,"Created At":c.createdAt,"Completed At":c.completedAt
+"Sl. No.":i+1,
+"Name":c.name,
+"PB No.":c.pb,
+"PAN":c.pan,
+"Mobile Number":c.mobile,
+"Mail Address":c.email,
+"Type of ITR":c.itr,
+"Fees":c.fee,
+"Status":c.stage,
+"Created By":c.createdBy,
+"Date of Creation":c.createdAt,
+"Date of Completion":c.completedAt
 }));
+
 let ws=XLSX.utils.json_to_sheet(formatted);
 let wb=XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb,ws,"Client Report");
@@ -424,7 +496,8 @@ i+1,c.name,c.pb,c.pan,c.mobile,c.email,c.itr,c.fee,c.stage,c.createdBy,c.created
 doc.autoTable({head:headers,body:rows});
 doc.save("Client_Report.pdf");
 };
-</script>
 
+</script>
+  
 </body>
 </html>
