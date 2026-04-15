@@ -60,6 +60,15 @@
 <div id="list"></div>
 </div>
 
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){
+  emailjs.init("oCSNm-4jMM9RJpB35");
+})();
+</script>
+
+<!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -75,8 +84,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let unsubscribe = null;
-
 let stages = [
 "Client registration at office",
 "Partial submission by client",
@@ -87,45 +94,12 @@ let stages = [
 "Completed"
 ];
 
-// ✅ AUTH STATE FIX (CRITICAL)
+// AUTH STATE
 onAuthStateChanged(auth, (user) => {
-
-  if (unsubscribe) {
-    unsubscribe(); // remove old listener
-    unsubscribe = null;
-  }
-
   if (user) {
     document.getElementById("loginDiv").style.display = "none";
     document.getElementById("appDiv").style.display = "block";
-
-    // 👉 attach listener ONLY AFTER auth confirmed
-    unsubscribe = onSnapshot(collection(db,"clients"), (snapshot)=>{
-      const list = document.getElementById("list");
-      list.innerHTML = "";
-
-      snapshot.forEach(d=>{
-        let c = d.data();
-        let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
-        let color = percent<40?"red":percent<80?"orange":"green";
-
-        list.innerHTML += `
-        <div class="card">
-          <b>${c.name}</b> (${c.pan})<br>
-          Fee: ₹${c.fee}<br>
-
-          <select onchange="updateStage('${c.pan}', this.value)">
-            ${stages.map(s=>`<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
-          </select>
-
-          <div class="progress">
-            <div class="bar" style="width:${percent}%; background:${color}"></div>
-          </div>
-        </div>`;
-      });
-
-    });
-
+    loadClients();
   } else {
     document.getElementById("loginDiv").style.display = "block";
     document.getElementById("appDiv").style.display = "none";
@@ -134,7 +108,10 @@ onAuthStateChanged(auth, (user) => {
 
 // LOGIN
 window.login = function () {
-  signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value)
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPass").value;
+
+  signInWithEmailAndPassword(auth, email, pass)
     .catch(err => alert(err.message));
 };
 
@@ -143,41 +120,85 @@ window.logout = function () {
   signOut(auth);
 };
 
-// SAVE CLIENT
+// AUTO FEE
+window.setFee = function(){
+  const itr = document.getElementById("itr").value;
+  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
+};
+
+// SAVE CLIENT + EMAIL
 window.saveClient = async function(){
 
+  const name = document.getElementById("name").value;
+  const pb = document.getElementById("pb").value;
   const pan = document.getElementById("pan").value;
+  const mobile = document.getElementById("mobile").value;
+  const email = document.getElementById("email").value;
+  const itr = document.getElementById("itr").value;
+  const fee = document.getElementById("fee").value;
+  const payment = document.getElementById("payment").value;
+  const stage = document.getElementById("stage").value;
 
   if(!pan){
     alert("PAN required");
     return;
   }
 
+  // SAVE TO FIREBASE
   await setDoc(doc(db, "clients", pan), {
-    name: document.getElementById("name").value,
-    pb: document.getElementById("pb").value,
-    pan,
-    mobile: document.getElementById("mobile").value,
-    email: document.getElementById("email").value,
-    itr: document.getElementById("itr").value,
-    fee: Number(document.getElementById("fee").value),
-    payment: document.getElementById("payment").value,
-    stage: document.getElementById("stage").value,
+    name, pb, pan, mobile, email, itr,
+    fee:Number(fee),
+    payment, stage,
     updated: new Date()
   });
 
-  alert("Saved");
+  // SEND EMAIL (IMPORTANT: Replace service/template IDs)
+  emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+    name: name,
+    pan: pan,
+    mobile: mobile,
+    itr: itr,
+    fee: fee
+  })
+  .then(() => {
+    alert("Saved + Email Sent");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Saved but email failed");
+  });
 };
+
+// LOAD CLIENTS
+function loadClients(){
+  onSnapshot(collection(db,"clients"), (snapshot)=>{
+    document.getElementById("list").innerHTML = "";
+
+    snapshot.forEach(d=>{
+      let c = d.data();
+      let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
+      let color = percent<40?"red":percent<80?"orange":"green";
+
+      document.getElementById("list").innerHTML += `
+      <div class="card">
+        <b>${c.name}</b> (${c.pan})<br>
+        Fee: ₹${c.fee}<br>
+
+        <select onchange="updateStage('${c.pan}', this.value)">
+          ${stages.map(s=>`<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
+        </select>
+
+        <div class="progress">
+          <div class="bar" style="width:${percent}%; background:${color}"></div>
+        </div>
+      </div>`;
+    });
+  });
+}
 
 // UPDATE STAGE
 window.updateStage = async function(pan, newStage){
   await setDoc(doc(db,"clients",pan), { stage:newStage }, { merge:true });
-};
-
-// AUTO FEE
-window.setFee = function(){
-  const itr = document.getElementById("itr").value;
-  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
 };
 </script>
 
