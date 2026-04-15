@@ -75,6 +75,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let unsubscribe = null;
+
 let stages = [
 "Client registration at office",
 "Partial submission by client",
@@ -85,15 +87,48 @@ let stages = [
 "Completed"
 ];
 
-// AUTH FIX
+// ✅ AUTH STATE FIX (CRITICAL)
 onAuthStateChanged(auth, (user) => {
+
+  if (unsubscribe) {
+    unsubscribe(); // remove old listener
+    unsubscribe = null;
+  }
+
   if (user) {
-    loginDiv.style.display = "none";
-    appDiv.style.display = "block";
-    loadClients();
+    document.getElementById("loginDiv").style.display = "none";
+    document.getElementById("appDiv").style.display = "block";
+
+    // 👉 attach listener ONLY AFTER auth confirmed
+    unsubscribe = onSnapshot(collection(db,"clients"), (snapshot)=>{
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      snapshot.forEach(d=>{
+        let c = d.data();
+        let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
+        let color = percent<40?"red":percent<80?"orange":"green";
+
+        list.innerHTML += `
+        <div class="card">
+          <b>${c.name}</b> (${c.pan})<br>
+          Fee: ₹${c.fee}<br>
+
+          <select onchange="updateStage('${c.pan}', this.value)">
+            ${stages.map(s=>`<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
+          </select>
+
+          <div class="progress">
+            <div class="bar" style="width:${percent}%; background:${color}"></div>
+          </div>
+        </div>`;
+      });
+
+    });
+
   } else {
-    loginDiv.style.display = "block";
-    appDiv.style.display = "none";
+    document.getElementById("loginDiv").style.display = "block";
+    document.getElementById("appDiv").style.display = "none";
   }
 });
 
@@ -108,26 +143,20 @@ window.logout = function () {
   signOut(auth);
 };
 
-// AUTO FEE
-window.setFee = function(){
-  const itr = document.getElementById("itr").value;
-  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
-};
-
-// SAVE CLIENT (NO DUPLICATES EVER)
+// SAVE CLIENT
 window.saveClient = async function(){
 
   const pan = document.getElementById("pan").value;
 
   if(!pan){
-    alert("PAN is mandatory (used as unique ID)");
+    alert("PAN required");
     return;
   }
 
   await setDoc(doc(db, "clients", pan), {
     name: document.getElementById("name").value,
     pb: document.getElementById("pb").value,
-    pan: pan,
+    pan,
     mobile: document.getElementById("mobile").value,
     email: document.getElementById("email").value,
     itr: document.getElementById("itr").value,
@@ -137,40 +166,18 @@ window.saveClient = async function(){
     updated: new Date()
   });
 
-  alert("Saved (No duplicates possible)");
+  alert("Saved");
 };
-
-// LOAD CLIENTS (STABLE)
-function loadClients(){
-
-  onSnapshot(collection(db,"clients"), (snapshot)=>{
-    list.innerHTML = "";
-
-    snapshot.forEach(d=>{
-      let c = d.data();
-      let percent = ((stages.indexOf(c.stage)+1)/stages.length)*100;
-      let color = percent<40?"red":percent<80?"orange":"green";
-
-      list.innerHTML += `
-      <div class="card">
-        <b>${c.name}</b> (${c.pan})<br>
-        Fee: ₹${c.fee}<br>
-
-        <select onchange="updateStage('${c.pan}', this.value)">
-          ${stages.map(s=>`<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
-        </select>
-
-        <div class="progress">
-          <div class="bar" style="width:${percent}%; background:${color}"></div>
-        </div>
-      </div>`;
-    });
-  });
-}
 
 // UPDATE STAGE
 window.updateStage = async function(pan, newStage){
   await setDoc(doc(db,"clients",pan), { stage:newStage }, { merge:true });
+};
+
+// AUTO FEE
+window.setFee = function(){
+  const itr = document.getElementById("itr").value;
+  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
 };
 </script>
 
