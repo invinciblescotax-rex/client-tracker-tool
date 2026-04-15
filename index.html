@@ -125,6 +125,7 @@ mobile:mobile.value,
 email:email.value,
 itr:itr.value,
 fee:Number(fee.value),
+payment:payment.value,
 stage:stage.value,
 isDeleted:false,
 deleteRequested:false,
@@ -194,16 +195,25 @@ let filtered=allClients.filter(c=>
 renderClients(filtered);
 };
 
-// RENDER
+// RENDER FULL DETAILS
 function renderClients(data){
 list.innerHTML="";
 
 data.forEach(c=>{
 list.innerHTML+=`
 <div class="card ${c.isDeleted?'deleted':''}">
-<b>${c.name}</b> (${c.pan})<br>
 
-${c.isDeleted ? "<b>Deleted</b><br>" : ""}
+<b>Name:</b> ${c.name || ""}<br>
+<b>PB No:</b> ${c.pb || ""}<br>
+<b>PAN:</b> ${c.pan || ""}<br>
+<b>Mobile:</b> ${c.mobile || ""}<br>
+<b>Email:</b> ${c.email || ""}<br>
+<b>ITR:</b> ${c.itr || ""}<br>
+<b>Fee:</b> ₹${c.fee || ""}<br>
+<b>Payment:</b> ${c.payment || ""}<br>
+<b>Stage:</b> ${c.stage || ""}<br>
+
+${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
 
 ${
 !c.deleteRequested && !c.isDeleted
@@ -213,6 +223,7 @@ ${
 <button class="approve" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
 : ""
 }
+
 </div>`;
 });
 }
