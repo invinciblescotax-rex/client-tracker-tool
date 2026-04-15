@@ -4,14 +4,55 @@
   <title>Client Workflow Tracker</title>
 
   <style>
-    body { font-family: Arial; margin: 20px; background:#f5f7fa; }
-    input, select, button { margin:5px; padding:8px; }
-    .card { background:white; padding:15px; margin:10px 0; border-radius:10px; }
-    .danger { background:red; color:white; }
-    .approve { background:green; color:white; }
-    .pending { color:orange; font-weight:bold; }
+    body {
+      font-family: Arial;
+      margin: 0;
+      background:#f4f6f9;
+    }
+
+    /* HEADER (matches your website theme) */
+    .header {
+      background:#1f1f1f;
+      color:white;
+      padding:15px 30px;
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    .container {
+      padding:20px;
+    }
+
+    input, select, button {
+      margin:5px;
+      padding:8px;
+      border-radius:6px;
+      border:1px solid #ccc;
+    }
+
+    button {
+      cursor:pointer;
+    }
+
+    .card {
+      background:white;
+      padding:15px;
+      margin:10px 0;
+      border-radius:10px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .danger { background:#e74c3c; color:white; border:none; }
+    .approve { background:#27ae60; color:white; border:none; }
+    .export { background:#3498db; color:white; border:none; }
+
+    .pending { color:#f39c12; font-weight:bold; }
     .deleted { background:#eee; opacity:0.6; }
-    .export { background:#007bff; color:white; }
+
+    h2 {
+      margin-top:25px;
+      color:#333;
+    }
   </style>
 
   <!-- Excel -->
@@ -24,10 +65,14 @@
 
 <body>
 
+<div class="header">Invincibles Co - Client Tracker</div>
+
+<div class="container">
+
 <div id="loginDiv">
   <h2>Login</h2>
-  <input id="loginEmail"><br>
-  <input id="loginPass" type="password"><br>
+  <input id="loginEmail" placeholder="Email"><br>
+  <input id="loginPass" type="password" placeholder="Password"><br>
   <button onclick="login()">Login</button>
 </div>
 
@@ -51,9 +96,10 @@
 <option value="">Select ITR</option>
 <option value="ITR1">ITR-1</option>
 <option value="ITR2">ITR-2/3/4</option>
+<option value="CONSULT">Consultation</option>
 </select>
 
-<input id="fee" readonly>
+<input id="fee" placeholder="Fee" readonly>
 
 <select id="payment">
 <option>Cash</option>
@@ -76,6 +122,8 @@
 
 <h2>Clients</h2>
 <div id="list"></div>
+
+</div>
 
 </div>
 
@@ -102,7 +150,6 @@ let currentUserEmail="";
 let allClients=[];
 let filteredClients=[];
 
-// AUTH
 onAuthStateChanged(auth,(user)=>{
 if(user){
 currentUserEmail=user.email;
@@ -115,16 +162,17 @@ appDiv.style.display="none";
 }
 });
 
-// LOGIN
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
-// FEE
+// UPDATED FEE LOGIC
 window.setFee=()=>{
-fee.value= itr.value==="ITR1"?849: itr.value==="ITR2"?1349:"";
+if(itr.value==="ITR1") fee.value=849;
+else if(itr.value==="ITR2") fee.value=1349;
+else if(itr.value==="CONSULT") fee.value=199;
+else fee.value="";
 };
 
-// SAVE
 window.saveClient=async()=>{
 let ref=doc(db,"clients",pan.value);
 let snap=await getDoc(ref);
@@ -155,7 +203,6 @@ name:name.value,pan:pan.value,mobile:mobile.value,itr:itr.value,fee:fee.value
 alert("Saved");
 };
 
-// DELETE REQUEST
 window.requestDelete=async(pan)=>{
 await setDoc(doc(db,"clients",pan),{
 deleteRequested:true,
@@ -170,7 +217,6 @@ requestedBy:currentUserEmail
 alert("Delete request sent");
 };
 
-// APPROVE DELETE (SOFT)
 window.approveDelete=async(pan,requestedBy)=>{
 if(requestedBy===currentUserEmail){
 alert("Cannot approve your own request");
@@ -186,7 +232,6 @@ deletedAt:new Date()
 alert("Marked as deleted");
 };
 
-// LOAD
 function loadClients(){
 onSnapshot(collection(db,"clients"),(snapshot)=>{
 allClients=[];
@@ -196,7 +241,6 @@ renderClients(filteredClients);
 });
 }
 
-// FILTER
 window.filterClients=()=>{
 let q=search.value.toLowerCase();
 filteredClients=allClients.filter(c=>
@@ -209,23 +253,17 @@ filteredClients=allClients.filter(c=>
 renderClients(filteredClients);
 };
 
-// RENDER
 function renderClients(data){
 list.innerHTML="";
-
 data.forEach(c=>{
 list.innerHTML+=`
 <div class="card ${c.isDeleted?'deleted':''}">
-
-<b>Name:</b> ${c.name}<br>
-<b>PB:</b> ${c.pb}<br>
-<b>PAN:</b> ${c.pan}<br>
-<b>Mobile:</b> ${c.mobile}<br>
-<b>Email:</b> ${c.email}<br>
-<b>ITR:</b> ${c.itr}<br>
-<b>Fee:</b> ₹${c.fee}<br>
-<b>Payment:</b> ${c.payment}<br>
-<b>Stage:</b> ${c.stage}<br>
+<b>${c.name}</b> (${c.pan})<br>
+Mobile: ${c.mobile}<br>
+Email: ${c.email}<br>
+ITR: ${c.itr}<br>
+Fee: ₹${c.fee}<br>
+Stage: ${c.stage}<br>
 
 ${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
 
@@ -237,40 +275,28 @@ ${
 <button class="approve" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
 : ""
 }
-
 </div>`;
 });
 }
 
-// EXPORT EXCEL
+// EXPORT
 window.exportExcel=()=>{
 let data=(filteredClients.length?filteredClients:allClients).map(c=>({
-Name:c.name,
-PB:c.pb,
-PAN:c.pan,
-Mobile:c.mobile,
-Email:c.email,
-ITR:c.itr,
-Fee:c.fee,
-Payment:c.payment,
-Stage:c.stage,
-Deleted:c.isDeleted?"Yes":"No"
+Name:c.name,PAN:c.pan,Mobile:c.mobile,Email:c.email,ITR:c.itr,Fee:c.fee,Stage:c.stage
 }));
-
 let ws=XLSX.utils.json_to_sheet(data);
 let wb=XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb,ws,"Clients");
 XLSX.writeFile(wb,"clients.xlsx");
 };
 
-// EXPORT PDF
 window.exportPDF=()=>{
 const { jsPDF } = window.jspdf;
 let doc=new jsPDF();
 let y=10;
 
 (filteredClients.length?filteredClients:allClients).forEach((c,i)=>{
-doc.text(`${i+1}. ${c.name} | ${c.pan} | ${c.mobile} | ${c.stage}`,10,y);
+doc.text(`${i+1}. ${c.name} | ${c.pan} | ${c.mobile}`,10,y);
 y+=8;
 if(y>280){doc.addPage();y=10;}
 });
