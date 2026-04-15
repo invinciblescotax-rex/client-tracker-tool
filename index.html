@@ -44,8 +44,14 @@
     .pending { color:#ff9800; font-weight:bold; }
   </style>
 
+  <!-- Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- PDF Table -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
 </head>
 
@@ -142,7 +148,6 @@ let currentUserEmail="";
 let allClients=[];
 let filteredClients=[];
 
-// IST TIME FUNCTION
 function getISTTime(){
   return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 }
@@ -190,26 +195,22 @@ let isNew=!snap.exists();
 let data={
 name,pb,pan,mobile,email,itr,
 fee:Number(fee),payment,stage,
-isDeleted:false,deleteRequested:false,requestedBy:""
+isDeleted:false,deleteRequested:false,requestedBy:"",
+createdBy: currentUserEmail
 };
 
-// ✅ ENTRY TIME
 if(isNew){
 data.createdAt = getISTTime();
 }
 
-// ✅ COMPLETION TIME
-if(stage==="Completed"){
+if(stage==="Completed" && !snap.data()?.completedAt){
 data.completedAt = getISTTime();
 }
 
 await setDoc(ref,data,{merge:true});
 
-// EMAIL
 if(isNew && stage==="Client registration at office"){
-emailjs.send("service_ns9w7qv","template_87k6k2w",{
-name,pan,mobile,itr,fee
-});
+emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
 }
 
 alert("Saved");
@@ -219,7 +220,6 @@ function nameInput(id){
 return document.getElementById(id).value.trim();
 }
 
-// DELETE FLOW
 window.requestDelete=async(pan)=>{
 await setDoc(doc(db,"clients",pan),{
 deleteRequested:true,
@@ -238,7 +238,6 @@ deletedBy:currentUserEmail
 },{merge:true});
 };
 
-// LOAD
 function loadClients(){
 onSnapshot(collection(db,"clients"),(snapshot)=>{
 allClients=[];
@@ -248,7 +247,6 @@ renderClients(filteredClients);
 });
 }
 
-// SEARCH
 window.filterClients=()=>{
 let q=search.value.toLowerCase();
 filteredClients=allClients.filter(c=>
@@ -258,7 +256,6 @@ filteredClients=allClients.filter(c=>
 renderClients(filteredClients);
 };
 
-// DISPLAY WITH TIMESTAMPS
 function renderClients(data){
 list.innerHTML="";
 data.forEach(c=>{
@@ -288,25 +285,44 @@ ${
 });
 }
 
-// EXPORT
+// ✅ FINAL STRUCTURED EXPORT
 window.exportExcel=()=>{
-let ws=XLSX.utils.json_to_sheet(filteredClients);
+let formatted = (filteredClients.length?filteredClients:allClients).map((c,i)=>({
+"Sl. No.": i+1,
+"Name": c.name,
+"PB No.": c.pb,
+"PAN": c.pan,
+"Mobile Number": c.mobile,
+"Mail Address": c.email,
+"Type of ITR": c.itr,
+"Fees": c.fee,
+"Status of Progress": c.stage,
+"Created By": c.createdBy,
+"Date of Creation": c.createdAt,
+"Date of Completion": c.completedAt
+}));
+
+let ws=XLSX.utils.json_to_sheet(formatted);
 let wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,"Clients");
-XLSX.writeFile(wb,"clients.xlsx");
+XLSX.utils.book_append_sheet(wb,ws,"Client Report");
+XLSX.writeFile(wb,"Client_Report.xlsx");
 };
 
 window.exportPDF=()=>{
 const { jsPDF } = window.jspdf;
-let doc=new jsPDF();
-let y=10;
-filteredClients.forEach((c,i)=>{
-doc.text(`${i+1}. ${c.name} - ${c.pan}`,10,y);
-y+=10;
-});
-doc.save("clients.pdf");
-};
+let doc=new jsPDF('landscape');
 
+let headers=[[
+"Sl.No","Name","PB No","PAN","Mobile","Email","ITR","Fees","Status","Created By","Created At","Completed At"
+]];
+
+let rows=(filteredClients.length?filteredClients:allClients).map((c,i)=>[
+i+1,c.name,c.pb,c.pan,c.mobile,c.email,c.itr,c.fee,c.stage,c.createdBy,c.createdAt,c.completedAt
+]);
+
+doc.autoTable({head:headers,body:rows,startY:20,styles:{fontSize:8}});
+doc.save("Client_Report.pdf");
+};
 </script>
 
 </body>
