@@ -142,6 +142,11 @@ let currentUserEmail="";
 let allClients=[];
 let filteredClients=[];
 
+// IST TIME FUNCTION
+function getISTTime(){
+  return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+}
+
 onAuthStateChanged(auth,(user)=>{
 if(user){
 currentUserEmail=user.email;
@@ -157,7 +162,6 @@ appDiv.style.display="none";
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
-// FEE
 window.setFee=()=>{
 const itr=document.getElementById("itr").value;
 if(itr==="ITR1") fee.value=849;
@@ -166,7 +170,6 @@ else if(itr==="CONSULT") fee.value=199;
 else fee.value="";
 };
 
-// SAVE (EMAIL FIXED)
 window.saveClient=async()=>{
 const name=nameInput("name");
 const pb=nameInput("pb");
@@ -184,20 +187,28 @@ let ref=doc(db,"clients",pan);
 let snap=await getDoc(ref);
 let isNew=!snap.exists();
 
-await setDoc(ref,{
+let data={
 name,pb,pan,mobile,email,itr,
 fee:Number(fee),payment,stage,
 isDeleted:false,deleteRequested:false,requestedBy:""
-},{merge:true});
+};
 
-// ✅ FULL EMAIL DATA
+// ✅ ENTRY TIME
+if(isNew){
+data.createdAt = getISTTime();
+}
+
+// ✅ COMPLETION TIME
+if(stage==="Completed"){
+data.completedAt = getISTTime();
+}
+
+await setDoc(ref,data,{merge:true});
+
+// EMAIL
 if(isNew && stage==="Client registration at office"){
 emailjs.send("service_ns9w7qv","template_87k6k2w",{
-name:name,
-pan:pan,
-mobile:mobile,
-itr:itr,
-fee:fee
+name,pan,mobile,itr,fee
 });
 }
 
@@ -242,13 +253,12 @@ window.filterClients=()=>{
 let q=search.value.toLowerCase();
 filteredClients=allClients.filter(c=>
 (c.name||"").toLowerCase().includes(q) ||
-(c.pan||"").toLowerCase().includes(q) ||
-(c.mobile||"").toLowerCase().includes(q)
+(c.pan||"").toLowerCase().includes(q)
 );
 renderClients(filteredClients);
 };
 
-// RENDER FULL DETAILS
+// DISPLAY WITH TIMESTAMPS
 function renderClients(data){
 list.innerHTML="";
 data.forEach(c=>{
@@ -260,6 +270,9 @@ Email: ${c.email}<br>
 ITR: ${c.itr}<br>
 Fee: ₹${c.fee}<br>
 Stage: ${c.stage}<br>
+
+<b>Created:</b> ${c.createdAt || '-'}<br>
+<b>Completed:</b> ${c.completedAt || '-'}<br>
 
 ${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
 
