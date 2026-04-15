@@ -5,26 +5,28 @@
   <style>
     body { font-family: Arial; margin: 20px; background:#f5f7fa; }
     input, select, button { margin:5px; padding:8px; }
-    .card { background:white; padding:15px; margin:10px 0; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);} 
-    .progress { height:20px; background:#ddd; border-radius:10px; overflow:hidden; }
-    .bar { height:100%; }
+    .card { background:white; padding:15px; margin:10px 0; border-radius:10px; }
     .danger { background:red; color:white; }
     .approve { background:green; color:white; }
     .pending { color:orange; font-weight:bold; }
+    .deleted { background:#eee; opacity:0.6; }
   </style>
 </head>
 <body>
 
 <div id="loginDiv">
   <h2>Login</h2>
-  <input id="loginEmail" placeholder="Email"><br>
-  <input id="loginPass" type="password" placeholder="Password"><br>
+  <input id="loginEmail"><br>
+  <input id="loginPass" type="password"><br>
   <button onclick="login()">Login</button>
 </div>
 
 <div id="appDiv" style="display:none;">
-<h2>Client Entry</h2>
 
+<h2>Search</h2>
+<input id="search" placeholder="Search by Name / PAN / Mobile / Email / PB" onkeyup="filterClients()">
+
+<h2>Client Entry</h2>
 <input id="name" placeholder="Name">
 <input id="pb" placeholder="PB No">
 <input id="pan" placeholder="PAN">
@@ -32,212 +34,188 @@
 <input id="email" placeholder="Email">
 
 <select id="itr" onchange="setFee()">
-  <option value="">Select ITR</option>
-  <option value="ITR1">ITR-1</option>
-  <option value="ITR2">ITR-2/3/4</option>
+<option value="">Select ITR</option>
+<option value="ITR1">ITR-1</option>
+<option value="ITR2">ITR-2/3/4</option>
 </select>
 
 <input id="fee" readonly>
 
 <select id="payment">
-  <option value="">Select Payment</option>
-  <option>Cash</option>
-  <option>UPI</option>
-  <option>Bank Transfer</option>
+<option>Cash</option>
+<option>UPI</option>
+<option>Bank</option>
 </select>
 
 <select id="stage">
-  <option>Client registration at office</option>
-  <option>Partial submission by client</option>
-  <option>Full submission by client</option>
-  <option>Work initiated at office</option>
-  <option>In progress</option>
-  <option>For client approval</option>
-  <option>Completed</option>
+<option>Client registration at office</option>
+<option>Partial submission by client</option>
+<option>Full submission by client</option>
+<option>Work initiated at office</option>
+<option>In progress</option>
+<option>For client approval</option>
+<option>Completed</option>
 </select>
 
-<button onclick="saveClient()">Save Client</button>
+<button onclick="saveClient()">Save</button>
 <button onclick="logout()">Logout</button>
 
 <h2>Clients</h2>
 <div id="list"></div>
+
 </div>
 
-<!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-(function(){
-  emailjs.init("oCSNm-4jMM9RJpB35");
-})();
+emailjs.init("oCSNm-4jMM9RJpB35");
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
-  authDomain: "client-tracker-tool-5bdf6.firebaseapp.com",
-  projectId: "client-tracker-tool-5bdf6",
-};
+const app = initializeApp({
+  apiKey:"AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
+  authDomain:"client-tracker-tool-5bdf6.firebaseapp.com",
+  projectId:"client-tracker-tool-5bdf6"
+});
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUserEmail = "";
-
-let stages = [
-"Client registration at office",
-"Partial submission by client",
-"Full submission by client",
-"Work initiated at office",
-"In progress",
-"For client approval",
-"Completed"
-];
+let currentUserEmail="";
+let allClients=[];
 
 // AUTH
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUserEmail = user.email;
-    loginDiv.style.display = "none";
-    appDiv.style.display = "block";
-    loadClients();
-  } else {
-    loginDiv.style.display = "block";
-    appDiv.style.display = "none";
-  }
+onAuthStateChanged(auth,(user)=>{
+if(user){
+currentUserEmail=user.email;
+loginDiv.style.display="none";
+appDiv.style.display="block";
+loadClients();
+}else{
+loginDiv.style.display="block";
+appDiv.style.display="none";
+}
 });
 
 // LOGIN
-window.login = function () {
-  signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value)
-    .catch(err => alert(err.message));
-};
+window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 
 // LOGOUT
-window.logout = function () {
-  signOut(auth);
+window.logout=()=>signOut(auth);
+
+// FEE
+window.setFee=()=>{
+fee.value= itr.value==="ITR1"?849: itr.value==="ITR2"?1349:"";
 };
 
-// AUTO FEE
-window.setFee = function(){
-  const itr = document.getElementById("itr").value;
-  document.getElementById("fee").value = itr === "ITR1" ? 849 : itr === "ITR2" ? 1349 : "";
-};
+// SAVE
+window.saveClient=async()=>{
+let ref=doc(db,"clients",pan.value);
+let snap=await getDoc(ref);
+let isNew=!snap.exists();
 
-// SAVE CLIENT (EMAIL ONLY ON FIRST ENTRY)
-window.saveClient = async function(){
+await setDoc(ref,{
+name:name.value,
+pb:pb.value,
+pan:pan.value,
+mobile:mobile.value,
+email:email.value,
+itr:itr.value,
+fee:Number(fee.value),
+stage:stage.value,
+isDeleted:false,
+deleteRequested:false,
+requestedBy:"",
+updated:new Date()
+},{merge:true});
 
-  const name = document.getElementById("name").value;
-  const pb = document.getElementById("pb").value;
-  const pan = document.getElementById("pan").value;
-  const mobile = document.getElementById("mobile").value;
-  const email = document.getElementById("email").value;
-  const itr = document.getElementById("itr").value;
-  const fee = document.getElementById("fee").value;
-  const payment = document.getElementById("payment").value;
-  const stage = document.getElementById("stage").value;
-
-  if(!pan){
-    alert("PAN required");
-    return;
-  }
-
-  const ref = doc(db,"clients",pan);
-  const snap = await getDoc(ref);
-  const isNew = !snap.exists();
-
-  await setDoc(ref,{
-    name,pb,pan,mobile,email,itr,
-    fee:Number(fee),
-    payment,stage,
-    deleteRequested:false,
-    requestedBy:"",
-    updated:new Date()
-  },{merge:true});
-
-  if(isNew && stage==="Client registration at office"){
-    emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
-  }
-
-  alert("Saved");
-};
-
-// REQUEST DELETE
-window.requestDelete = async function(pan){
-
-  await setDoc(doc(db,"clients",pan),{
-    deleteRequested:true,
-    requestedBy:currentUserEmail
-  },{merge:true});
-
-  // SEND DELETE EMAIL
-  emailjs.send("service_ns9w7qv","template_rigq89q",{
-    pan:pan,
-    requestedBy:currentUserEmail
-  });
-
-  alert("Deletion request sent");
-};
-
-// APPROVE DELETE
-window.approveDelete = async function(pan,requestedBy){
-
-  if(requestedBy===currentUserEmail){
-    alert("You cannot approve your own request");
-    return;
-  }
-
-  await deleteDoc(doc(db,"clients",pan));
-  alert("Deleted permanently");
-};
-
-// LOAD CLIENTS
-function loadClients(){
-  onSnapshot(collection(db,"clients"),(snapshot)=>{
-    list.innerHTML="";
-
-    snapshot.forEach(d=>{
-      let c=d.data();
-      let percent=((stages.indexOf(c.stage)+1)/stages.length)*100;
-      let color=percent<40?"red":percent<80?"orange":"green";
-
-      list.innerHTML+=`
-      <div class="card">
-        <b>${c.name}</b> (${c.pan})<br>
-        Fee: ₹${c.fee}<br>
-
-        <select onchange="updateStage('${c.pan}',this.value)">
-          ${stages.map(s=>`<option ${s===c.stage?'selected':''}>${s}</option>`).join("")}
-        </select>
-
-        <div class="progress">
-          <div class="bar" style="width:${percent}%;background:${color}"></div>
-        </div>
-
-        ${
-          !c.deleteRequested
-          ? `<button class="danger" onclick="requestDelete('${c.pan}')">Delete</button>`
-          : `
-            <div class="pending">Pending Deletion (By ${c.requestedBy})</div>
-            <button class="approve" onclick="approveDelete('${c.pan}','${c.requestedBy}')">
-              Confirm Delete
-            </button>
-          `
-        }
-      </div>`;
-    });
-  });
+if(isNew && stage.value==="Client registration at office"){
+emailjs.send("service_ns9w7qv","template_87k6k2w",{
+name:name.value,pan:pan.value,mobile:mobile.value,itr:itr.value,fee:fee.value
+});
 }
 
-// UPDATE STAGE
-window.updateStage = async function(pan,newStage){
-  await setDoc(doc(db,"clients",pan),{stage:newStage},{merge:true});
+alert("Saved");
 };
+
+// DELETE REQUEST
+window.requestDelete=async(pan)=>{
+await setDoc(doc(db,"clients",pan),{
+deleteRequested:true,
+requestedBy:currentUserEmail
+},{merge:true});
+
+emailjs.send("service_ns9w7qv","template_rigq89q",{
+pan:pan,
+requestedBy:currentUserEmail
+});
+
+alert("Delete request sent");
+};
+
+// APPROVE DELETE (SOFT DELETE)
+window.approveDelete=async(pan,requestedBy)=>{
+if(requestedBy===currentUserEmail){
+alert("Cannot approve your own request");
+return;
+}
+
+await setDoc(doc(db,"clients",pan),{
+isDeleted:true,
+deletedBy:currentUserEmail,
+deletedAt:new Date()
+},{merge:true});
+
+alert("Marked as deleted");
+};
+
+// LOAD
+function loadClients(){
+onSnapshot(collection(db,"clients"),(snapshot)=>{
+allClients=[];
+snapshot.forEach(d=>allClients.push(d.data()));
+renderClients(allClients);
+});
+}
+
+// SEARCH FILTER
+window.filterClients=()=>{
+let q=search.value.toLowerCase();
+let filtered=allClients.filter(c=>
+(c.name||"").toLowerCase().includes(q) ||
+(c.pan||"").toLowerCase().includes(q) ||
+(c.mobile||"").toLowerCase().includes(q) ||
+(c.email||"").toLowerCase().includes(q) ||
+(c.pb||"").toLowerCase().includes(q)
+);
+renderClients(filtered);
+};
+
+// RENDER
+function renderClients(data){
+list.innerHTML="";
+
+data.forEach(c=>{
+list.innerHTML+=`
+<div class="card ${c.isDeleted?'deleted':''}">
+<b>${c.name}</b> (${c.pan})<br>
+
+${c.isDeleted ? "<b>Deleted</b><br>" : ""}
+
+${
+!c.deleteRequested && !c.isDeleted
+? `<button class="danger" onclick="requestDelete('${c.pan}')">Delete</button>`
+: c.deleteRequested && !c.isDeleted
+? `<div class="pending">Pending (${c.requestedBy})</div>
+<button class="approve" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
+: ""
+}
+</div>`;
+});
+}
 </script>
 
 </body>
