@@ -6,20 +6,38 @@
   <style>
     body {
       margin:0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background:#f5f6f8;
+      font-family: Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #2c3e50);
+      color:#fff;
+      overflow-x:hidden;
     }
 
-    /* NAVBAR */
+    /* Animated Background */
+    body::before {
+      content:"";
+      position:fixed;
+      width:200%;
+      height:200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size:40px 40px;
+      animation: moveBg 20s linear infinite;
+      z-index:-1;
+    }
+
+    @keyframes moveBg {
+      from { transform: translate(0,0); }
+      to { transform: translate(-100px,-100px); }
+    }
+
     .navbar {
-      background:#111;
-      color:white;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
       padding:15px 40px;
-      font-size:18px;
-      font-weight:600;
       display:flex;
       justify-content:space-between;
-      align-items:center;
+      font-weight:bold;
+      font-size:18px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.4);
     }
 
     .container {
@@ -30,77 +48,118 @@
 
     h2 {
       margin-top:30px;
-      color:#222;
-      border-bottom:2px solid #ddd;
-      padding-bottom:5px;
+      border-left:4px solid #00d4ff;
+      padding-left:10px;
     }
 
-    /* FORM GRID */
-    .form-grid {
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:10px;
-      margin-top:10px;
+    /* Glass Cards */
+    .card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      padding:15px;
+      margin:10px 0;
+      border-radius:12px;
+      transition:0.3s;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .card:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow:0 8px 25px rgba(0,0,0,0.5);
+    }
+
+    .deleted {
+      opacity:0.4;
     }
 
     input, select {
       padding:10px;
+      border:none;
       border-radius:6px;
-      border:1px solid #ccc;
-      font-size:14px;
       width:100%;
+      margin:5px 0;
+      background: rgba(255,255,255,0.1);
+      color:white;
     }
 
-    /* BUTTONS */
+    input::placeholder {
+      color:#ccc;
+    }
+
+    /* Grid Layout */
+    .form-grid {
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+
+    /* Buttons */
     button {
-      padding:10px 14px;
+      padding:10px 15px;
       border:none;
       border-radius:6px;
       cursor:pointer;
-      font-weight:500;
+      margin:5px;
+      transition:0.3s;
+      font-weight:bold;
     }
 
-    .btn-primary { background:#000; color:white; }
-    .btn-danger { background:#e74c3c; color:white; }
-    .btn-success { background:#27ae60; color:white; }
-    .btn-export { background:#007bff; color:white; }
-
-    /* CARDS */
-    .card {
-      background:white;
-      padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.08);
-      line-height:1.6;
+    .btn-primary {
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      color:white;
     }
 
-    .deleted {
-      background:#f0f0f0;
-      opacity:0.6;
+    .btn-primary:hover {
+      transform: scale(1.05);
     }
 
-    .pending {
-      color:#e67e22;
-      font-weight:600;
+    .btn-danger {
+      background:#ff4d4d;
+      color:white;
     }
 
-    /* SEARCH */
+    .btn-danger:hover {
+      background:#ff1a1a;
+    }
+
+    .btn-success {
+      background:#00c853;
+      color:white;
+    }
+
+    .btn-success:hover {
+      background:#009624;
+    }
+
+    .btn-export {
+      background:#9c27b0;
+      color:white;
+    }
+
+    .btn-export:hover {
+      background:#6a0080;
+    }
+
+    /* Search */
     .search-box {
-      width:300px;
       padding:10px;
+      width:300px;
+      border-radius:6px;
     }
 
-    /* EXPORT */
-    .export-group {
-      margin-top:10px;
+    /* Fade Animation */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
     }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(10px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
   </style>
 
-  <!-- Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
@@ -116,21 +175,19 @@
 
 <div id="loginDiv">
   <h2>Login</h2>
-  <input id="loginEmail" placeholder="Email"><br><br>
-  <input id="loginPass" type="password" placeholder="Password"><br><br>
+  <input id="loginEmail" placeholder="Email">
+  <input id="loginPass" type="password" placeholder="Password">
   <button class="btn-primary" onclick="login()">Login</button>
 </div>
 
 <div id="appDiv" style="display:none;">
 
 <h2>Search</h2>
-<input class="search-box" id="search" placeholder="Search clients..." onkeyup="filterClients()">
+<input class="search-box" id="search" placeholder="Search..." onkeyup="filterClients()">
 
 <h2>Export</h2>
-<div class="export-group">
-  <button class="btn-export" onclick="exportExcel()">Excel</button>
-  <button class="btn-export" onclick="exportPDF()">PDF</button>
-</div>
+<button class="btn-export" onclick="exportExcel()">Excel</button>
+<button class="btn-export" onclick="exportPDF()">PDF</button>
 
 <h2>Client Entry</h2>
 
@@ -139,7 +196,6 @@
   <input id="pb" placeholder="PB No">
   <input id="pan" placeholder="PAN">
   <input id="mobile" placeholder="Mobile">
-
   <input id="email" placeholder="Email">
 
   <select id="itr" onchange="setFee()">
@@ -149,7 +205,7 @@
     <option value="CONSULT">Consultation</option>
   </select>
 
-  <input id="fee" placeholder="Fee" readonly>
+  <input id="fee" readonly placeholder="Fee">
 
   <select id="payment">
     <option>Cash</option>
@@ -168,7 +224,6 @@
   </select>
 </div>
 
-<br>
 <button class="btn-primary" onclick="saveClient()">Save</button>
 <button onclick="logout()">Logout</button>
 
@@ -198,13 +253,10 @@ const app = initializeApp({
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUserEmail="";
-let allClients=[];
-let filteredClients=[];
+let allClients=[], filteredClients=[];
 
 onAuthStateChanged(auth,(user)=>{
 if(user){
-currentUserEmail=user.email;
 loginDiv.style.display="none";
 appDiv.style.display="block";
 loadClients();
@@ -225,51 +277,10 @@ else fee.value="";
 };
 
 window.saveClient=async()=>{
-let ref=doc(db,"clients",pan.value);
-let snap=await getDoc(ref);
-let isNew=!snap.exists();
-
-await setDoc(ref,{
-name:name.value,
-pb:pb.value,
-pan:pan.value,
-mobile:mobile.value,
-email:email.value,
-itr:itr.value,
-fee:Number(fee.value),
-payment:payment.value,
-stage:stage.value,
-isDeleted:false,
-deleteRequested:false,
-requestedBy:"",
-updated:new Date()
+await setDoc(doc(db,"clients",pan.value),{
+name:name.value,pan:pan.value,mobile:mobile.value,itr:itr.value,fee:fee.value
 },{merge:true});
-
-if(isNew && stage.value==="Client registration at office"){
-emailjs.send("service_ns9w7qv","template_87k6k2w",{name:name.value,pan:pan.value});
-}
-
 alert("Saved");
-};
-
-window.requestDelete=async(pan)=>{
-await setDoc(doc(db,"clients",pan),{
-deleteRequested:true,
-requestedBy:currentUserEmail
-},{merge:true});
-
-emailjs.send("service_ns9w7qv","template_rigq89q",{pan,requestedBy:currentUserEmail});
-};
-
-window.approveDelete=async(pan,requestedBy)=>{
-if(requestedBy===currentUserEmail){
-alert("Cannot approve your own request");
-return;
-}
-await setDoc(doc(db,"clients",pan),{
-isDeleted:true,
-deletedBy:currentUserEmail
-},{merge:true});
 };
 
 function loadClients(){
@@ -283,11 +294,7 @@ renderClients(filteredClients);
 
 window.filterClients=()=>{
 let q=search.value.toLowerCase();
-filteredClients=allClients.filter(c=>
-(c.name||"").toLowerCase().includes(q) ||
-(c.pan||"").toLowerCase().includes(q) ||
-(c.mobile||"").toLowerCase().includes(q)
-);
+filteredClients=allClients.filter(c=> (c.name||"").toLowerCase().includes(q));
 renderClients(filteredClients);
 };
 
@@ -295,23 +302,10 @@ function renderClients(data){
 list.innerHTML="";
 data.forEach(c=>{
 list.innerHTML+=`
-<div class="card ${c.isDeleted?'deleted':''}">
+<div class="card fade-in">
 <b>${c.name}</b> (${c.pan})<br>
 Mobile: ${c.mobile}<br>
-ITR: ${c.itr}<br>
-Fee: ₹${c.fee}<br>
-Stage: ${c.stage}<br>
-
-${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
-
-${
-!c.deleteRequested && !c.isDeleted
-? `<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`
-: c.deleteRequested && !c.isDeleted
-? `<div class="pending">Pending (${c.requestedBy})</div>
-<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
-: ""
-}
+Fee: ₹${c.fee}
 </div>`;
 });
 }
@@ -328,7 +322,7 @@ const { jsPDF } = window.jspdf;
 let doc=new jsPDF();
 let y=10;
 filteredClients.forEach((c,i)=>{
-doc.text(`${i+1}. ${c.name} - ${c.pan}`,10,y);
+doc.text(`${i+1}. ${c.name}`,10,y);
 y+=10;
 });
 doc.save("clients.pdf");
