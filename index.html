@@ -372,15 +372,33 @@ renderClients(filteredClients);
 
 function renderClients(data){
 list.innerHTML="";
+
 data.forEach(c=>{
+
 list.innerHTML+=`
 <div class="card ${c.isDeleted?'deleted':''}">
+
 <b>${c.name}</b> (${c.pan})<br>
 Mobile: ${c.mobile}<br>
 Email: ${c.email}<br>
 ITR: ${c.itr}<br>
 Fee: ₹${c.fee}<br>
-Stage: ${c.stage}<br>
+
+<b>Current Stage:</b> ${c.stage}<br><br>
+
+<select id="stage_${c.pan}">
+  <option ${c.stage==="Client registration at office"?"selected":""}>Client registration at office</option>
+  <option ${c.stage==="Partial submission by client"?"selected":""}>Partial submission by client</option>
+  <option ${c.stage==="Full submission by client"?"selected":""}>Full submission by client</option>
+  <option ${c.stage==="Work initiated at office"?"selected":""}>Work initiated at office</option>
+  <option ${c.stage==="In progress"?"selected":""}>In progress</option>
+  <option ${c.stage==="For client approval"?"selected":""}>For client approval</option>
+  <option ${c.stage==="Completed"?"selected":""}>Completed</option>
+</select>
+
+<button onclick="updateStage('${c.pan}')">Update Stage</button>
+
+<br><br>
 
 <b>Created:</b> ${c.createdAt || '-'}<br>
 <b>Completed:</b> ${c.completedAt || '-'}<br>
@@ -395,9 +413,29 @@ ${
 <button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
 : ""
 }
+
 </div>`;
 });
 }
+
+window.updateStage = async (pan) => {
+
+const newStage = document.getElementById("stage_"+pan).value;
+
+let updateData = {
+  stage: newStage
+};
+
+// auto set completion timestamp
+if(newStage === "Completed"){
+  updateData.completedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+}
+
+await setDoc(doc(db,"clients",pan), updateData, {merge:true});
+
+alert("Stage updated successfully");
+
+};
 
 window.exportExcel=()=>{
 let formatted=(filteredClients.length?filteredClients:allClients).map((c,i)=>({
