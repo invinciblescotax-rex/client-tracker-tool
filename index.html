@@ -7,74 +7,174 @@
 
   <style>
     :root {
-      --bg: #f3f8fc;
-      --bg-soft: #eaf1f8;
-      --surface: #ffffff;
-      --surface-soft: #f8fbff;
-      --text: #243042;
-      --muted: #6d7a8d;
-      --line: #dce6f1;
-      --primary: #2f80ed;
-      --primary-2: #69a9ff;
-      --success: #1f9d67;
-      --warning: #d98a00;
-      --danger: #d9534f;
-      --shadow: 0 10px 28px rgba(28, 52, 84, 0.08);
-      --radius: 16px;
+      --bg-1: #f8fbff;
+      --bg-2: #eef5ff;
+      --bg-3: #f9fcff;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-strong: rgba(255, 255, 255, 0.92);
+      --surface-soft: #f7fbff;
+      --text: #24324a;
+      --text-soft: #60708d;
+      --line: rgba(186, 205, 232, 0.45);
+      --primary: #5b8def;
+      --primary-2: #7fb3ff;
+      --primary-3: #a8caff;
+      --mint: #7ed7c1;
+      --teal: #57c6c2;
+      --peach: #ffd8c2;
+      --gold: #f2c96d;
+      --rose: #f6b7c8;
+      --success: #44b98b;
+      --warning: #d8a54b;
+      --danger: #e58a95;
+      --shadow-lg: 0 24px 60px rgba(115, 149, 199, 0.18);
+      --shadow-md: 0 14px 34px rgba(122, 152, 199, 0.14);
+      --shadow-sm: 0 8px 20px rgba(122, 152, 199, 0.1);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, #fbfdff 0%, #eef5fb 35%, #e7eff8 100%);
+        radial-gradient(circle at 0% 0%, rgba(168, 202, 255, 0.26), transparent 28%),
+        radial-gradient(circle at 100% 10%, rgba(126, 215, 193, 0.22), transparent 24%),
+        radial-gradient(circle at 70% 100%, rgba(246, 183, 200, 0.18), transparent 24%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    body::before {
+      top: -80px;
+      left: -90px;
+      background: rgba(127, 179, 255, 0.24);
+    }
+
+    body::after {
+      right: -100px;
+      bottom: -100px;
+      background: rgba(126, 215, 193, 0.22);
+    }
+
+    .app-shell {
+      position: relative;
+      z-index: 1;
     }
 
     .navbar {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(10px);
-      padding: 16px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 25;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      position: sticky;
-      top: 0;
-      z-index: 20;
+      padding: 16px 26px;
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(201, 216, 238, 0.45);
+      box-shadow: 0 8px 24px rgba(141, 169, 207, 0.08);
     }
 
     .brand {
       display: flex;
-      align-items: baseline;
-      gap: 10px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.65)),
+        linear-gradient(135deg, var(--primary), var(--teal));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 55%);
+    }
+
+    .brand-mark::after {
+      content: "IC";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #3b67b7;
+      letter-spacing: 0.5px;
+      font-size: 15px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
     .logo {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      background: linear-gradient(90deg, #2f80ed, #5da7ff, #2f80ed);
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #4d7fe5, #61b7d5, #4d7fe5);
       background-size: 200% auto;
       color: transparent;
       background-clip: text;
       -webkit-background-clip: text;
-      animation: shimmer 3s linear infinite;
+      animation: shimmer 5s linear infinite;
     }
 
     .logo-sub {
-      font-size: 13px;
-      color: var(--muted);
+      color: var(--text-soft);
+      font-size: 12px;
       font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
     }
 
     .nav-right {
-      color: var(--muted);
-      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(197, 214, 238, 0.5);
+      color: var(--text-soft);
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
     }
 
     @keyframes shimmer {
@@ -83,114 +183,98 @@
     }
 
     .container {
-      max-width: 1320px;
+      max-width: 1380px;
       margin: 0 auto;
-      padding: 26px;
+      padding: 28px 22px 40px;
     }
 
     .panel {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(220, 230, 241, 0.95);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 22px;
-      margin-bottom: 20px;
+      position: relative;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: 26px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, rgba(91,141,239,0.85), rgba(87,198,194,0.75), rgba(246,183,200,0.7));
+    }
+
+    .hero-login {
+      max-width: 520px;
+      margin: 50px auto 0;
+      padding-top: 34px;
+    }
+
+    .hero-login::after {
+      content: "";
+      position: absolute;
+      right: -50px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,202,255,0.38), transparent 70%);
+      pointer-events: none;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .section-head-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     h2 {
-      margin: 0 0 14px;
-      padding-left: 10px;
-      border-left: 4px solid var(--primary);
-      font-size: 20px;
-    }
-
-    h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
     }
 
     .subtle {
-      color: var(--muted);
+      color: var(--text-soft);
       font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(246,250,255,0.75));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      color: #5f7396;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+      white-space: nowrap;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    input, select, button {
-      font: inherit;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 11px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--text);
-      transition: 0.2s ease;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary-2);
-      box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.12);
-    }
-
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s ease;
-      font-weight: 600;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: #eef4fb;
-      color: var(--text);
-      border: 1px solid #d7e5f6;
-    }
-
-    .btn-export {
-      background: linear-gradient(135deg, #6f42c1, #8e5be8);
-      color: #fff;
-    }
-
-    .btn-edit {
-      background: linear-gradient(135deg, #11998e, #38c7b6);
-      color: #fff;
-    }
-
-    .btn-view.active {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: #fff;
-      box-shadow: 0 8px 18px rgba(47, 128, 237, 0.18);
-    }
-
-    .action-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-top: 12px;
+      gap: 14px;
     }
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1.4fr 0.8fr auto;
+      grid-template-columns: 1.35fr 0.85fr auto;
       gap: 12px;
       align-items: center;
       margin-bottom: 14px;
@@ -198,9 +282,9 @@
 
     .toolbar-right {
       display: flex;
+      justify-content: flex-end;
       gap: 8px;
       flex-wrap: wrap;
-      justify-content: flex-end;
     }
 
     .filters-grid {
@@ -210,35 +294,156 @@
       margin-top: 8px;
     }
 
+    input,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 48px;
+      border: 1px solid rgba(190, 208, 233, 0.62);
+      background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,251,255,0.92));
+      border-radius: 16px;
+      padding: 0 14px;
+      color: var(--text);
+      outline: none;
+      transition: 0.22s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+    }
+
+    input::placeholder {
+      color: #92a2bc;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(91,141,239,0.78);
+      box-shadow:
+        0 0 0 4px rgba(126, 177, 255, 0.14),
+        0 10px 24px rgba(141, 175, 224, 0.12);
+      transform: translateY(-1px);
+    }
+
+    button {
+      height: 46px;
+      padding: 0 16px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+      transition: 0.22s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, #5b8def, #78adff);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,255,0.92));
+      border: 1px solid rgba(192, 211, 236, 0.62);
+    }
+
+    .btn-export {
+      color: #fff;
+      background: linear-gradient(135deg, #8c7cf0, #ad8fff);
+    }
+
+    .btn-edit {
+      color: #fff;
+      background: linear-gradient(135deg, #46b8a4, #6ad3c0);
+    }
+
+    .btn-view.active {
+      color: #fff;
+      background: linear-gradient(135deg, #5b8def, #7fb3ff);
+      box-shadow: 0 12px 28px rgba(97, 149, 235, 0.25);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .status-banner {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      display: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    .status-banner.editing {
+      display: block;
+      background: linear-gradient(135deg, rgba(126,215,193,0.18), rgba(91,141,239,0.12));
+      color: #2f6f77;
+      border: 1px solid rgba(126, 215, 193, 0.32);
+    }
+
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
 
     .summary-card {
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.9));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .summary-card::after {
+      content: "";
+      position: absolute;
+      right: -24px;
+      top: -24px;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,202,255,0.24), transparent 68%);
     }
 
     .summary-label {
-      color: var(--muted);
+      color: var(--text-soft);
       font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .summary-value {
-      font-size: 28px;
+      margin-bottom: 10px;
       font-weight: 700;
     }
 
+    .summary-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
     .summary-note {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 4px;
+      margin-top: 6px;
+      color: #8392aa;
+      font-size: 12px;
     }
 
     .chart-grid {
@@ -249,26 +454,27 @@
     }
 
     .chart-card {
-      background: linear-gradient(180deg, #ffffff, #f9fbfe);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,251,255,0.9));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow-md);
     }
 
     .chart-label {
       font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 10px;
-      font-weight: 700;
+      color: var(--text-soft);
+      margin-bottom: 12px;
+      font-weight: 800;
     }
 
     .bar-track {
       height: 18px;
       width: 100%;
-      background: #e9f0f7;
       border-radius: 999px;
+      background: linear-gradient(90deg, rgba(232,239,250,0.9), rgba(241,246,252,0.95));
       overflow: hidden;
-      margin-bottom: 8px;
+      box-shadow: inset 0 1px 3px rgba(130, 158, 196, 0.1);
     }
 
     .bar-fill {
@@ -278,35 +484,38 @@
     }
 
     .bar-fill.pending {
-      background: linear-gradient(90deg, #f6b64a, #e28a18);
+      background: linear-gradient(90deg, #f6cc7a, #e8ad4d);
     }
 
     .bar-fill.completed {
-      background: linear-gradient(90deg, #23b26d, #178a52);
+      background: linear-gradient(90deg, #70d1aa, #46b98b);
     }
 
     .chart-meta {
       display: flex;
       justify-content: space-between;
-      color: var(--muted);
+      margin-top: 10px;
+      color: var(--text-soft);
       font-size: 13px;
+      font-weight: 600;
     }
 
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 16px;
-      margin-top: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
     }
 
     .card {
-      background: #fff;
-      border: 1px solid #e7eef6;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(27, 55, 90, 0.06);
-      padding: 18px;
       position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+      padding: 20px;
       overflow: hidden;
+      transition: 0.24s ease;
     }
 
     .card::before {
@@ -314,46 +523,65 @@
       position: absolute;
       inset: 0 auto auto 0;
       width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      height: 6px;
+      background: linear-gradient(90deg, rgba(91,141,239,0.85), rgba(87,198,194,0.7), rgba(246,183,200,0.66));
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -35px;
+      top: -35px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,202,255,0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 46px rgba(122, 154, 199, 0.18);
     }
 
     .card-top {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
       align-items: start;
-      margin-bottom: 12px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .client-name {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
     }
 
     .client-pan {
-      color: var(--muted);
+      color: var(--text-soft);
       font-size: 13px;
-      margin-top: 4px;
+      margin-top: 5px;
+      font-weight: 600;
     }
 
     .meta {
       display: grid;
-      gap: 8px;
-      margin: 14px 0;
-      color: #314155;
+      gap: 9px;
+      margin: 16px 0;
       font-size: 14px;
     }
 
     .meta-row {
       display: grid;
-      grid-template-columns: 110px 1fr;
+      grid-template-columns: 108px 1fr;
       gap: 8px;
+      align-items: start;
     }
 
     .meta-label {
-      color: var(--muted);
-      font-weight: 600;
+      color: var(--text-soft);
+      font-weight: 700;
     }
 
     .stage-badge {
@@ -361,43 +589,28 @@
       align-items: center;
       gap: 6px;
       border-radius: 999px;
-      padding: 6px 10px;
+      padding: 7px 11px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
       white-space: nowrap;
     }
 
-    .stage-client { background: #e9f3ff; color: #2368c4; }
-    .stage-partial { background: #fff3dd; color: #b46b00; }
-    .stage-full { background: #e9fbef; color: #18794e; }
-    .stage-initiated { background: #efeaff; color: #6d44c5; }
-    .stage-progress { background: #e8f7ff; color: #0f7399; }
-    .stage-approval { background: #fff0f0; color: #c34c4c; }
-    .stage-completed { background: #e7f8ee; color: #157347; }
-
-    .status-banner {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      display: none;
-    }
-
-    .status-banner.editing {
-      display: block;
-      background: #e9f7f5;
-      color: #11695f;
-      border: 1px solid #cbeee9;
-    }
+    .stage-client { background: #e9f2ff; color: #4674c7; }
+    .stage-partial { background: #fff3dc; color: #b27a14; }
+    .stage-full { background: #e8f8ef; color: #2e8b62; }
+    .stage-initiated { background: #f1ebff; color: #7d58c5; }
+    .stage-progress { background: #e7f8ff; color: #2c8bb1; }
+    .stage-approval { background: #fff0f3; color: #c06b87; }
+    .stage-completed { background: #e7f9f1; color: #2f9970; }
 
     .list-table-wrap {
+      margin-top: 16px;
       overflow-x: auto;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 8px 24px rgba(27, 55, 90, 0.05);
-      margin-top: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
     }
 
     .list-table {
@@ -408,95 +621,105 @@
 
     .list-table th,
     .list-table td {
-      padding: 12px 14px;
-      border-bottom: 1px solid #edf2f8;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(224, 234, 247, 0.9);
       text-align: left;
       vertical-align: top;
       font-size: 14px;
     }
 
     .list-table th {
-      background: #f7fbff;
-      color: #42526b;
       position: sticky;
       top: 0;
+      z-index: 1;
+      background: rgba(244, 249, 255, 0.97);
+      color: #64789a;
+      font-weight: 800;
+    }
+
+    .list-table tr:hover td {
+      background: rgba(248, 251, 255, 0.75);
     }
 
     .pane-layout {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 340px 1fr;
       gap: 16px;
-      margin-top: 12px;
+      margin-top: 18px;
     }
 
     .pane-list,
     .pane-detail {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(27, 55, 90, 0.05);
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
       overflow: hidden;
     }
 
     .pane-item {
-      padding: 14px 16px;
-      border-bottom: 1px solid #edf2f8;
+      position: relative;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(224, 234, 247, 0.9);
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: 0.2s ease;
     }
 
     .pane-item:hover {
-      background: #f7fbff;
+      background: rgba(247, 251, 255, 0.8);
     }
 
     .pane-item.active {
-      background: linear-gradient(135deg, rgba(47,128,237,0.10), rgba(98,163,255,0.16));
+      background: linear-gradient(135deg, rgba(91,141,239,0.1), rgba(87,198,194,0.1));
       border-left: 4px solid var(--primary);
-      padding-left: 12px;
+      padding-left: 14px;
     }
 
     .pane-detail-inner {
-      padding: 22px;
+      padding: 24px;
     }
 
     .detail-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
-      margin: 16px 0;
+      margin: 18px 0;
     }
 
     .detail-box {
-      background: var(--surface-soft);
-      border: 1px solid #e7eef6;
-      border-radius: 12px;
-      padding: 12px;
+      background: linear-gradient(180deg, rgba(250,252,255,0.96), rgba(244,249,255,0.92));
+      border: 1px solid rgba(221, 232, 246, 0.92);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
     }
 
     .detail-label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 5px;
-      font-weight: 700;
+      color: var(--text-soft);
+      font-size: 11px;
+      margin-bottom: 6px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.7px;
     }
 
     .empty-state {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 26px;
+      margin-top: 18px;
+      padding: 34px 18px;
       text-align: center;
-      color: var(--muted);
-      margin-top: 12px;
+      color: var(--text-soft);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.9));
+      border: 1px solid rgba(197, 214, 238, 0.55);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+      font-weight: 600;
     }
 
     .muted {
-      color: var(--muted);
+      color: var(--text-soft);
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1180px) {
       .form-grid,
       .summary-grid,
       .filters-grid,
@@ -521,9 +744,22 @@
       }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 700px) {
       .container {
-        padding: 16px;
+        padding: 16px 14px 28px;
+      }
+
+      .navbar {
+        padding: 14px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+      }
+
+      .logo {
+        font-size: 22px;
       }
 
       .form-grid,
@@ -533,12 +769,13 @@
         grid-template-columns: 1fr;
       }
 
-      .navbar {
-        padding: 14px 16px;
+      .panel {
+        padding: 18px;
+        border-radius: 22px;
       }
 
-      .logo {
-        font-size: 24px;
+      .hero-login {
+        margin-top: 28px;
       }
     }
   </style>
@@ -548,157 +785,180 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-  <div class="navbar">
-    <div class="brand">
-      <span class="logo">IC-KS</span>
-      <span class="logo-sub">CRM System</span>
-    </div>
-    <div class="nav-right">Operations Hub</div>
-  </div>
-
-  <div class="container">
-    <div id="loginDiv" class="panel">
-      <h2>Login</h2>
-      <input id="loginEmail" placeholder="Email" />
-      <br /><br />
-      <input id="loginPass" type="password" placeholder="Password" />
-      <br /><br />
-      <button class="btn-primary" onclick="login()">Login</button>
-    </div>
-
-    <div id="appDiv" style="display:none;">
-      <div class="panel" id="entryPanel">
-        <h2>Client Entry</h2>
-        <div class="subtle">Add new clients or edit an existing client record.</div>
-
-        <div id="editBanner" class="status-banner"></div>
-
-        <div class="form-grid" style="margin-top:14px;">
-          <input id="name" placeholder="Name" />
-          <input id="pb" placeholder="PB No" />
-          <input id="pan" placeholder="PAN" />
-          <input id="mobile" placeholder="Mobile" />
-          <input id="email" placeholder="Email" />
-
-          <select id="itr" onchange="setFee()">
-            <option value="">Select ITR</option>
-            <option value="ITR1">ITR-1</option>
-            <option value="ITR2">ITR-2/3/4</option>
-            <option value="CONSULT">Consultation</option>
-          </select>
-
-          <input id="fee" readonly placeholder="Fee" />
-
-          <select id="payment">
-            <option>Cash</option>
-            <option>UPI</option>
-            <option>Bank</option>
-          </select>
-
-          <select id="stage">
-            <option>Client registration at office</option>
-            <option>Partial submission by client</option>
-            <option>Full submission by client</option>
-            <option>Work initiated at office</option>
-            <option>In progress</option>
-            <option>For client approval</option>
-            <option>Completed</option>
-          </select>
-        </div>
-
-        <div class="action-row">
-          <button id="saveBtn" class="btn-primary" onclick="saveClient()">Save</button>
-          <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
-          <button class="btn-secondary" onclick="logout()">Logout</button>
+  <div class="app-shell">
+    <div class="navbar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text">
+          <span class="logo">IC-KS</span>
+          <span class="logo-sub">CRM System</span>
         </div>
       </div>
+      <div class="nav-right">Operations Hub</div>
+    </div>
 
-      <div class="panel">
-        <h2>Client Dashboard</h2>
+    <div class="container">
+      <div id="loginDiv" class="panel hero-login">
+        <div class="section-head">
+          <div class="section-head-left">
+            <h2>Welcome Back</h2>
+            <div class="subtle">Sign in to access your client dashboard, workflows, and reporting tools.</div>
+          </div>
+          <div class="chip">Secure Login</div>
+        </div>
 
-        <div class="toolbar">
-          <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="applyFiltersAndRender()" />
+        <input id="loginEmail" placeholder="Email" />
+        <br /><br />
+        <input id="loginPass" type="password" placeholder="Password" />
+        <br /><br />
+        <button class="btn-primary" onclick="login()">Login</button>
+      </div>
 
-          <select id="sortBy" onchange="applyFiltersAndRender()">
-            <option value="latest">Sort: Latest</option>
-            <option value="pending">Sort: Pending First</option>
-            <option value="completed">Sort: Completed First</option>
-            <option value="name">Sort: Name A-Z</option>
-          </select>
+      <div id="appDiv" style="display:none;">
+        <div class="panel" id="entryPanel">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2>Client Entry</h2>
+              <div class="subtle">Add a new client or load an existing one for editing without changing the current workflow.</div>
+            </div>
+            <div class="chip">Live Connected</div>
+          </div>
 
-          <div class="toolbar-right">
-            <button id="btnList" class="btn-secondary btn-view" onclick="setViewMode('list')">List View</button>
-            <button id="btnCard" class="btn-secondary btn-view active" onclick="setViewMode('card')">Card View</button>
-            <button id="btnPane" class="btn-secondary btn-view" onclick="setViewMode('pane')">Pane View</button>
-            <button class="btn-export" onclick="exportExcel()">Excel</button>
-            <button class="btn-export" onclick="exportPDF()">PDF</button>
+          <div id="editBanner" class="status-banner"></div>
+
+          <div class="form-grid" style="margin-top:14px;">
+            <input id="name" placeholder="Name" />
+            <input id="pb" placeholder="PB No" />
+            <input id="pan" placeholder="PAN" />
+            <input id="mobile" placeholder="Mobile" />
+            <input id="email" placeholder="Email" />
+
+            <select id="itr" onchange="setFee()">
+              <option value="">Select ITR</option>
+              <option value="ITR1">ITR-1</option>
+              <option value="ITR2">ITR-2/3/4</option>
+              <option value="CONSULT">Consultation</option>
+            </select>
+
+            <input id="fee" readonly placeholder="Fee" />
+
+            <select id="payment">
+              <option>Cash</option>
+              <option>UPI</option>
+              <option>Bank</option>
+            </select>
+
+            <select id="stage">
+              <option>Client registration at office</option>
+              <option>Partial submission by client</option>
+              <option>Full submission by client</option>
+              <option>Work initiated at office</option>
+              <option>In progress</option>
+              <option>For client approval</option>
+              <option>Completed</option>
+            </select>
+          </div>
+
+          <div class="action-row">
+            <button id="saveBtn" class="btn-primary" onclick="saveClient()">Save</button>
+            <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
           </div>
         </div>
 
-        <div class="filters-grid">
-          <input id="createdDateFilter" type="date" onchange="applyFiltersAndRender()" />
-          <input id="completedDateFilter" type="date" onchange="applyFiltersAndRender()" />
-          <select id="stageFilter" onchange="applyFiltersAndRender()">
-            <option value="">All Stages</option>
-            <option>Client registration at office</option>
-            <option>Partial submission by client</option>
-            <option>Full submission by client</option>
-            <option>Work initiated at office</option>
-            <option>In progress</option>
-            <option>For client approval</option>
-            <option>Completed</option>
-          </select>
-          <button class="btn-secondary" onclick="clearFilters()">Clear Filters</button>
+        <div class="panel">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2>Client Dashboard</h2>
+              <div class="subtle">Search, filter, export, review, and update client progress across multiple views.</div>
+            </div>
+            <div class="chip">Stylish v3</div>
+          </div>
+
+          <div class="toolbar">
+            <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="applyFiltersAndRender()" />
+
+            <select id="sortBy" onchange="applyFiltersAndRender()">
+              <option value="latest">Sort: Latest</option>
+              <option value="pending">Sort: Pending First</option>
+              <option value="completed">Sort: Completed First</option>
+              <option value="name">Sort: Name A-Z</option>
+            </select>
+
+            <div class="toolbar-right">
+              <button id="btnList" class="btn-secondary btn-view" onclick="setViewMode('list')">List View</button>
+              <button id="btnCard" class="btn-secondary btn-view active" onclick="setViewMode('card')">Card View</button>
+              <button id="btnPane" class="btn-secondary btn-view" onclick="setViewMode('pane')">Pane View</button>
+              <button class="btn-export" onclick="exportExcel()">Excel</button>
+              <button class="btn-export" onclick="exportPDF()">PDF</button>
+            </div>
+          </div>
+
+          <div class="filters-grid">
+            <input id="createdDateFilter" type="date" onchange="applyFiltersAndRender()" />
+            <input id="completedDateFilter" type="date" onchange="applyFiltersAndRender()" />
+            <select id="stageFilter" onchange="applyFiltersAndRender()">
+              <option value="">All Stages</option>
+              <option>Client registration at office</option>
+              <option>Partial submission by client</option>
+              <option>Full submission by client</option>
+              <option>Work initiated at office</option>
+              <option>In progress</option>
+              <option>For client approval</option>
+              <option>Completed</option>
+            </select>
+            <button class="btn-secondary" onclick="clearFilters()">Clear Filters</button>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">Total Clients</div>
+              <div id="sumTotal" class="summary-value">0</div>
+              <div class="summary-note">Visible after current filters</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Pending Clients</div>
+              <div id="sumPending" class="summary-value">0</div>
+              <div class="summary-note">Not yet completed</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Completed Clients</div>
+              <div id="sumCompleted" class="summary-value">0</div>
+              <div class="summary-note">Marked as completed</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Completion Rate</div>
+              <div id="sumRate" class="summary-value">0%</div>
+              <div class="summary-note">Based on visible clients</div>
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-label">Pending Clients</div>
+              <div class="bar-track">
+                <div id="pendingBar" class="bar-fill pending" style="width:0%;"></div>
+              </div>
+              <div class="chart-meta">
+                <span id="pendingCount">0 clients</span>
+                <span id="pendingPercent">0%</span>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-label">Completed Clients</div>
+              <div class="bar-track">
+                <div id="completedBar" class="bar-fill completed" style="width:0%;"></div>
+              </div>
+              <div class="chart-meta">
+                <span id="completedCount">0 clients</span>
+                <span id="completedPercent">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="list"></div>
         </div>
-
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-label">Total Clients</div>
-            <div id="sumTotal" class="summary-value">0</div>
-            <div class="summary-note">Visible after current filters</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Pending Clients</div>
-            <div id="sumPending" class="summary-value">0</div>
-            <div class="summary-note">Not yet completed</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Completed Clients</div>
-            <div id="sumCompleted" class="summary-value">0</div>
-            <div class="summary-note">Marked as completed</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Completion Rate</div>
-            <div id="sumRate" class="summary-value">0%</div>
-            <div class="summary-note">Based on visible clients</div>
-          </div>
-        </div>
-
-        <div class="chart-grid">
-          <div class="chart-card">
-            <div class="chart-label">Pending Clients</div>
-            <div class="bar-track">
-              <div id="pendingBar" class="bar-fill pending" style="width:0%;"></div>
-            </div>
-            <div class="chart-meta">
-              <span id="pendingCount">0 clients</span>
-              <span id="pendingPercent">0%</span>
-            </div>
-          </div>
-
-          <div class="chart-card">
-            <div class="chart-label">Completed Clients</div>
-            <div class="bar-track">
-              <div id="completedBar" class="bar-fill completed" style="width:0%;"></div>
-            </div>
-            <div class="chart-meta">
-              <span id="completedCount">0 clients</span>
-              <span id="completedPercent">0%</span>
-            </div>
-          </div>
-        </div>
-
-        <div id="list"></div>
       </div>
     </div>
   </div>
@@ -798,7 +1058,7 @@
     }
 
     function setEditMode(client) {
-      editingPan = client.pan || null;
+      editingPan = client?.pan || null;
       const banner = document.getElementById("editBanner");
       const saveBtn = document.getElementById("saveBtn");
 
@@ -1032,7 +1292,7 @@
 
           <div class="pane-detail">
             <div class="pane-detail-inner">
-              <h3>${escapeHtml(selectedClient.name || "-")}</h3>
+              <h2 style="font-size:28px; margin-bottom:12px;">${escapeHtml(selectedClient.name || "-")}</h2>
               <div>${stageBadge(selectedClient.stage)}</div>
 
               <div class="detail-grid">
