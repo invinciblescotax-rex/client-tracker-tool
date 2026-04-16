@@ -1,148 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IC-KS CRM</title>
 
   <style>
+    :root {
+      --bg: #f4f8fc;
+      --bg-soft: #ebf2f9;
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --text: #243042;
+      --muted: #6b7a90;
+      --line: #dfe8f2;
+      --primary: #2f80ed;
+      --primary-2: #62a3ff;
+      --success: #1f9d67;
+      --warning: #d98a00;
+      --shadow: 0 10px 30px rgba(27, 55, 90, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Tahoma, Arial, sans-serif;
-      background: linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
-      color: #2c2c2c;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #fdfefe 0%, #eef5fb 35%, #e8f0f8 100%);
     }
 
     .navbar {
-      background: #ffffff;
-      padding: 16px 32px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 16px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 25px;
-    }
-
-    h2 {
-      margin-top: 30px;
-      margin-bottom: 10px;
-      border-left: 4px solid #4f8cff;
-      padding-left: 10px;
-      font-weight: 600;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #d6dbe6;
-      background: #ffffff;
-      transition: all 0.2s ease;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #4f8cff;
-      box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.15);
-    }
-
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 6px 6px 0 0;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #4f8cff, #6aa7ff);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 15px rgba(79, 140, 255, 0.3);
-    }
-
-    .btn-export {
-      background: linear-gradient(135deg, #6f42c1, #8e5be8);
-      color: white;
-    }
-
-    .btn-export:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 15px rgba(111, 66, 193, 0.3);
-    }
-
-    #search {
-      width: 300px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #d6dbe6;
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 18px;
-      margin: 12px 0;
-      border-radius: 12px;
-      border: 1px solid #eef1f6;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      position: sticky;
       top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, #4f8cff, #6aa7ff);
-      opacity: 0.7;
+      z-index: 10;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-    }
-
-    .card select {
-      margin-top: 8px;
-      border-radius: 6px;
-    }
-
-    @media (max-width: 900px) {
-      .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 500px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
     }
 
     .logo {
       font-size: 30px;
       font-weight: 700;
       letter-spacing: 1px;
-      background: linear-gradient(90deg, #4f8cff, #6aa7ff, #4f8cff);
+      background: linear-gradient(90deg, #2f80ed, #5da7ff, #2f80ed);
       background-size: 200% auto;
       color: transparent;
       background-clip: text;
@@ -152,14 +67,388 @@
 
     .logo-sub {
       font-size: 13px;
-      color: #6b7280;
-      margin-left: 10px;
-      font-weight: 500;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .nav-right {
+      color: var(--muted);
+      font-weight: 600;
     }
 
     @keyframes shimmer {
       0% { background-position: 0% center; }
       100% { background-position: 200% center; }
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 26px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(223, 232, 242, 0.9);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      padding-left: 10px;
+      border-left: 4px solid var(--primary);
+      font-size: 20px;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    input, select, button {
+      font: inherit;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      transition: 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-2);
+      box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.12);
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: 600;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+    }
+
+    .btn-export {
+      background: linear-gradient(135deg, #6f42c1, #8e5be8);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #eef4fb;
+      color: var(--text);
+      border: 1px solid #d7e5f6;
+    }
+
+    .btn-view.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(47, 128, 237, 0.18);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr auto auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .toolbar-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .summary-card {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .summary-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e8eff7;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(27, 55, 90, 0.06);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .client-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .client-pan {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .meta {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0;
+      color: #314155;
+      font-size: 14px;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 8px;
+    }
+
+    .meta-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .stage-client { background: #e9f3ff; color: #2368c4; }
+    .stage-partial { background: #fff3dd; color: #b46b00; }
+    .stage-full { background: #e9fbef; color: #18794e; }
+    .stage-initiated { background: #efeaff; color: #6d44c5; }
+    .stage-progress { background: #e8f7ff; color: #0f7399; }
+    .stage-approval { background: #fff0f0; color: #c34c4c; }
+    .stage-completed { background: #e7f8ee; color: #157347; }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .list-table-wrap {
+      overflow-x: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(27, 55, 90, 0.05);
+      margin-top: 12px;
+    }
+
+    .list-table {
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: collapse;
+    }
+
+    .list-table th,
+    .list-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #edf2f8;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .list-table th {
+      background: #f7fbff;
+      color: #42526b;
+      position: sticky;
+      top: 0;
+    }
+
+    .pane-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .pane-list,
+    .pane-detail {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(27, 55, 90, 0.05);
+      overflow: hidden;
+    }
+
+    .pane-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid #edf2f8;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .pane-item:hover {
+      background: #f7fbff;
+    }
+
+    .pane-item.active {
+      background: linear-gradient(135deg, rgba(47,128,237,0.10), rgba(98,163,255,0.16));
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    .pane-detail-inner {
+      padding: 22px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .detail-box {
+      background: var(--surface-2);
+      border: 1px solid #e7eef6;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .detail-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .empty-state {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 26px;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 1024px) {
+      .form-grid,
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar-right {
+        justify-content: flex-start;
+      }
+
+      .pane-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px;
+      }
+
+      .form-grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .navbar {
+        padding: 14px 16px;
+      }
+
+      .logo {
+        font-size: 24px;
+      }
     }
   </style>
 
@@ -167,75 +456,114 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
-
 <body>
   <div class="navbar">
-    <div>
+    <div class="brand">
       <span class="logo">IC-KS</span>
       <span class="logo-sub">CRM System</span>
     </div>
-
-    <div class="nav-right">
-      Operations Hub
-    </div>
+    <div class="nav-right">Operations Hub</div>
   </div>
 
   <div class="container">
-    <div id="loginDiv">
+    <div id="loginDiv" class="panel">
       <h2>Login</h2>
-      <input id="loginEmail" placeholder="Email"><br><br>
-      <input id="loginPass" type="password" placeholder="Password"><br><br>
+      <input id="loginEmail" placeholder="Email" />
+      <br /><br />
+      <input id="loginPass" type="password" placeholder="Password" />
+      <br /><br />
       <button class="btn-primary" onclick="login()">Login</button>
     </div>
 
     <div id="appDiv" style="display:none;">
-      <h2>Search</h2>
-      <input id="search" placeholder="Search..." onkeyup="filterClients()">
+      <div class="panel">
+        <h2>Client Entry</h2>
+        <div class="form-grid">
+          <input id="name" placeholder="Name" />
+          <input id="pb" placeholder="PB No" />
+          <input id="pan" placeholder="PAN" />
+          <input id="mobile" placeholder="Mobile" />
+          <input id="email" placeholder="Email" />
 
-      <h2>Export</h2>
-      <button class="btn-export" onclick="exportExcel()">Excel</button>
-      <button class="btn-export" onclick="exportPDF()">PDF</button>
+          <select id="itr" onchange="setFee()">
+            <option value="">Select ITR</option>
+            <option value="ITR1">ITR-1</option>
+            <option value="ITR2">ITR-2/3/4</option>
+            <option value="CONSULT">Consultation</option>
+          </select>
 
-      <h2>Client Entry</h2>
+          <input id="fee" readonly placeholder="Fee" />
 
-      <div class="form-grid">
-        <input id="name" placeholder="Name">
-        <input id="pb" placeholder="PB No">
-        <input id="pan" placeholder="PAN">
-        <input id="mobile" placeholder="Mobile">
-        <input id="email" placeholder="Email">
+          <select id="payment">
+            <option>Cash</option>
+            <option>UPI</option>
+            <option>Bank</option>
+          </select>
 
-        <select id="itr" onchange="setFee()">
-          <option value="">Select ITR</option>
-          <option value="ITR1">ITR-1</option>
-          <option value="ITR2">ITR-2/3/4</option>
-          <option value="CONSULT">Consultation</option>
-        </select>
+          <select id="stage">
+            <option>Client registration at office</option>
+            <option>Partial submission by client</option>
+            <option>Full submission by client</option>
+            <option>Work initiated at office</option>
+            <option>In progress</option>
+            <option>For client approval</option>
+            <option>Completed</option>
+          </select>
+        </div>
 
-        <input id="fee" readonly placeholder="Fee">
-
-        <select id="payment">
-          <option>Cash</option>
-          <option>UPI</option>
-          <option>Bank</option>
-        </select>
-
-        <select id="stage">
-          <option>Client registration at office</option>
-          <option>Partial submission by client</option>
-          <option>Full submission by client</option>
-          <option>Work initiated at office</option>
-          <option>In progress</option>
-          <option>For client approval</option>
-          <option>Completed</option>
-        </select>
+        <div class="action-row">
+          <button class="btn-primary" onclick="saveClient()">Save</button>
+          <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
       </div>
 
-      <button class="btn-primary" onclick="saveClient()">Save</button>
-      <button onclick="logout()">Logout</button>
+      <div class="panel">
+        <h2>Client Dashboard</h2>
 
-      <h2>Clients</h2>
-      <div id="list"></div>
+        <div class="toolbar">
+          <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="filterClients()" />
+
+          <select id="sortBy" onchange="applyFiltersAndRender()">
+            <option value="latest">Sort: Latest</option>
+            <option value="pending">Sort: Pending First</option>
+            <option value="completed">Sort: Completed First</option>
+            <option value="name">Sort: Name A-Z</option>
+          </select>
+
+          <div class="toolbar-right">
+            <button id="btnList" class="btn-secondary btn-view" onclick="setViewMode('list')">List View</button>
+            <button id="btnCard" class="btn-secondary btn-view active" onclick="setViewMode('card')">Card View</button>
+            <button id="btnPane" class="btn-secondary btn-view" onclick="setViewMode('pane')">Pane View</button>
+            <button class="btn-export" onclick="exportExcel()">Excel</button>
+            <button class="btn-export" onclick="exportPDF()">PDF</button>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">Total Clients</div>
+            <div id="sumTotal" class="summary-value">0</div>
+            <div class="summary-note">Visible after current filters</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Pending Clients</div>
+            <div id="sumPending" class="summary-value">0</div>
+            <div class="summary-note">Not yet completed</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Completed Clients</div>
+            <div id="sumCompleted" class="summary-value">0</div>
+            <div class="summary-note">Marked as completed</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Completion Rate</div>
+            <div id="sumRate" class="summary-value">0%</div>
+            <div class="summary-note">Based on visible clients</div>
+          </div>
+        </div>
+
+        <div id="list"></div>
+      </div>
     </div>
   </div>
 
@@ -260,14 +588,311 @@
 
     let currentUserEmail = "";
     let allClients = [];
-    let filteredClients = [];
+    let displayedClients = [];
+    let currentView = "card";
+    let selectedPanePan = null;
+
+    const stages = [
+      "Client registration at office",
+      "Partial submission by client",
+      "Full submission by client",
+      "Work initiated at office",
+      "In progress",
+      "For client approval",
+      "Completed"
+    ];
 
     function getISTTime() {
       return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
     }
 
-    function nameInput(id) {
+    function getInputValue(id) {
       return document.getElementById(id).value.trim();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function isCompleted(client) {
+      return (client.stage || "") === "Completed";
+    }
+
+    function getStageClass(stage) {
+      switch (stage) {
+        case "Client registration at office": return "stage-client";
+        case "Partial submission by client": return "stage-partial";
+        case "Full submission by client": return "stage-full";
+        case "Work initiated at office": return "stage-initiated";
+        case "In progress": return "stage-progress";
+        case "For client approval": return "stage-approval";
+        case "Completed": return "stage-completed";
+        default: return "stage-client";
+      }
+    }
+
+    function stageBadge(stage) {
+      return `<span class="stage-badge ${getStageClass(stage)}">${escapeHtml(stage || "-")}</span>`;
+    }
+
+    function stageOptions(selectedStage) {
+      return stages.map(stage =>
+        `<option value="${escapeHtml(stage)}" ${selectedStage === stage ? "selected" : ""}>${escapeHtml(stage)}</option>`
+      ).join("");
+    }
+
+    function getSortValue(client, key) {
+      if (key === "latest") {
+        return client.createdAt || "";
+      }
+      if (key === "name") {
+        return (client.name || "").toLowerCase();
+      }
+      return "";
+    }
+
+    function updateViewButtons() {
+      document.getElementById("btnList").classList.toggle("active", currentView === "list");
+      document.getElementById("btnCard").classList.toggle("active", currentView === "card");
+      document.getElementById("btnPane").classList.toggle("active", currentView === "pane");
+    }
+
+    function updateSummary(data) {
+      const total = data.length;
+      const completed = data.filter(isCompleted).length;
+      const pending = total - completed;
+      const rate = total ? Math.round((completed / total) * 100) : 0;
+
+      document.getElementById("sumTotal").textContent = total;
+      document.getElementById("sumPending").textContent = pending;
+      document.getElementById("sumCompleted").textContent = completed;
+      document.getElementById("sumRate").textContent = rate + "%";
+    }
+
+    function applySort(data) {
+      const sortBy = document.getElementById("sortBy").value;
+      const sorted = [...data];
+
+      if (sortBy === "name") {
+        sorted.sort((a, b) => getSortValue(a, "name").localeCompare(getSortValue(b, "name")));
+      } else if (sortBy === "completed") {
+        sorted.sort((a, b) => Number(isCompleted(b)) - Number(isCompleted(a)));
+      } else if (sortBy === "pending") {
+        sorted.sort((a, b) => Number(isCompleted(a)) - Number(isCompleted(b)));
+      } else {
+        sorted.reverse();
+      }
+
+      return sorted;
+    }
+
+    function applyFiltersAndRender() {
+      const q = document.getElementById("search").value.toLowerCase().trim();
+
+      let data = allClients.filter(c =>
+        (c.name || "").toLowerCase().includes(q) ||
+        (c.pan || "").toLowerCase().includes(q) ||
+        (c.mobile || "").toLowerCase().includes(q) ||
+        (c.email || "").toLowerCase().includes(q)
+      );
+
+      data = applySort(data);
+      displayedClients = data;
+
+      if (!data.length) {
+        selectedPanePan = null;
+      } else if (!data.some(c => c.pan === selectedPanePan)) {
+        selectedPanePan = data[0].pan;
+      }
+
+      updateSummary(data);
+      renderClients(data);
+    }
+
+    function renderClients(data) {
+      if (!data.length) {
+        document.getElementById("list").innerHTML = `<div class="empty-state">No client records found for the current search or sort.</div>`;
+        return;
+      }
+
+      if (currentView === "list") {
+        renderListView(data);
+      } else if (currentView === "pane") {
+        renderPaneView(data);
+      } else {
+        renderCardView(data);
+      }
+    }
+
+    function renderCardView(data) {
+      document.getElementById("list").innerHTML = `
+        <div class="cards-grid">
+          ${data.map(c => `
+            <div class="card">
+              <div class="card-top">
+                <div>
+                  <div class="client-name">${escapeHtml(c.name || "-")}</div>
+                  <div class="client-pan">${escapeHtml(c.pan || "-")}</div>
+                </div>
+                <div>${stageBadge(c.stage)}</div>
+              </div>
+
+              <div class="meta">
+                <div class="meta-row"><div class="meta-label">PB No</div><div>${escapeHtml(c.pb || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">Mobile</div><div>${escapeHtml(c.mobile || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">Email</div><div>${escapeHtml(c.email || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">ITR</div><div>${escapeHtml(c.itr || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">Fee</div><div>₹${escapeHtml(c.fee || 0)}</div></div>
+                <div class="meta-row"><div class="meta-label">Payment</div><div>${escapeHtml(c.payment || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">Created</div><div>${escapeHtml(c.createdAt || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">Completed</div><div>${escapeHtml(c.completedAt || "-")}</div></div>
+              </div>
+
+              <div class="action-row">
+                <select id="stage_${c.pan}">
+                  ${stageOptions(c.stage)}
+                </select>
+                <button class="btn-primary" onclick="updateStage('${c.pan}')">Update Stage</button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderListView(data) {
+      document.getElementById("list").innerHTML = `
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>PAN</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>ITR</th>
+                <th>Fee</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Completed</th>
+                <th>Update Stage</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(c => `
+                <tr>
+                  <td>${escapeHtml(c.name || "-")}</td>
+                  <td>${escapeHtml(c.pan || "-")}</td>
+                  <td>${escapeHtml(c.mobile || "-")}</td>
+                  <td>${escapeHtml(c.email || "-")}</td>
+                  <td>${escapeHtml(c.itr || "-")}</td>
+                  <td>₹${escapeHtml(c.fee || 0)}</td>
+                  <td>${stageBadge(c.stage)}</td>
+                  <td>${escapeHtml(c.createdAt || "-")}</td>
+                  <td>${escapeHtml(c.completedAt || "-")}</td>
+                  <td>
+                    <div class="action-row">
+                      <select id="stage_${c.pan}">
+                        ${stageOptions(c.stage)}
+                      </select>
+                      <button class="btn-primary" onclick="updateStage('${c.pan}')">Update</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderPaneView(data) {
+      const selectedClient = data.find(c => c.pan === selectedPanePan) || data[0];
+      selectedPanePan = selectedClient.pan;
+
+      document.getElementById("list").innerHTML = `
+        <div class="pane-layout">
+          <div class="pane-list">
+            ${data.map(c => `
+              <div class="pane-item ${c.pan === selectedPanePan ? "active" : ""}" onclick="selectPaneClient('${c.pan}')">
+                <div><strong>${escapeHtml(c.name || "-")}</strong></div>
+                <div class="muted">${escapeHtml(c.pan || "-")}</div>
+                <div style="margin-top:8px;">${stageBadge(c.stage)}</div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="pane-detail">
+            <div class="pane-detail-inner">
+              <h3>${escapeHtml(selectedClient.name || "-")}</h3>
+              <div>${stageBadge(selectedClient.stage)}</div>
+
+              <div class="detail-grid">
+                <div class="detail-box">
+                  <div class="detail-label">PAN</div>
+                  <div>${escapeHtml(selectedClient.pan || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">PB No</div>
+                  <div>${escapeHtml(selectedClient.pb || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Mobile</div>
+                  <div>${escapeHtml(selectedClient.mobile || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Email</div>
+                  <div>${escapeHtml(selectedClient.email || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">ITR Type</div>
+                  <div>${escapeHtml(selectedClient.itr || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Fee</div>
+                  <div>₹${escapeHtml(selectedClient.fee || 0)}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Payment</div>
+                  <div>${escapeHtml(selectedClient.payment || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Created By</div>
+                  <div>${escapeHtml(selectedClient.createdBy || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Created At</div>
+                  <div>${escapeHtml(selectedClient.createdAt || "-")}</div>
+                </div>
+                <div class="detail-box">
+                  <div class="detail-label">Completed At</div>
+                  <div>${escapeHtml(selectedClient.completedAt || "-")}</div>
+                </div>
+              </div>
+
+              <div class="action-row">
+                <select id="stage_${selectedClient.pan}">
+                  ${stageOptions(selectedClient.stage)}
+                </select>
+                <button class="btn-primary" onclick="updateStage('${selectedClient.pan}')">Update Stage</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadClients() {
+      onSnapshot(collection(db, "clients"), (snapshot) => {
+        allClients = [];
+        snapshot.forEach(d => allClients.push(d.data()));
+        applyFiltersAndRender();
+      });
     }
 
     onAuthStateChanged(auth, (user) => {
@@ -294,11 +919,11 @@
     };
 
     window.saveClient = async () => {
-      const name = nameInput("name");
-      const pb = nameInput("pb");
-      const pan = nameInput("pan");
-      const mobile = nameInput("mobile");
-      const email = nameInput("email");
+      const name = getInputValue("name");
+      const pb = getInputValue("pb");
+      const pan = getInputValue("pan");
+      const mobile = getInputValue("mobile");
+      const email = getInputValue("email");
       const itr = document.getElementById("itr").value;
       const fee = document.getElementById("fee").value;
       const payment = document.getElementById("payment").value;
@@ -349,68 +974,32 @@
       alert("Saved");
     };
 
-    function loadClients() {
-      onSnapshot(collection(db, "clients"), (snapshot) => {
-        allClients = [];
-        snapshot.forEach((d) => allClients.push(d.data()));
-        filteredClients = [...allClients];
-        renderClients(filteredClients);
-      });
-    }
+    window.filterClients = () => applyFiltersAndRender();
 
-    window.filterClients = () => {
-      const q = search.value.toLowerCase();
-      filteredClients = allClients.filter((c) =>
-        (c.name || "").toLowerCase().includes(q) ||
-        (c.pan || "").toLowerCase().includes(q)
-      );
-      renderClients(filteredClients);
+    window.setViewMode = (mode) => {
+      currentView = mode;
+      updateViewButtons();
+      renderClients(displayedClients);
     };
 
-    function renderClients(data) {
-      list.innerHTML = "";
-
-      data.forEach((c) => {
-        list.innerHTML += `
-          <div class="card">
-            <b>${c.name || ""}</b> (${c.pan || ""})<br>
-            Mobile: ${c.mobile || ""}<br>
-            Email: ${c.email || ""}<br>
-            ITR: ${c.itr || ""}<br>
-            Fee: ₹${c.fee || 0}<br>
-
-            <b>Current Stage:</b> ${c.stage || ""}<br><br>
-
-            <select id="stage_${c.pan}">
-              <option ${c.stage === "Client registration at office" ? "selected" : ""}>Client registration at office</option>
-              <option ${c.stage === "Partial submission by client" ? "selected" : ""}>Partial submission by client</option>
-              <option ${c.stage === "Full submission by client" ? "selected" : ""}>Full submission by client</option>
-              <option ${c.stage === "Work initiated at office" ? "selected" : ""}>Work initiated at office</option>
-              <option ${c.stage === "In progress" ? "selected" : ""}>In progress</option>
-              <option ${c.stage === "For client approval" ? "selected" : ""}>For client approval</option>
-              <option ${c.stage === "Completed" ? "selected" : ""}>Completed</option>
-            </select>
-
-            <button onclick="updateStage('${c.pan}')">Update Stage</button>
-
-            <br><br>
-
-            <b>Created:</b> ${c.createdAt || "-"}<br>
-            <b>Completed:</b> ${c.completedAt || "-"}<br>
-          </div>
-        `;
-      });
-    }
+    window.selectPaneClient = (pan) => {
+      selectedPanePan = pan;
+      renderClients(displayedClients);
+    };
 
     window.updateStage = async (pan) => {
-      const newStage = document.getElementById("stage_" + pan).value;
+      const stageSelect = document.getElementById("stage_" + pan);
+      if (!stageSelect) return;
+
+      const newStage = stageSelect.value;
+      const client = allClients.find(c => c.pan === pan);
 
       const updateData = {
         stage: newStage
       };
 
-      if (newStage === "Completed") {
-        updateData.completedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      if (newStage === "Completed" && !client?.completedAt) {
+        updateData.completedAt = getISTTime();
       }
 
       await setDoc(doc(db, "clients", pan), updateData, { merge: true });
@@ -418,7 +1007,7 @@
     };
 
     window.exportExcel = () => {
-      const formatted = (filteredClients.length ? filteredClients : allClients).map((c, i) => ({
+      const formatted = displayedClients.map((c, i) => ({
         "Sl. No.": i + 1,
         "Name": c.name,
         "PB No.": c.pb,
@@ -441,31 +1030,33 @@
 
     window.exportPDF = () => {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF("landscape");
+      const pdf = new jsPDF("landscape");
 
       const headers = [[
-        "Sl.No", "Name", "PB", "PAN", "Mobile", "Email", "ITR", "Fees",
-        "Status", "Created By", "Created", "Completed"
+        "Sl.No", "Name", "PB", "PAN", "Mobile", "Email",
+        "ITR", "Fees", "Status", "Created By", "Created", "Completed"
       ]];
 
-      const rows = (filteredClients.length ? filteredClients : allClients).map((c, i) => [
+      const rows = displayedClients.map((c, i) => [
         i + 1,
-        c.name,
-        c.pb,
-        c.pan,
-        c.mobile,
-        c.email,
-        c.itr,
-        c.fee,
-        c.stage,
-        c.createdBy,
-        c.createdAt,
-        c.completedAt
+        c.name || "",
+        c.pb || "",
+        c.pan || "",
+        c.mobile || "",
+        c.email || "",
+        c.itr || "",
+        c.fee || "",
+        c.stage || "",
+        c.createdBy || "",
+        c.createdAt || "",
+        c.completedAt || ""
       ]);
 
-      doc.autoTable({ head: headers, body: rows });
-      doc.save("Client_Report.pdf");
+      pdf.autoTable({ head: headers, body: rows });
+      pdf.save("Client_Report.pdf");
     };
+
+    updateViewButtons();
   </script>
 </body>
 </html>
