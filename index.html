@@ -240,7 +240,7 @@
 emailjs.init("oCSNm-4jMM9RJpB35");
 </script>
 
-  <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -255,7 +255,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserEmail="";
-let currentUserRole="user";
+let currentUserRole="user"; // default
+let roleLoaded=false;       // 🔥 NEW FLAG
 let allClients=[];
 let filteredClients=[];
 
@@ -264,14 +265,16 @@ let filteredClients=[];
 // =========================
 async function getUserRole(email){
   try{
-    const ref = doc(db, "roles", email);
+    const ref = doc(db, "roles", email.trim());
     const snap = await getDoc(ref);
 
     if(snap.exists()){
-      currentUserRole = snap.data().role;
+      currentUserRole = (snap.data().role || "user").toLowerCase().trim();
     } else {
       currentUserRole = "user";
     }
+
+    roleLoaded = true;
 
     console.log("Logged in as:", email);
     console.log("Role:", currentUserRole);
@@ -279,6 +282,7 @@ async function getUserRole(email){
   } catch(err){
     console.error("Role fetch error:", err);
     currentUserRole = "user";
+    roleLoaded = true;
   }
 }
 
@@ -294,12 +298,17 @@ function getISTTime(){
 // =========================
 onAuthStateChanged(auth, async (user)=>{
 if(user){
-currentUserEmail=user.email;
-await getUserRole(user.email);
+currentUserEmail=user.email.trim();
+
+await getUserRole(currentUserEmail);
 
 loginDiv.style.display="none";
 appDiv.style.display="block";
-loadClients();
+
+// 🔥 ENSURE ROLE LOADED BEFORE DATA LOAD
+setTimeout(()=>{
+  loadClients();
+},200);
 
 }else{
 loginDiv.style.display="block";
@@ -323,7 +332,7 @@ else fee.value="";
 };
 
 // =========================
-// SAVE CLIENT (UPDATED)
+// SAVE CLIENT
 // =========================
 window.saveClient=async()=>{
 const name=nameInput("name");
@@ -342,7 +351,7 @@ let ref=doc(db,"clients",pan);
 let snap=await getDoc(ref);
 let isNew=!snap.exists();
 
-// 🔒 COMPLETION INTERCEPT
+// 🔒 COMPLETION INTERCEPT FOR USERS
 if(stage==="Completed" && currentUserRole !== "admin"){
 await setDoc(doc(db,"requests", pan + "_completion"),{
 type:"completion",
@@ -355,7 +364,6 @@ alert("Request sent for admin approval");
 return;
 }
 
-// NORMAL SAVE FLOW
 let data={
 name,pb,pan,mobile,email,itr,
 fee:Number(fee),
@@ -366,19 +374,17 @@ requestedBy:"",
 createdBy: currentUserEmail
 };
 
-// ENTRY TIME
 if(isNew){
 data.createdAt = getISTTime();
 }
 
-// COMPLETION TIME (admin only)
 if(stage==="Completed" && !snap.data()?.completedAt){
 data.completedAt = getISTTime();
 }
 
 await setDoc(ref,data,{merge:true});
 
-// EMAIL FOR CREATION
+// EMAIL (CREATION)
 if(isNew && stage==="Client registration at office"){
 emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
 }
@@ -391,7 +397,7 @@ return document.getElementById(id).value.trim();
 }
 
 // =========================
-// DELETE FLOW (UPDATED)
+// DELETE FLOW
 // =========================
 window.requestDelete=async(pan)=>{
 await setDoc(doc(db,"clients",pan),{
@@ -407,7 +413,15 @@ requestedBy: currentUserEmail
 
 window.approveDelete=async(pan,requestedBy)=>{
 
-// 🔒 ADMIN ONLY
+console.log("Role at approval:", currentUserRole);
+
+// 🔥 ENSURE ROLE LOADED
+if(!roleLoaded){
+alert("Please wait, loading permissions...");
+return;
+}
+
+// 🔒 ADMIN CHECK
 if(currentUserRole !== "admin"){
 alert("Only admin can approve deletion");
 return;
