@@ -20,17 +20,12 @@
       --teal: #57c6c2;
       --mint: #7ed7c1;
       --rose: #f6b7c8;
-      --gold: #f1c96d;
-      --success: #44b98b;
-      --warning: #d8a54b;
-      --danger: #e58a95;
       --shadow-lg: 0 24px 60px rgba(115, 149, 199, 0.18);
       --shadow-md: 0 14px 34px rgba(122, 152, 199, 0.14);
       --shadow-sm: 0 8px 20px rgba(122, 152, 199, 0.1);
       --radius-xl: 28px;
       --radius-lg: 22px;
       --radius-md: 16px;
-      --radius-sm: 12px;
     }
 
     * {
@@ -191,14 +186,13 @@
     .nav-btn {
       height: 42px;
       padding: 0 16px;
-      border: none;
+      border: 1px solid rgba(192, 211, 236, 0.62);
       border-radius: 14px;
       cursor: pointer;
       font: inherit;
       font-weight: 700;
       color: var(--text);
       background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,255,0.92));
-      border: 1px solid rgba(192, 211, 236, 0.62);
       box-shadow: var(--shadow-sm);
       transition: 0.22s ease;
     }
@@ -879,15 +873,6 @@
       .hero-login {
         margin-top: 28px;
       }
-
-      .nav-right {
-        gap: 8px;
-      }
-
-      .nav-pill {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
     }
   </style>
 
@@ -919,7 +904,7 @@
         <div class="section-head">
           <div class="section-head-left">
             <h1>Welcome Back</h1>
-            <div class="subtle">Login once and the system will automatically open the correct workspace for admin or user inside this same page.</div>
+            <div class="subtle">Login once and the system will open the correct workspace for admin or user inside this same page.</div>
           </div>
           <div class="chip">Secure Login</div>
         </div>
@@ -948,7 +933,7 @@
           <div class="section-head">
             <div class="section-head-left">
               <h2>Client Entry</h2>
-              <div class="subtle">Add a new client or edit an existing record while keeping the current CRM flow intact.</div>
+              <div class="subtle">Add a new client or edit an existing record while keeping the CRM flow intact.</div>
             </div>
             <div class="chip" id="workspaceChip">Workspace</div>
           </div>
@@ -1132,17 +1117,6 @@
     const workspaceChip = document.getElementById("workspaceChip");
     const dashboardChip = document.getElementById("dashboardChip");
 
-    const stages = [
-      "Client registration at office",
-      "Partial submission by client",
-      "Full submission by client",
-      "Work initiated at office",
-      "In progress",
-      "For client approval",
-      "Waiting for admin approval",
-      "Completed"
-    ];
-
     const editableStages = [
       "Client registration at office",
       "Partial submission by client",
@@ -1269,10 +1243,8 @@
     function toISODateFromStored(value) {
       if (!value) return "";
       if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-
       const match = String(value).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
       if (!match) return "";
-
       const day = match[1].padStart(2, "0");
       const month = match[2].padStart(2, "0");
       const year = match[3];
@@ -1320,44 +1292,6 @@
       return sorted;
     }
 
-    function applyFiltersAndRender() {
-      const q = document.getElementById("search").value.toLowerCase().trim();
-      const createdDateFilter = document.getElementById("createdDateFilter").value;
-      const completedDateFilter = document.getElementById("completedDateFilter").value;
-      const stageFilter = document.getElementById("stageFilter").value;
-
-      let data = allClients.filter(c => {
-        const matchesSearch =
-          (c.name || "").toLowerCase().includes(q) ||
-          (c.pan || "").toLowerCase().includes(q) ||
-          (c.mobile || "").toLowerCase().includes(q) ||
-          (c.email || "").toLowerCase().includes(q);
-
-        const createdISO = c.createdAtISO || toISODateFromStored(c.createdAt);
-        const completedISO = c.completedAtISO || toISODateFromStored(c.completedAt);
-
-        const matchesCreatedDate = !createdDateFilter || createdISO === createdDateFilter;
-        const matchesCompletedDate = !completedDateFilter || completedISO === completedDateFilter;
-        const matchesStage = !stageFilter || (c.stage || "") === stageFilter;
-
-        return matchesSearch && matchesCreatedDate && matchesCompletedDate && matchesStage;
-      });
-
-      data = applySort(data);
-      displayedClients = data;
-
-      if (!data.length) {
-        selectedPanePan = null;
-      } else if (!data.some(c => c.pan === selectedPanePan)) {
-        selectedPanePan = data[0].pan;
-      }
-
-      updateSummary(data);
-      renderClients(data);
-      renderPendingRequests();
-      updatePendingNav();
-    }
-
     function renderPendingRequests() {
       if (!isAdmin()) {
         approvalPanel.style.display = "none";
@@ -1383,7 +1317,7 @@
                 PAN: ${escapeHtml(c.pan || "-")}<br>
                 Requested By: ${escapeHtml(c.completionRequestedBy || "-")}<br>
                 Requested At: ${escapeHtml(c.completionRequestedAt || "-")}<br>
-                Current Stage Before Request: ${escapeHtml(c.previousStageBeforeApproval || "-")}
+                Previous Stage: ${escapeHtml(c.previousStageBeforeApproval || "-")}
               </div>
               <div class="action-row">
                 <button class="btn-success" onclick="approveCompletion('${escapeHtml(c.pan)}')">Approve</button>
@@ -1401,13 +1335,9 @@
         return;
       }
 
-      if (currentView === "list") {
-        renderListView(data);
-      } else if (currentView === "pane") {
-        renderPaneView(data);
-      } else {
-        renderCardView(data);
-      }
+      if (currentView === "list") renderListView(data);
+      else if (currentView === "pane") renderPaneView(data);
+      else renderCardView(data);
     }
 
     function renderCardView(data) {
@@ -1584,7 +1514,6 @@
         navPending.classList.add("hidden");
         return;
       }
-
       const count = getPendingRequests().length;
       navPending.textContent = `Pending Requests: ${count}`;
       navPending.classList.remove("hidden");
@@ -1592,7 +1521,6 @@
 
     function loadClients() {
       if (unsubscribeClients) unsubscribeClients();
-
       unsubscribeClients = onSnapshot(collection(db, "clients"), (snapshot) => {
         allClients = [];
         snapshot.forEach((d) => allClients.push(d.data()));
@@ -1618,6 +1546,41 @@
             ? existingData.stage
             : (existingData.previousStageBeforeApproval || fallbackPreviousStage)
       };
+    }
+
+    function applyFiltersAndRender() {
+      const q = document.getElementById("search").value.toLowerCase().trim();
+      const createdDateFilter = document.getElementById("createdDateFilter").value;
+      const completedDateFilter = document.getElementById("completedDateFilter").value;
+      const stageFilter = document.getElementById("stageFilter").value;
+
+      let data = allClients.filter(c => {
+        const matchesSearch =
+          (c.name || "").toLowerCase().includes(q) ||
+          (c.pan || "").toLowerCase().includes(q) ||
+          (c.mobile || "").toLowerCase().includes(q) ||
+          (c.email || "").toLowerCase().includes(q);
+
+        const createdISO = c.createdAtISO || toISODateFromStored(c.createdAt);
+        const completedISO = c.completedAtISO || toISODateFromStored(c.completedAt);
+
+        const matchesCreatedDate = !createdDateFilter || createdISO === createdDateFilter;
+        const matchesCompletedDate = !completedDateFilter || completedISO === completedDateFilter;
+        const matchesStage = !stageFilter || (c.stage || "") === stageFilter;
+
+        return matchesSearch && matchesCreatedDate && matchesCompletedDate && matchesStage;
+      });
+
+      data = applySort(data);
+      displayedClients = data;
+
+      if (!data.length) selectedPanePan = null;
+      else if (!data.some(c => c.pan === selectedPanePan)) selectedPanePan = data[0].pan;
+
+      updateSummary(data);
+      renderClients(data);
+      renderPendingRequests();
+      updatePendingNav();
     }
 
     window.login = async () => {
@@ -1650,7 +1613,6 @@
     window.setFee = () => {
       const itr = document.getElementById("itr").value;
       const feeField = document.getElementById("fee");
-
       if (itr === "ITR1") feeField.value = 849;
       else if (itr === "ITR2") feeField.value = 1349;
       else if (itr === "CONSULT") feeField.value = 199;
@@ -1698,9 +1660,6 @@
         if (!proceed) return;
       }
 
-      const createdAt = existingData.createdAt || getISTTime();
-      const createdAtISO = existingData.createdAtISO || getTodayISOFromIST();
-
       const data = {
         name,
         pb,
@@ -1712,15 +1671,17 @@
         payment,
         stage,
         createdBy: existingData.createdBy || currentUserEmail,
-        createdAt,
-        createdAtISO,
+        createdAt: existingData.createdAt || getISTTime(),
+        createdAtISO: existingData.createdAtISO || getTodayISOFromIST(),
         completionRequested: existingData.completionRequested || false,
         completionRequestedBy: existingData.completionRequestedBy || "",
         completionRequestedAt: existingData.completionRequestedAt || "",
         approvalStatus: existingData.approvalStatus || "",
         approvedBy: existingData.approvedBy || "",
         approvedAt: existingData.approvedAt || "",
-        previousStageBeforeApproval: existingData.previousStageBeforeApproval || ""
+        previousStageBeforeApproval: existingData.previousStageBeforeApproval || "",
+        completedAt: existingData.completedAt || "",
+        completedAtISO: existingData.completedAtISO || ""
       };
 
       if (isAdmin()) {
@@ -1735,19 +1696,15 @@
           data.completedAt = existingData.completedAt || getISTTime();
           data.completedAtISO = existingData.completedAtISO || getTodayISOFromIST();
           data.previousStageBeforeApproval = "";
-        } else {
-          data.completedAt = stage === "Completed" ? (existingData.completedAt || getISTTime()) : (existingData.completedAt || "");
-          data.completedAtISO = stage === "Completed" ? (existingData.completedAtISO || getTodayISOFromIST()) : (existingData.completedAtISO || "");
-          if (stage !== "Waiting for admin approval") {
-            data.completionRequested = false;
-            data.completionRequestedBy = "";
-            data.completionRequestedAt = "";
-            if (stage !== "Completed") {
-              data.approvalStatus = "";
-              data.approvedBy = "";
-              data.approvedAt = "";
-              data.previousStageBeforeApproval = "";
-            }
+        } else if (stage !== "Waiting for admin approval") {
+          data.completionRequested = false;
+          data.completionRequestedBy = "";
+          data.completionRequestedAt = "";
+          if (stage !== "Completed") {
+            data.approvalStatus = "";
+            data.approvedBy = "";
+            data.approvedAt = "";
+            data.previousStageBeforeApproval = "";
           }
         }
       } else {
@@ -1765,8 +1722,6 @@
             data.approvedAt = "";
             data.previousStageBeforeApproval = "";
           }
-          data.completedAt = existingData.completedAt || "";
-          data.completedAtISO = existingData.completedAtISO || "";
         }
       }
 
@@ -1849,7 +1804,6 @@
 
     window.approveCompletion = async (pan) => {
       if (!isAdmin()) return;
-
       const client = allClients.find(c => c.pan === pan);
       if (!client) return;
 
@@ -1871,7 +1825,6 @@
 
     window.rejectCompletion = async (pan) => {
       if (!isAdmin()) return;
-
       const client = allClients.find(c => c.pan === pan);
       if (!client) return;
 
@@ -1910,8 +1863,6 @@
       document.getElementById("sortBy").value = "latest";
       applyFiltersAndRender();
     };
-
-    window.applyFiltersAndRender = applyFiltersAndRender;
 
     window.exportExcel = () => {
       const formatted = displayedClients.map((c, i) => ({
@@ -2007,7 +1958,14 @@
 
         loginDiv.classList.add("hidden");
         appDiv.classList.remove("hidden");
-        updateShellByRole();
+
+        navRole.classList.remove("hidden");
+        navLogout.classList.remove("hidden");
+        navRole.textContent = isAdmin() ? "Admin Workspace" : "User Workspace";
+        navRole.classList.add(isAdmin() ? "role-admin" : "role-user");
+        workspaceChip.textContent = isAdmin() ? "Admin Workspace" : "User Workspace";
+        dashboardChip.textContent = isAdmin() ? "Admin Dashboard" : "User Dashboard";
+
         setEditMode(null);
         updateViewButtons();
         loadClients();
