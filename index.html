@@ -1,75 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>ICKS - CRM System</title>
+  <title>Client Workflow Tracker</title>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <style>
+    body { margin:0; font-family:Tahoma, Arial; background:#f7f9fc; color:#333; }
+    .navbar { background:#fff; padding:15px 30px; display:flex; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+    .container { max-width:1200px; margin:auto; padding:20px; }
+    h2 { margin-top:30px; border-left:4px solid #007bff; padding-left:10px; }
 
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-emailjs.init("oCSNm-4jMM9RJpB35");
-</script>
+    .form-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; }
 
-<!-- Export libs -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    input, select {
+      padding:10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      width:100%;
+      background:white;
+    }
 
-<style>
-body{
-font-family:Tahoma;
-background:#f5f7fb;
-margin:0;
-padding:20px;
-}
+    button {
+      padding:10px 14px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      margin:5px;
+    }
 
-h2{
-border-left:5px solid #3b82f6;
-padding-left:10px;
-}
+    .btn-primary { background:#007bff; color:white; }
+    .btn-danger { background:#dc3545; color:white; }
+    .btn-success { background:#28a745; color:white; }
+    .btn-export { background:#6f42c1; color:white; }
 
-input,select{
-padding:8px;
-margin:5px;
-border-radius:6px;
-border:1px solid #ccc;
-}
+    .card {
+      background:white;
+      padding:15px;
+      margin:10px 0;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    }
 
-button{
-padding:8px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
+    .deleted { background:#f1f1f1; opacity:0.6; }
+    .pending { color:#ff9800; font-weight:bold; }
+  </style>
 
-.btn-danger{background:#ef4444;color:white;}
-.btn-success{background:#22c55e;color:white;}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
-.card{
-background:white;
-padding:12px;
-margin:10px 0;
-border-radius:8px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-.deleted{
-opacity:0.5;
-}
-</style>
 </head>
 
 <body>
 
-<h1>ICKS - CRM System</h1>
+<div class="navbar">
+  <div>Invincibles Co</div>
+  <div>Client Tracker</div>
+</div>
+
+<div class="container">
 
 <div id="loginDiv">
-<input id="loginEmail" placeholder="Email">
-<input id="loginPass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+  <h2>Login</h2>
+  <input id="loginEmail"><br><br>
+  <input id="loginPass" type="password"><br><br>
+  <button class="btn-primary" onclick="login()">Login</button>
 </div>
 
 <div id="appDiv" style="display:none;">
@@ -77,46 +71,59 @@ opacity:0.5;
 <h2>Search</h2>
 <input id="search" placeholder="Search..." onkeyup="filterClients()">
 
+<h2>Export</h2>
+<button class="btn-export" onclick="exportExcel()">Excel</button>
+<button class="btn-export" onclick="exportPDF()">PDF</button>
+
 <h2>Client Entry</h2>
 
-<input id="name" placeholder="Name">
-<input id="pb" placeholder="PB No">
-<input id="pan" placeholder="PAN">
-<input id="mobile" placeholder="Mobile">
-<input id="email" placeholder="Email">
+<div class="form-grid">
+  <input id="name" placeholder="Name">
+  <input id="pb" placeholder="PB No">
+  <input id="pan" placeholder="PAN">
+  <input id="mobile" placeholder="Mobile">
+  <input id="email" placeholder="Email">
 
-<select id="itr" onchange="setFee()">
-<option value="">Select ITR</option>
-<option value="ITR1">ITR1</option>
-<option value="ITR2">ITR2</option>
-<option value="CONSULT">Consultation</option>
-</select>
+  <select id="itr" onchange="setFee()">
+    <option value="">Select ITR</option>
+    <option value="ITR1">ITR-1</option>
+    <option value="ITR2">ITR-2/3/4</option>
+    <option value="CONSULT">Consultation</option>
+  </select>
 
-<input id="fee" placeholder="Fee">
+  <input id="fee" readonly placeholder="Fee">
 
-<select id="payment">
-<option>Cash</option>
-<option>Online</option>
-</select>
+  <select id="payment">
+    <option>Cash</option>
+    <option>UPI</option>
+    <option>Bank</option>
+  </select>
 
-<select id="stage">
-<option>Client registration at office</option>
-<option>In Progress</option>
-<option>Filed</option>
-<option>Completed</option>
-</select>
+  <select id="stage">
+    <option>Client registration at office</option>
+    <option>Partial submission by client</option>
+    <option>Full submission by client</option>
+    <option>Work initiated at office</option>
+    <option>In progress</option>
+    <option>For client approval</option>
+    <option>Completed</option>
+  </select>
+</div>
 
-<br>
-<button onclick="saveClient()">Save</button>
+<button class="btn-primary" onclick="saveClient()">Save</button>
 <button onclick="logout()">Logout</button>
 
 <h2>Clients</h2>
-<button onclick="exportExcel()">Export Excel</button>
-<button onclick="exportPDF()">Export PDF</button>
-
 <div id="list"></div>
 
 </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+emailjs.init("oCSNm-4jMM9RJpB35");
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -124,38 +131,25 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from
 import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const app = initializeApp({
-apiKey:"AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
-authDomain:"client-tracker-tool-5bdf6.firebaseapp.com",
-projectId:"client-tracker-tool-5bdf6"
+  apiKey:"AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
+  authDomain:"client-tracker-tool-5bdf6.firebaseapp.com",
+  projectId:"client-tracker-tool-5bdf6"
 });
 
-const auth=getAuth(app);
-const db=getFirestore(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 let currentUserEmail="";
-let currentUserRole="user";
 let allClients=[];
 let filteredClients=[];
 
-// ROLE FIX (SAFE)
-async function getUserRole(email){
-const clean=email.toLowerCase().trim();
-const snap=await getDoc(doc(db,"roles",clean));
-currentUserRole=snap.exists()?snap.data().role.toLowerCase().trim():"user";
-console.log("ROLE:",currentUserRole);
-}
-
-// TIME
 function getISTTime(){
-return new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+  return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 }
 
-// AUTH
-onAuthStateChanged(auth, async(user)=>{
+onAuthStateChanged(auth,(user)=>{
 if(user){
-currentUserEmail=user.email.toLowerCase().trim();
-await getUserRole(currentUserEmail);
-
+currentUserEmail=user.email;
 loginDiv.style.display="none";
 appDiv.style.display="block";
 loadClients();
@@ -168,93 +162,99 @@ appDiv.style.display="none";
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
-// FEE
 window.setFee=()=>{
-let v=itr.value;
-fee.value=v==="ITR1"?849:v==="ITR2"?1349:v==="CONSULT"?199:"";
+const itr=document.getElementById("itr").value;
+if(itr==="ITR1") fee.value=849;
+else if(itr==="ITR2") fee.value=1349;
+else if(itr==="CONSULT") fee.value=199;
+else fee.value="";
 };
 
-// SAVE CLIENT
 window.saveClient=async()=>{
-let name=nameInput("name");
-let pb=nameInput("pb");
-let pan=nameInput("pan");
-let mobile=nameInput("mobile");
-let email=nameInput("email");
-let stage=document.getElementById("stage").value;
-let itr=document.getElementById("itr").value;
-let feeVal=document.getElementById("fee").value;
+const name=nameInput("name");
+const pb=nameInput("pb");
+const pan=nameInput("pan");
+const mobile=nameInput("mobile");
+const email=nameInput("email");
+const itr=document.getElementById("itr").value;
+const fee=document.getElementById("fee").value;
+const payment=document.getElementById("payment").value;
+const stage=document.getElementById("stage").value;
 
-if(!pan){alert("PAN required");return;}
+if(!pan){ alert("PAN required"); return; }
 
 let ref=doc(db,"clients",pan);
 let snap=await getDoc(ref);
 let isNew=!snap.exists();
 
-// COMPLETION CONTROL
-if(stage==="Completed" && currentUserRole!=="admin"){
-await setDoc(doc(db,"requests",pan+"_completion"),{
-pan,requestedBy:currentUserEmail,type:"completion",status:"pending",createdAt:getISTTime()
-});
-alert("Request sent for admin approval");
-return;
-}
-
 let data={
 name,pb,pan,mobile,email,itr,
-fee:Number(feeVal),
-stage,
-isDeleted:false,
-deleteRequested:false,
-requestedBy:"",
-createdBy:currentUserEmail
+fee:Number(fee),payment,stage,
+isDeleted:false,deleteRequested:false,requestedBy:"",
+createdBy: currentUserEmail
 };
 
-if(isNew)data.createdAt=getISTTime();
-if(stage==="Completed"&&!snap.data()?.completedAt)data.completedAt=getISTTime();
+if(isNew){ data.createdAt = getISTTime(); }
+if(stage==="Completed" && !snap.data()?.completedAt){
+data.completedAt = getISTTime();
+}
 
 await setDoc(ref,data,{merge:true});
 
-// EMAIL CREATION
-if(isNew&&stage==="Client registration at office"){
-emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee:feeVal});
+if(isNew && stage==="Client registration at office"){
+emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
 }
 
 alert("Saved");
 };
 
-function nameInput(id){return document.getElementById(id).value.trim();}
+function nameInput(id){
+return document.getElementById(id).value.trim();
+}
 
-// DELETE
+// 🔥 FIXED DELETE WITH EMAIL
 window.requestDelete=async(pan)=>{
-await setDoc(doc(db,"clients",pan),{deleteRequested:true,requestedBy:currentUserEmail},{merge:true});
-emailjs.send("service_ns9w7qv","template_rigq89q",{pan,requestedBy:currentUserEmail});
+await setDoc(doc(db,"clients",pan),{
+deleteRequested:true,
+requestedBy:currentUserEmail
+},{merge:true});
+
+// EMAIL TRIGGER ADDED
+emailjs.send("service_ns9w7qv","template_rigq89q",{
+pan: pan,
+requestedBy: currentUserEmail
+});
 };
 
 window.approveDelete=async(pan,requestedBy)=>{
-if(currentUserRole!=="admin"){alert("Only admin can approve deletion");return;}
-if(requestedBy===currentUserEmail){alert("Cannot approve own");return;}
-await setDoc(doc(db,"clients",pan),{isDeleted:true},{merge:true});
-alert("Deleted");
+if(requestedBy===currentUserEmail){
+alert("Cannot approve your own request");
+return;
+}
+await setDoc(doc(db,"clients",pan),{
+isDeleted:true,
+deletedBy:currentUserEmail
+},{merge:true});
 };
 
-// LOAD
 function loadClients(){
-onSnapshot(collection(db,"clients"),snap=>{
+onSnapshot(collection(db,"clients"),(snapshot)=>{
 allClients=[];
-snap.forEach(d=>allClients.push(d.data()));
+snapshot.forEach(d=>allClients.push(d.data()));
 filteredClients=[...allClients];
 renderClients(filteredClients);
 });
 }
 
-// SEARCH
 window.filterClients=()=>{
 let q=search.value.toLowerCase();
-renderClients(allClients.filter(c=>c.name?.toLowerCase().includes(q)||c.pan?.toLowerCase().includes(q)));
+filteredClients=allClients.filter(c=>
+(c.name||"").toLowerCase().includes(q) ||
+(c.pan||"").toLowerCase().includes(q)
+);
+renderClients(filteredClients);
 };
 
-// RENDER
 function renderClients(data){
 list.innerHTML="";
 data.forEach(c=>{
@@ -266,32 +266,49 @@ Email: ${c.email}<br>
 ITR: ${c.itr}<br>
 Fee: ₹${c.fee}<br>
 Stage: ${c.stage}<br>
-Created: ${c.createdAt||'-'}<br>
-Completed: ${c.completedAt||'-'}<br>
 
-${!c.isDeleted&&!c.deleteRequested?`<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`:''}
+<b>Created:</b> ${c.createdAt || '-'}<br>
+<b>Completed:</b> ${c.completedAt || '-'}<br>
 
-${c.deleteRequested&&!c.isDeleted?`Pending (${c.requestedBy})
-<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`:''}
+${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
+
+${
+!c.deleteRequested && !c.isDeleted
+? `<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`
+: c.deleteRequested && !c.isDeleted
+? `<div class="pending">Pending (${c.requestedBy})</div>
+<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
+: ""
+}
 </div>`;
 });
 }
 
-// EXPORT
 window.exportExcel=()=>{
-let ws=XLSX.utils.json_to_sheet(allClients);
+let formatted=(filteredClients.length?filteredClients:allClients).map((c,i)=>({
+"Sl. No.":i+1,"Name":c.name,"PB No.":c.pb,"PAN":c.pan,
+"Mobile Number":c.mobile,"Mail Address":c.email,
+"Type of ITR":c.itr,"Fees":c.fee,"Status":c.stage,
+"Created By":c.createdBy,"Created At":c.createdAt,"Completed At":c.completedAt
+}));
+let ws=XLSX.utils.json_to_sheet(formatted);
 let wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,"Clients");
-XLSX.writeFile(wb,"report.xlsx");
+XLSX.utils.book_append_sheet(wb,ws,"Client Report");
+XLSX.writeFile(wb,"Client_Report.xlsx");
 };
 
 window.exportPDF=()=>{
 const { jsPDF }=window.jspdf;
-let doc=new jsPDF();
-doc.text(JSON.stringify(allClients,null,2),10,10);
-doc.save("report.pdf");
-};
+let doc=new jsPDF('landscape');
 
+let headers=[["Sl.No","Name","PB","PAN","Mobile","Email","ITR","Fees","Status","Created By","Created","Completed"]];
+let rows=(filteredClients.length?filteredClients:allClients).map((c,i)=>[
+i+1,c.name,c.pb,c.pan,c.mobile,c.email,c.itr,c.fee,c.stage,c.createdBy,c.createdAt,c.completedAt
+]);
+
+doc.autoTable({head:headers,body:rows});
+doc.save("Client_Report.pdf");
+};
 </script>
 
 </body>
