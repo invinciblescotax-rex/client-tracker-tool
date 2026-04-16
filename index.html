@@ -370,15 +370,14 @@ filteredClients=allClients.filter(c=>
 renderClients(filteredClients);
 };
 
-window.updateStage = async (pan) => {
+window.updateStage = async (pan, safePan) => {
 
-const newStage = document.getElementById("stage_"+pan).value;
+const newStage = document.getElementById("stage_"+safePan).value;
 
 let updateData = {
   stage: newStage
 };
 
-// If marking completed → add timestamp
 if(newStage === "Completed"){
   updateData.completedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 }
@@ -388,11 +387,14 @@ await setDoc(doc(db,"clients",pan), updateData, {merge:true});
 alert("Stage updated successfully");
 
 };
-  
+
 function renderClients(data){
 list.innerHTML="";
 
 data.forEach(c=>{
+
+let safePan = (c.pan || "").replace(/[^a-zA-Z0-9]/g,"");
+
 list.innerHTML+=`
 <div class="card ${c.isDeleted?'deleted':''}">
 
@@ -404,14 +406,14 @@ Fee: ₹${c.fee}<br>
 
 <b>Current Stage:</b> ${c.stage}<br><br>
 
-<select id="stage_${c.pan}">
+<select id="stage_${safePan}">
   <option ${c.stage==="Client registration at office"?"selected":""}>Client registration at office</option>
   <option ${c.stage==="In Progress"?"selected":""}>In Progress</option>
   <option ${c.stage==="Filed"?"selected":""}>Filed</option>
   <option ${c.stage==="Completed"?"selected":""}>Completed</option>
 </select>
 
-<button onclick="updateStage('${c.pan}')">Update Stage</button>
+<button onclick="updateStage('${c.pan}','${safePan}')">Update Stage</button>
 
 <br><br>
 
@@ -427,6 +429,11 @@ ${
 ? `<div class="pending">Pending (${c.requestedBy})</div>
 <button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
 : ""
+}
+
+</div>
+`;
+});
 }
 
 </div>
