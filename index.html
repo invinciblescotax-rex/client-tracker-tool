@@ -370,6 +370,25 @@ filteredClients=allClients.filter(c=>
 renderClients(filteredClients);
 };
 
+window.updateStage = async (pan) => {
+
+const newStage = document.getElementById("stage_"+pan).value;
+
+let updateData = {
+  stage: newStage
+};
+
+// If marking completed → add timestamp
+if(newStage === "Completed"){
+  updateData.completedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+}
+
+await setDoc(doc(db,"clients",pan), updateData, {merge:true});
+
+alert("Stage updated successfully");
+
+};
+  
 function renderClients(data){
 list.innerHTML="";
 
