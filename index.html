@@ -7,19 +7,20 @@
 
   <style>
     :root {
-      --bg: #f4f8fc;
-      --bg-soft: #ebf2f9;
+      --bg: #f3f8fc;
+      --bg-soft: #eaf1f8;
       --surface: #ffffff;
-      --surface-2: #f8fbff;
+      --surface-soft: #f8fbff;
       --text: #243042;
-      --muted: #6b7a90;
-      --line: #dfe8f2;
+      --muted: #6d7a8d;
+      --line: #dce6f1;
       --primary: #2f80ed;
-      --primary-2: #62a3ff;
+      --primary-2: #69a9ff;
       --success: #1f9d67;
       --warning: #d98a00;
-      --shadow: 0 10px 30px rgba(27, 55, 90, 0.08);
-      --radius: 14px;
+      --danger: #d9534f;
+      --shadow: 0 10px 28px rgba(28, 52, 84, 0.08);
+      --radius: 16px;
     }
 
     * {
@@ -31,7 +32,7 @@
       font-family: Tahoma, Arial, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, #fdfefe 0%, #eef5fb 35%, #e8f0f8 100%);
+        radial-gradient(circle at top left, #fbfdff 0%, #eef5fb 35%, #e7eff8 100%);
     }
 
     .navbar {
@@ -44,7 +45,7 @@
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .brand {
@@ -82,14 +83,14 @@
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 26px;
     }
 
     .panel {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(223, 232, 242, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(220, 230, 241, 0.95);
       border-radius: 18px;
       box-shadow: var(--shadow);
       padding: 22px;
@@ -105,6 +106,12 @@
 
     h3 {
       margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .form-grid {
@@ -151,15 +158,20 @@
       color: #fff;
     }
 
+    .btn-secondary {
+      background: #eef4fb;
+      color: var(--text);
+      border: 1px solid #d7e5f6;
+    }
+
     .btn-export {
       background: linear-gradient(135deg, #6f42c1, #8e5be8);
       color: #fff;
     }
 
-    .btn-secondary {
-      background: #eef4fb;
-      color: var(--text);
-      border: 1px solid #d7e5f6;
+    .btn-edit {
+      background: linear-gradient(135deg, #11998e, #38c7b6);
+      color: #fff;
     }
 
     .btn-view.active {
@@ -168,11 +180,20 @@
       box-shadow: 0 8px 18px rgba(47, 128, 237, 0.18);
     }
 
+    .action-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 12px;
+    }
+
     .toolbar {
       display: grid;
-      grid-template-columns: 1.2fr auto auto;
+      grid-template-columns: 1.4fr 0.8fr auto;
       gap: 12px;
       align-items: center;
+      margin-bottom: 14px;
     }
 
     .toolbar-right {
@@ -180,6 +201,13 @@
       gap: 8px;
       flex-wrap: wrap;
       justify-content: flex-end;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 8px;
     }
 
     .summary-grid {
@@ -213,6 +241,57 @@
       margin-top: 4px;
     }
 
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .chart-card {
+      background: linear-gradient(180deg, #ffffff, #f9fbfe);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .chart-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      height: 18px;
+      width: 100%;
+      background: #e9f0f7;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .bar-fill.pending {
+      background: linear-gradient(90deg, #f6b64a, #e28a18);
+    }
+
+    .bar-fill.completed {
+      background: linear-gradient(90deg, #23b26d, #178a52);
+    }
+
+    .chart-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
@@ -222,7 +301,7 @@
 
     .card {
       background: #fff;
-      border: 1px solid #e8eff7;
+      border: 1px solid #e7eef6;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(27, 55, 90, 0.06);
       padding: 18px;
@@ -244,7 +323,7 @@
       justify-content: space-between;
       gap: 10px;
       align-items: start;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .client-name {
@@ -296,12 +375,20 @@
     .stage-approval { background: #fff0f0; color: #c34c4c; }
     .stage-completed { background: #e7f8ee; color: #157347; }
 
-    .action-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .status-banner {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .status-banner.editing {
+      display: block;
+      background: #e9f7f5;
+      color: #11695f;
+      border: 1px solid #cbeee9;
     }
 
     .list-table-wrap {
@@ -315,7 +402,7 @@
 
     .list-table {
       width: 100%;
-      min-width: 1100px;
+      min-width: 1180px;
       border-collapse: collapse;
     }
 
@@ -380,7 +467,7 @@
     }
 
     .detail-box {
-      background: var(--surface-2);
+      background: var(--surface-soft);
       border: 1px solid #e7eef6;
       border-radius: 12px;
       padding: 12px;
@@ -409,9 +496,11 @@
       color: var(--muted);
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1100px) {
       .form-grid,
-      .summary-grid {
+      .summary-grid,
+      .filters-grid,
+      .chart-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
@@ -432,13 +521,15 @@
       }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 650px) {
       .container {
         padding: 16px;
       }
 
       .form-grid,
-      .summary-grid {
+      .summary-grid,
+      .filters-grid,
+      .chart-grid {
         grid-template-columns: 1fr;
       }
 
@@ -476,9 +567,13 @@
     </div>
 
     <div id="appDiv" style="display:none;">
-      <div class="panel">
+      <div class="panel" id="entryPanel">
         <h2>Client Entry</h2>
-        <div class="form-grid">
+        <div class="subtle">Add new clients or edit an existing client record.</div>
+
+        <div id="editBanner" class="status-banner"></div>
+
+        <div class="form-grid" style="margin-top:14px;">
           <input id="name" placeholder="Name" />
           <input id="pb" placeholder="PB No" />
           <input id="pan" placeholder="PAN" />
@@ -512,7 +607,8 @@
         </div>
 
         <div class="action-row">
-          <button class="btn-primary" onclick="saveClient()">Save</button>
+          <button id="saveBtn" class="btn-primary" onclick="saveClient()">Save</button>
+          <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
           <button class="btn-secondary" onclick="logout()">Logout</button>
         </div>
       </div>
@@ -521,7 +617,7 @@
         <h2>Client Dashboard</h2>
 
         <div class="toolbar">
-          <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="filterClients()" />
+          <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="applyFiltersAndRender()" />
 
           <select id="sortBy" onchange="applyFiltersAndRender()">
             <option value="latest">Sort: Latest</option>
@@ -537,6 +633,22 @@
             <button class="btn-export" onclick="exportExcel()">Excel</button>
             <button class="btn-export" onclick="exportPDF()">PDF</button>
           </div>
+        </div>
+
+        <div class="filters-grid">
+          <input id="createdDateFilter" type="date" onchange="applyFiltersAndRender()" />
+          <input id="completedDateFilter" type="date" onchange="applyFiltersAndRender()" />
+          <select id="stageFilter" onchange="applyFiltersAndRender()">
+            <option value="">All Stages</option>
+            <option>Client registration at office</option>
+            <option>Partial submission by client</option>
+            <option>Full submission by client</option>
+            <option>Work initiated at office</option>
+            <option>In progress</option>
+            <option>For client approval</option>
+            <option>Completed</option>
+          </select>
+          <button class="btn-secondary" onclick="clearFilters()">Clear Filters</button>
         </div>
 
         <div class="summary-grid">
@@ -559,6 +671,30 @@
             <div class="summary-label">Completion Rate</div>
             <div id="sumRate" class="summary-value">0%</div>
             <div class="summary-note">Based on visible clients</div>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-label">Pending Clients</div>
+            <div class="bar-track">
+              <div id="pendingBar" class="bar-fill pending" style="width:0%;"></div>
+            </div>
+            <div class="chart-meta">
+              <span id="pendingCount">0 clients</span>
+              <span id="pendingPercent">0%</span>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-label">Completed Clients</div>
+            <div class="bar-track">
+              <div id="completedBar" class="bar-fill completed" style="width:0%;"></div>
+            </div>
+            <div class="chart-meta">
+              <span id="completedCount">0 clients</span>
+              <span id="completedPercent">0%</span>
+            </div>
           </div>
         </div>
 
@@ -591,6 +727,7 @@
     let displayedClients = [];
     let currentView = "card";
     let selectedPanePan = null;
+    let editingPan = null;
 
     const stages = [
       "Client registration at office",
@@ -606,8 +743,8 @@
       return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
     }
 
-    function getInputValue(id) {
-      return document.getElementById(id).value.trim();
+    function getTodayISOFromIST() {
+      return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })).toISOString().slice(0, 10);
     }
 
     function escapeHtml(value) {
@@ -617,6 +754,14 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function getInputValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function setInputValue(id, value) {
+      document.getElementById(id).value = value || "";
     }
 
     function isCompleted(client) {
@@ -646,32 +791,71 @@
       ).join("");
     }
 
-    function getSortValue(client, key) {
-      if (key === "latest") {
-        return client.createdAt || "";
-      }
-      if (key === "name") {
-        return (client.name || "").toLowerCase();
-      }
-      return "";
-    }
-
     function updateViewButtons() {
       document.getElementById("btnList").classList.toggle("active", currentView === "list");
       document.getElementById("btnCard").classList.toggle("active", currentView === "card");
       document.getElementById("btnPane").classList.toggle("active", currentView === "pane");
     }
 
+    function setEditMode(client) {
+      editingPan = client.pan || null;
+      const banner = document.getElementById("editBanner");
+      const saveBtn = document.getElementById("saveBtn");
+
+      if (editingPan) {
+        banner.className = "status-banner editing";
+        banner.textContent = `Editing client: ${client.name || "-"} (${client.pan || "-"})`;
+        saveBtn.textContent = "Update Client";
+      } else {
+        banner.className = "status-banner";
+        banner.textContent = "";
+        saveBtn.textContent = "Save";
+      }
+    }
+
+    function resetFormFields() {
+      setInputValue("name", "");
+      setInputValue("pb", "");
+      setInputValue("pan", "");
+      setInputValue("mobile", "");
+      setInputValue("email", "");
+      setInputValue("itr", "");
+      setInputValue("fee", "");
+      setInputValue("payment", "Cash");
+      setInputValue("stage", "Client registration at office");
+    }
+
+    function toISODateFromStored(value) {
+      if (!value) return "";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+      const match = String(value).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (!match) return "";
+
+      const day = match[1].padStart(2, "0");
+      const month = match[2].padStart(2, "0");
+      const year = match[3];
+      return `${year}-${month}-${day}`;
+    }
+
     function updateSummary(data) {
       const total = data.length;
       const completed = data.filter(isCompleted).length;
       const pending = total - completed;
-      const rate = total ? Math.round((completed / total) * 100) : 0;
+      const completedPercent = total ? Math.round((completed / total) * 100) : 0;
+      const pendingPercent = total ? 100 - completedPercent : 0;
 
       document.getElementById("sumTotal").textContent = total;
       document.getElementById("sumPending").textContent = pending;
       document.getElementById("sumCompleted").textContent = completed;
-      document.getElementById("sumRate").textContent = rate + "%";
+      document.getElementById("sumRate").textContent = completedPercent + "%";
+
+      document.getElementById("pendingBar").style.width = pendingPercent + "%";
+      document.getElementById("completedBar").style.width = completedPercent + "%";
+      document.getElementById("pendingCount").textContent = `${pending} clients`;
+      document.getElementById("completedCount").textContent = `${completed} clients`;
+      document.getElementById("pendingPercent").textContent = `${pendingPercent}%`;
+      document.getElementById("completedPercent").textContent = `${completedPercent}%`;
     }
 
     function applySort(data) {
@@ -679,13 +863,17 @@
       const sorted = [...data];
 
       if (sortBy === "name") {
-        sorted.sort((a, b) => getSortValue(a, "name").localeCompare(getSortValue(b, "name")));
+        sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
       } else if (sortBy === "completed") {
         sorted.sort((a, b) => Number(isCompleted(b)) - Number(isCompleted(a)));
       } else if (sortBy === "pending") {
         sorted.sort((a, b) => Number(isCompleted(a)) - Number(isCompleted(b)));
       } else {
-        sorted.reverse();
+        sorted.sort((a, b) => {
+          const aDate = toISODateFromStored(a.createdAt) || "";
+          const bDate = toISODateFromStored(b.createdAt) || "";
+          return bDate.localeCompare(aDate);
+        });
       }
 
       return sorted;
@@ -693,13 +881,26 @@
 
     function applyFiltersAndRender() {
       const q = document.getElementById("search").value.toLowerCase().trim();
+      const createdDateFilter = document.getElementById("createdDateFilter").value;
+      const completedDateFilter = document.getElementById("completedDateFilter").value;
+      const stageFilter = document.getElementById("stageFilter").value;
 
-      let data = allClients.filter(c =>
-        (c.name || "").toLowerCase().includes(q) ||
-        (c.pan || "").toLowerCase().includes(q) ||
-        (c.mobile || "").toLowerCase().includes(q) ||
-        (c.email || "").toLowerCase().includes(q)
-      );
+      let data = allClients.filter(c => {
+        const matchesSearch =
+          (c.name || "").toLowerCase().includes(q) ||
+          (c.pan || "").toLowerCase().includes(q) ||
+          (c.mobile || "").toLowerCase().includes(q) ||
+          (c.email || "").toLowerCase().includes(q);
+
+        const createdISO = c.createdAtISO || toISODateFromStored(c.createdAt);
+        const completedISO = c.completedAtISO || toISODateFromStored(c.completedAt);
+
+        const matchesCreatedDate = !createdDateFilter || createdISO === createdDateFilter;
+        const matchesCompletedDate = !completedDateFilter || completedISO === completedDateFilter;
+        const matchesStage = !stageFilter || (c.stage || "") === stageFilter;
+
+        return matchesSearch && matchesCreatedDate && matchesCompletedDate && matchesStage;
+      });
 
       data = applySort(data);
       displayedClients = data;
@@ -716,7 +917,7 @@
 
     function renderClients(data) {
       if (!data.length) {
-        document.getElementById("list").innerHTML = `<div class="empty-state">No client records found for the current search or sort.</div>`;
+        document.getElementById("list").innerHTML = `<div class="empty-state">No client records found for the current search or filters.</div>`;
         return;
       }
 
@@ -754,10 +955,11 @@
               </div>
 
               <div class="action-row">
-                <select id="stage_${c.pan}">
+                <select id="stage_${escapeHtml(c.pan)}">
                   ${stageOptions(c.stage)}
                 </select>
-                <button class="btn-primary" onclick="updateStage('${c.pan}')">Update Stage</button>
+                <button class="btn-primary" onclick="updateStage('${escapeHtml(c.pan)}')">Update Stage</button>
+                <button class="btn-edit" onclick="editClient('${escapeHtml(c.pan)}')">Edit Client</button>
               </div>
             </div>
           `).join("")}
@@ -780,7 +982,7 @@
                 <th>Status</th>
                 <th>Created</th>
                 <th>Completed</th>
-                <th>Update Stage</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -797,10 +999,11 @@
                   <td>${escapeHtml(c.completedAt || "-")}</td>
                   <td>
                     <div class="action-row">
-                      <select id="stage_${c.pan}">
+                      <select id="stage_${escapeHtml(c.pan)}">
                         ${stageOptions(c.stage)}
                       </select>
-                      <button class="btn-primary" onclick="updateStage('${c.pan}')">Update</button>
+                      <button class="btn-primary" onclick="updateStage('${escapeHtml(c.pan)}')">Update</button>
+                      <button class="btn-edit" onclick="editClient('${escapeHtml(c.pan)}')">Edit</button>
                     </div>
                   </td>
                 </tr>
@@ -819,7 +1022,7 @@
         <div class="pane-layout">
           <div class="pane-list">
             ${data.map(c => `
-              <div class="pane-item ${c.pan === selectedPanePan ? "active" : ""}" onclick="selectPaneClient('${c.pan}')">
+              <div class="pane-item ${c.pan === selectedPanePan ? "active" : ""}" onclick="selectPaneClient('${escapeHtml(c.pan)}')">
                 <div><strong>${escapeHtml(c.name || "-")}</strong></div>
                 <div class="muted">${escapeHtml(c.pan || "-")}</div>
                 <div style="margin-top:8px;">${stageBadge(c.stage)}</div>
@@ -833,53 +1036,24 @@
               <div>${stageBadge(selectedClient.stage)}</div>
 
               <div class="detail-grid">
-                <div class="detail-box">
-                  <div class="detail-label">PAN</div>
-                  <div>${escapeHtml(selectedClient.pan || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">PB No</div>
-                  <div>${escapeHtml(selectedClient.pb || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Mobile</div>
-                  <div>${escapeHtml(selectedClient.mobile || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Email</div>
-                  <div>${escapeHtml(selectedClient.email || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">ITR Type</div>
-                  <div>${escapeHtml(selectedClient.itr || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Fee</div>
-                  <div>₹${escapeHtml(selectedClient.fee || 0)}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Payment</div>
-                  <div>${escapeHtml(selectedClient.payment || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Created By</div>
-                  <div>${escapeHtml(selectedClient.createdBy || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Created At</div>
-                  <div>${escapeHtml(selectedClient.createdAt || "-")}</div>
-                </div>
-                <div class="detail-box">
-                  <div class="detail-label">Completed At</div>
-                  <div>${escapeHtml(selectedClient.completedAt || "-")}</div>
-                </div>
+                <div class="detail-box"><div class="detail-label">PAN</div><div>${escapeHtml(selectedClient.pan || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">PB No</div><div>${escapeHtml(selectedClient.pb || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">Mobile</div><div>${escapeHtml(selectedClient.mobile || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">Email</div><div>${escapeHtml(selectedClient.email || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">ITR Type</div><div>${escapeHtml(selectedClient.itr || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">Fee</div><div>₹${escapeHtml(selectedClient.fee || 0)}</div></div>
+                <div class="detail-box"><div class="detail-label">Payment</div><div>${escapeHtml(selectedClient.payment || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">Created By</div><div>${escapeHtml(selectedClient.createdBy || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">Created At</div><div>${escapeHtml(selectedClient.createdAt || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">Completed At</div><div>${escapeHtml(selectedClient.completedAt || "-")}</div></div>
               </div>
 
               <div class="action-row">
-                <select id="stage_${selectedClient.pan}">
+                <select id="stage_${escapeHtml(selectedClient.pan)}">
                   ${stageOptions(selectedClient.stage)}
                 </select>
-                <button class="btn-primary" onclick="updateStage('${selectedClient.pan}')">Update Stage</button>
+                <button class="btn-primary" onclick="updateStage('${escapeHtml(selectedClient.pan)}')">Update Stage</button>
+                <button class="btn-edit" onclick="editClient('${escapeHtml(selectedClient.pan)}')">Edit Client</button>
               </div>
             </div>
           </div>
@@ -888,14 +1062,29 @@
     }
 
     function loadClients() {
-      onSnapshot(collection(db, "clients"), (snapshot) => {
+      onSnapshot(collection(db, "clients"), snapshot => {
         allClients = [];
         snapshot.forEach(d => allClients.push(d.data()));
         applyFiltersAndRender();
       });
     }
 
-    onAuthStateChanged(auth, (user) => {
+    function fillForm(client) {
+      setInputValue("name", client.name);
+      setInputValue("pb", client.pb);
+      setInputValue("pan", client.pan);
+      setInputValue("mobile", client.mobile);
+      setInputValue("email", client.email);
+      setInputValue("itr", client.itr);
+      setInputValue("fee", client.fee);
+      setInputValue("payment", client.payment || "Cash");
+      setInputValue("stage", client.stage || "Client registration at office");
+    }
+
+    onAuthStateChanged(auth, user => {
+      const loginDiv = document.getElementById("loginDiv");
+      const appDiv = document.getElementById("appDiv");
+
       if (user) {
         currentUserEmail = user.email;
         loginDiv.style.display = "none";
@@ -907,21 +1096,38 @@
       }
     });
 
-    window.login = () => signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value);
+    window.login = () => signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value, document.getElementById("loginPass").value);
     window.logout = () => signOut(auth);
 
     window.setFee = () => {
       const itr = document.getElementById("itr").value;
-      if (itr === "ITR1") fee.value = 849;
-      else if (itr === "ITR2") fee.value = 1349;
-      else if (itr === "CONSULT") fee.value = 199;
-      else fee.value = "";
+      const feeField = document.getElementById("fee");
+
+      if (itr === "ITR1") feeField.value = 849;
+      else if (itr === "ITR2") feeField.value = 1349;
+      else if (itr === "CONSULT") feeField.value = 199;
+      else feeField.value = "";
+    };
+
+    window.resetForm = () => {
+      resetFormFields();
+      editingPan = null;
+      setEditMode(null);
+    };
+
+    window.editClient = (pan) => {
+      const client = allClients.find(c => c.pan === pan);
+      if (!client) return;
+
+      fillForm(client);
+      setEditMode(client);
+      document.getElementById("entryPanel").scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     window.saveClient = async () => {
       const name = getInputValue("name");
       const pb = getInputValue("pb");
-      const pan = getInputValue("pan");
+      const pan = getInputValue("pan").toUpperCase();
       const mobile = getInputValue("mobile");
       const email = getInputValue("email");
       const itr = document.getElementById("itr").value;
@@ -936,7 +1142,23 @@
 
       const ref = doc(db, "clients", pan);
       const snap = await getDoc(ref);
-      const isNew = !snap.exists();
+      const exists = snap.exists();
+      const isEditingSameClient = editingPan && editingPan === pan;
+
+      if (exists && !isEditingSameClient) {
+        const proceed = confirm("This PAN already exists. Saving now will update the existing client record. Do you want to continue?");
+        if (!proceed) return;
+      }
+
+      const existingData = snap.data() || {};
+      const createdAtISO = existingData.createdAtISO || getTodayISOFromIST();
+      let completedAt = existingData.completedAt || "";
+      let completedAtISO = existingData.completedAtISO || "";
+
+      if (stage === "Completed" && !completedAt) {
+        completedAt = getISTTime();
+        completedAtISO = getTodayISOFromIST();
+      }
 
       const data = {
         name,
@@ -948,20 +1170,19 @@
         fee: Number(fee),
         payment,
         stage,
-        createdBy: currentUserEmail
+        createdBy: existingData.createdBy || currentUserEmail,
+        createdAt: existingData.createdAt || getISTTime(),
+        createdAtISO
       };
 
-      if (isNew) {
-        data.createdAt = getISTTime();
-      }
-
-      if (stage === "Completed" && !snap.data()?.completedAt) {
-        data.completedAt = getISTTime();
+      if (completedAt) {
+        data.completedAt = completedAt;
+        data.completedAtISO = completedAtISO;
       }
 
       await setDoc(ref, data, { merge: true });
 
-      if (isNew && stage === "Client registration at office") {
+      if (!exists && stage === "Client registration at office") {
         emailjs.send("service_ns9w7qv", "template_87k6k2w", {
           name,
           pan,
@@ -971,10 +1192,26 @@
         });
       }
 
-      alert("Saved");
+      alert(exists ? "Client updated successfully" : "Client saved successfully");
+      resetForm();
     };
 
-    window.filterClients = () => applyFiltersAndRender();
+    window.updateStage = async (pan) => {
+      const stageSelect = document.getElementById("stage_" + pan);
+      if (!stageSelect) return;
+
+      const newStage = stageSelect.value;
+      const client = allClients.find(c => c.pan === pan);
+      const updateData = { stage: newStage };
+
+      if (newStage === "Completed" && !client?.completedAt) {
+        updateData.completedAt = getISTTime();
+        updateData.completedAtISO = getTodayISOFromIST();
+      }
+
+      await setDoc(doc(db, "clients", pan), updateData, { merge: true });
+      alert("Stage updated successfully");
+    };
 
     window.setViewMode = (mode) => {
       currentView = mode;
@@ -987,24 +1224,16 @@
       renderClients(displayedClients);
     };
 
-    window.updateStage = async (pan) => {
-      const stageSelect = document.getElementById("stage_" + pan);
-      if (!stageSelect) return;
-
-      const newStage = stageSelect.value;
-      const client = allClients.find(c => c.pan === pan);
-
-      const updateData = {
-        stage: newStage
-      };
-
-      if (newStage === "Completed" && !client?.completedAt) {
-        updateData.completedAt = getISTTime();
-      }
-
-      await setDoc(doc(db, "clients", pan), updateData, { merge: true });
-      alert("Stage updated successfully");
+    window.clearFilters = () => {
+      document.getElementById("search").value = "";
+      document.getElementById("createdDateFilter").value = "";
+      document.getElementById("completedDateFilter").value = "";
+      document.getElementById("stageFilter").value = "";
+      document.getElementById("sortBy").value = "latest";
+      applyFiltersAndRender();
     };
+
+    window.applyFiltersAndRender = applyFiltersAndRender;
 
     window.exportExcel = () => {
       const formatted = displayedClients.map((c, i) => ({
@@ -1057,6 +1286,7 @@
     };
 
     updateViewButtons();
+    setEditMode(null);
   </script>
 </body>
 </html>
