@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IC-KS CRM</title>
+  <title>IC-KS CRM Login</title>
 
   <style>
     :root {
@@ -12,40 +12,29 @@
       --bg-3: #f9fcff;
       --surface: rgba(255, 255, 255, 0.78);
       --surface-strong: rgba(255, 255, 255, 0.92);
-      --surface-soft: #f7fbff;
       --text: #24324a;
       --text-soft: #60708d;
       --line: rgba(186, 205, 232, 0.45);
       --primary: #5b8def;
       --primary-2: #7fb3ff;
-      --primary-3: #a8caff;
-      --mint: #7ed7c1;
       --teal: #57c6c2;
-      --peach: #ffd8c2;
-      --gold: #f2c96d;
+      --mint: #7ed7c1;
       --rose: #f6b7c8;
-      --success: #44b98b;
-      --warning: #d8a54b;
-      --danger: #e58a95;
       --shadow-lg: 0 24px 60px rgba(115, 149, 199, 0.18);
       --shadow-md: 0 14px 34px rgba(122, 152, 199, 0.14);
       --shadow-sm: 0 8px 20px rgba(122, 152, 199, 0.1);
       --radius-xl: 28px;
       --radius-lg: 22px;
       --radius-md: 16px;
-      --radius-sm: 12px;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: "Segoe UI", Tahoma, Arial, sans-serif;
       color: var(--text);
       background:
@@ -53,15 +42,13 @@
         radial-gradient(circle at 100% 10%, rgba(126, 215, 193, 0.22), transparent 24%),
         radial-gradient(circle at 70% 100%, rgba(246, 183, 200, 0.18), transparent 24%),
         linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     body::before,
     body::after {
       content: "";
       position: fixed;
-      inset: auto;
       width: 320px;
       height: 320px;
       border-radius: 50%;
@@ -83,15 +70,15 @@
       background: rgba(126, 215, 193, 0.22);
     }
 
-    .app-shell {
+    .page {
       position: relative;
       z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 25;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -120,13 +107,6 @@
       overflow: hidden;
     }
 
-    .brand-mark::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 55%);
-    }
-
     .brand-mark::after {
       content: "IC";
       position: absolute;
@@ -135,8 +115,8 @@
       place-items: center;
       font-weight: 800;
       color: #3b67b7;
-      letter-spacing: 0.5px;
       font-size: 15px;
+      letter-spacing: 0.4px;
     }
 
     .brand-text {
@@ -182,25 +162,27 @@
       100% { background-position: 200% center; }
     }
 
-    .container {
-      max-width: 1380px;
-      margin: 0 auto;
-      padding: 28px 22px 40px;
+    .main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 24px;
     }
 
-    .panel {
+    .login-card {
+      width: 100%;
+      max-width: 520px;
       position: relative;
       background: var(--surface);
       backdrop-filter: blur(16px);
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-lg);
-      padding: 26px;
-      margin-bottom: 22px;
+      padding: 30px;
       overflow: hidden;
     }
 
-    .panel::before {
+    .login-card::before {
       content: "";
       position: absolute;
       inset: 0 auto auto 0;
@@ -209,13 +191,7 @@
       background: linear-gradient(90deg, rgba(91,141,239,0.85), rgba(87,198,194,0.75), rgba(246,183,200,0.7));
     }
 
-    .hero-login {
-      max-width: 520px;
-      margin: 50px auto 0;
-      padding-top: 34px;
-    }
-
-    .hero-login::after {
+    .login-card::after {
       content: "";
       position: absolute;
       right: -50px;
@@ -230,28 +206,23 @@
     .section-head {
       display: flex;
       justify-content: space-between;
-      align-items: end;
+      align-items: start;
       gap: 14px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
-    .section-head-left {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 24px;
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
       font-weight: 800;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.4px;
     }
 
-    .subtle {
+    .subtitle {
+      margin: 0;
       color: var(--text-soft);
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     .chip {
@@ -266,60 +237,29 @@
       white-space: nowrap;
     }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1.35fr 0.85fr auto;
-      gap: 12px;
-      align-items: center;
+    .field {
       margin-bottom: 14px;
     }
 
-    .toolbar-right {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .filters-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    input,
-    select,
-    button {
-      font: inherit;
-    }
-
-    input,
-    select {
+    input {
       width: 100%;
-      height: 48px;
+      height: 50px;
       border: 1px solid rgba(190, 208, 233, 0.62);
       background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,251,255,0.92));
-      border-radius: 16px;
-      padding: 0 14px;
+      border-radius: var(--radius-md);
+      padding: 0 15px;
       color: var(--text);
       outline: none;
       transition: 0.22s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+      font: inherit;
     }
 
     input::placeholder {
       color: #92a2bc;
     }
 
-    input:focus,
-    select:focus {
+    input:focus {
       border-color: rgba(91,141,239,0.78);
       box-shadow:
         0 0 0 4px rgba(126, 177, 255, 0.14),
@@ -328,14 +268,17 @@
     }
 
     button {
-      height: 46px;
-      padding: 0 16px;
+      width: 100%;
+      height: 48px;
       border: none;
       border-radius: 15px;
       cursor: pointer;
       font-weight: 700;
+      font-size: 15px;
       letter-spacing: 0.1px;
       transition: 0.22s ease;
+      color: #fff;
+      background: linear-gradient(135deg, #5b8def, #78adff);
       box-shadow: var(--shadow-sm);
     }
 
@@ -347,408 +290,29 @@
       transform: translateY(0);
     }
 
-    .btn-primary {
-      color: #fff;
-      background: linear-gradient(135deg, #5b8def, #78adff);
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .btn-secondary {
-      color: var(--text);
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,255,0.92));
-      border: 1px solid rgba(192, 211, 236, 0.62);
-    }
-
-    .btn-export {
-      color: #fff;
-      background: linear-gradient(135deg, #8c7cf0, #ad8fff);
-    }
-
-    .btn-edit {
-      color: #fff;
-      background: linear-gradient(135deg, #46b8a4, #6ad3c0);
-    }
-
-    .btn-view.active {
-      color: #fff;
-      background: linear-gradient(135deg, #5b8def, #7fb3ff);
-      box-shadow: 0 12px 28px rgba(97, 149, 235, 0.25);
-    }
-
-    .action-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
+    .status {
       margin-top: 14px;
-    }
-
-    .status-banner {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      display: none;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
-    }
-
-    .status-banner.editing {
-      display: block;
-      background: linear-gradient(135deg, rgba(126,215,193,0.18), rgba(91,141,239,0.12));
-      color: #2f6f77;
-      border: 1px solid rgba(126, 215, 193, 0.32);
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .summary-card {
-      position: relative;
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.9));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-    }
-
-    .summary-card::after {
-      content: "";
-      position: absolute;
-      right: -24px;
-      top: -24px;
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(168,202,255,0.24), transparent 68%);
-    }
-
-    .summary-label {
-      color: var(--text-soft);
-      font-size: 13px;
-      margin-bottom: 10px;
-      font-weight: 700;
-    }
-
-    .summary-value {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .summary-note {
-      margin-top: 6px;
-      color: #8392aa;
-      font-size: 12px;
-    }
-
-    .chart-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .chart-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,251,255,0.9));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: var(--shadow-md);
-    }
-
-    .chart-label {
-      font-size: 14px;
-      color: var(--text-soft);
-      margin-bottom: 12px;
-      font-weight: 800;
-    }
-
-    .bar-track {
-      height: 18px;
-      width: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(232,239,250,0.9), rgba(241,246,252,0.95));
-      overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(130, 158, 196, 0.1);
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.3s ease;
-    }
-
-    .bar-fill.pending {
-      background: linear-gradient(90deg, #f6cc7a, #e8ad4d);
-    }
-
-    .bar-fill.completed {
-      background: linear-gradient(90deg, #70d1aa, #46b98b);
-    }
-
-    .chart-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-      color: var(--text-soft);
+      min-height: 22px;
       font-size: 13px;
       font-weight: 600;
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .card {
-      position: relative;
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 24px;
-      box-shadow: var(--shadow-md);
-      padding: 20px;
-      overflow: hidden;
-      transition: 0.24s ease;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto auto 0;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, rgba(91,141,239,0.85), rgba(87,198,194,0.7), rgba(246,183,200,0.66));
-    }
-
-    .card::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      right: -35px;
-      top: -35px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(168,202,255,0.18), transparent 68%);
-      pointer-events: none;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 22px 46px rgba(122, 154, 199, 0.18);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .client-name {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.2px;
-    }
-
-    .client-pan {
-      color: var(--text-soft);
-      font-size: 13px;
-      margin-top: 5px;
-      font-weight: 600;
-    }
-
-    .meta {
-      display: grid;
-      gap: 9px;
-      margin: 16px 0;
-      font-size: 14px;
-    }
-
-    .meta-row {
-      display: grid;
-      grid-template-columns: 108px 1fr;
-      gap: 8px;
-      align-items: start;
-    }
-
-    .meta-label {
-      color: var(--text-soft);
-      font-weight: 700;
-    }
-
-    .stage-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      padding: 7px 11px;
-      font-size: 12px;
-      font-weight: 800;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-      white-space: nowrap;
-    }
-
-    .stage-client { background: #e9f2ff; color: #4674c7; }
-    .stage-partial { background: #fff3dc; color: #b27a14; }
-    .stage-full { background: #e8f8ef; color: #2e8b62; }
-    .stage-initiated { background: #f1ebff; color: #7d58c5; }
-    .stage-progress { background: #e7f8ff; color: #2c8bb1; }
-    .stage-approval { background: #fff0f3; color: #c06b87; }
-    .stage-completed { background: #e7f9f1; color: #2f9970; }
-
-    .list-table-wrap {
-      margin-top: 16px;
-      overflow-x: auto;
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 24px;
-      box-shadow: var(--shadow-md);
-    }
-
-    .list-table {
-      width: 100%;
-      min-width: 1180px;
-      border-collapse: collapse;
-    }
-
-    .list-table th,
-    .list-table td {
-      padding: 14px 14px;
-      border-bottom: 1px solid rgba(224, 234, 247, 0.9);
-      text-align: left;
-      vertical-align: top;
-      font-size: 14px;
-    }
-
-    .list-table th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: rgba(244, 249, 255, 0.97);
-      color: #64789a;
-      font-weight: 800;
-    }
-
-    .list-table tr:hover td {
-      background: rgba(248, 251, 255, 0.75);
-    }
-
-    .pane-layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 16px;
-      margin-top: 18px;
-    }
-
-    .pane-list,
-    .pane-detail {
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 24px;
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-    }
-
-    .pane-item {
-      position: relative;
-      padding: 16px 18px;
-      border-bottom: 1px solid rgba(224, 234, 247, 0.9);
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .pane-item:hover {
-      background: rgba(247, 251, 255, 0.8);
-    }
-
-    .pane-item.active {
-      background: linear-gradient(135deg, rgba(91,141,239,0.1), rgba(87,198,194,0.1));
-      border-left: 4px solid var(--primary);
-      padding-left: 14px;
-    }
-
-    .pane-detail-inner {
-      padding: 24px;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin: 18px 0;
-    }
-
-    .detail-box {
-      background: linear-gradient(180deg, rgba(250,252,255,0.96), rgba(244,249,255,0.92));
-      border: 1px solid rgba(221, 232, 246, 0.92);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
-    }
-
-    .detail-label {
-      color: var(--text-soft);
-      font-size: 11px;
-      margin-bottom: 6px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-    }
-
-    .empty-state {
-      margin-top: 18px;
-      padding: 34px 18px;
-      text-align: center;
-      color: var(--text-soft);
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.9));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 24px;
-      box-shadow: var(--shadow-md);
-      font-weight: 600;
-    }
-
-    .muted {
       color: var(--text-soft);
     }
 
-    @media (max-width: 1180px) {
-      .form-grid,
-      .summary-grid,
-      .filters-grid,
-      .chart-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .toolbar-right {
-        justify-content: flex-start;
-      }
-
-      .pane-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
+    .status.error {
+      color: #c85b72;
     }
 
-    @media (max-width: 700px) {
-      .container {
-        padding: 16px 14px 28px;
-      }
+    .status.success {
+      color: #2f8d6a;
+    }
 
+    @media (max-width: 640px) {
       .navbar {
         padding: 14px;
       }
@@ -762,30 +326,30 @@
         font-size: 22px;
       }
 
-      .form-grid,
-      .summary-grid,
-      .filters-grid,
-      .chart-grid {
-        grid-template-columns: 1fr;
+      .nav-right {
+        display: none;
       }
 
-      .panel {
-        padding: 18px;
-        border-radius: 22px;
+      .main {
+        padding: 16px;
       }
 
-      .hero-login {
-        margin-top: 28px;
+      .login-card {
+        padding: 22px;
+      }
+
+      .section-head {
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 26px;
       }
     }
   </style>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="page">
     <div class="navbar">
       <div class="brand">
         <div class="brand-mark"></div>
@@ -794,184 +358,39 @@
           <span class="logo-sub">CRM System</span>
         </div>
       </div>
-      <div class="nav-right">Operations Hub</div>
+      <div class="nav-right">Role Based Access</div>
     </div>
 
-    <div class="container">
-      <div id="loginDiv" class="panel hero-login">
+    <div class="main">
+      <div class="login-card">
         <div class="section-head">
-          <div class="section-head-left">
-            <h2>Welcome Back</h2>
-            <div class="subtle">Sign in to access your client dashboard, workflows, and reporting tools.</div>
+          <div>
+            <h1>Welcome Back</h1>
+            <p class="subtitle">
+              Sign in once and the system will automatically identify whether you are an admin or user and redirect you to the correct dashboard.
+            </p>
           </div>
           <div class="chip">Secure Login</div>
         </div>
 
-        <input id="loginEmail" placeholder="Email" />
-        <br /><br />
-        <input id="loginPass" type="password" placeholder="Password" />
-        <br /><br />
-        <button class="btn-primary" onclick="login()">Login</button>
-      </div>
-
-      <div id="appDiv" style="display:none;">
-        <div class="panel" id="entryPanel">
-          <div class="section-head">
-            <div class="section-head-left">
-              <h2>Client Entry</h2>
-              <div class="subtle">Add a new client or load an existing one for editing without changing the current workflow.</div>
-            </div>
-            <div class="chip">Live Connected</div>
-          </div>
-
-          <div id="editBanner" class="status-banner"></div>
-
-          <div class="form-grid" style="margin-top:14px;">
-            <input id="name" placeholder="Name" />
-            <input id="pb" placeholder="PB No" />
-            <input id="pan" placeholder="PAN" />
-            <input id="mobile" placeholder="Mobile" />
-            <input id="email" placeholder="Email" />
-
-            <select id="itr" onchange="setFee()">
-              <option value="">Select ITR</option>
-              <option value="ITR1">ITR-1</option>
-              <option value="ITR2">ITR-2/3/4</option>
-              <option value="CONSULT">Consultation</option>
-            </select>
-
-            <input id="fee" readonly placeholder="Fee" />
-
-            <select id="payment">
-              <option>Cash</option>
-              <option>UPI</option>
-              <option>Bank</option>
-            </select>
-
-            <select id="stage">
-              <option>Client registration at office</option>
-              <option>Partial submission by client</option>
-              <option>Full submission by client</option>
-              <option>Work initiated at office</option>
-              <option>In progress</option>
-              <option>For client approval</option>
-              <option>Completed</option>
-            </select>
-          </div>
-
-          <div class="action-row">
-            <button id="saveBtn" class="btn-primary" onclick="saveClient()">Save</button>
-            <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
-            <button class="btn-secondary" onclick="logout()">Logout</button>
-          </div>
+        <div class="field">
+          <input id="loginEmail" type="email" placeholder="Email" />
         </div>
 
-        <div class="panel">
-          <div class="section-head">
-            <div class="section-head-left">
-              <h2>Client Dashboard</h2>
-              <div class="subtle">Search, filter, export, review, and update client progress across multiple views.</div>
-            </div>
-            <div class="chip">Stylish v3</div>
-          </div>
-
-          <div class="toolbar">
-            <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="applyFiltersAndRender()" />
-
-            <select id="sortBy" onchange="applyFiltersAndRender()">
-              <option value="latest">Sort: Latest</option>
-              <option value="pending">Sort: Pending First</option>
-              <option value="completed">Sort: Completed First</option>
-              <option value="name">Sort: Name A-Z</option>
-            </select>
-
-            <div class="toolbar-right">
-              <button id="btnList" class="btn-secondary btn-view" onclick="setViewMode('list')">List View</button>
-              <button id="btnCard" class="btn-secondary btn-view active" onclick="setViewMode('card')">Card View</button>
-              <button id="btnPane" class="btn-secondary btn-view" onclick="setViewMode('pane')">Pane View</button>
-              <button class="btn-export" onclick="exportExcel()">Excel</button>
-              <button class="btn-export" onclick="exportPDF()">PDF</button>
-            </div>
-          </div>
-
-          <div class="filters-grid">
-            <input id="createdDateFilter" type="date" onchange="applyFiltersAndRender()" />
-            <input id="completedDateFilter" type="date" onchange="applyFiltersAndRender()" />
-            <select id="stageFilter" onchange="applyFiltersAndRender()">
-              <option value="">All Stages</option>
-              <option>Client registration at office</option>
-              <option>Partial submission by client</option>
-              <option>Full submission by client</option>
-              <option>Work initiated at office</option>
-              <option>In progress</option>
-              <option>For client approval</option>
-              <option>Completed</option>
-            </select>
-            <button class="btn-secondary" onclick="clearFilters()">Clear Filters</button>
-          </div>
-
-          <div class="summary-grid">
-            <div class="summary-card">
-              <div class="summary-label">Total Clients</div>
-              <div id="sumTotal" class="summary-value">0</div>
-              <div class="summary-note">Visible after current filters</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label">Pending Clients</div>
-              <div id="sumPending" class="summary-value">0</div>
-              <div class="summary-note">Not yet completed</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label">Completed Clients</div>
-              <div id="sumCompleted" class="summary-value">0</div>
-              <div class="summary-note">Marked as completed</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label">Completion Rate</div>
-              <div id="sumRate" class="summary-value">0%</div>
-              <div class="summary-note">Based on visible clients</div>
-            </div>
-          </div>
-
-          <div class="chart-grid">
-            <div class="chart-card">
-              <div class="chart-label">Pending Clients</div>
-              <div class="bar-track">
-                <div id="pendingBar" class="bar-fill pending" style="width:0%;"></div>
-              </div>
-              <div class="chart-meta">
-                <span id="pendingCount">0 clients</span>
-                <span id="pendingPercent">0%</span>
-              </div>
-            </div>
-
-            <div class="chart-card">
-              <div class="chart-label">Completed Clients</div>
-              <div class="bar-track">
-                <div id="completedBar" class="bar-fill completed" style="width:0%;"></div>
-              </div>
-              <div class="chart-meta">
-                <span id="completedCount">0 clients</span>
-                <span id="completedPercent">0%</span>
-              </div>
-            </div>
-          </div>
-
-          <div id="list"></div>
+        <div class="field">
+          <input id="loginPass" type="password" placeholder="Password" />
         </div>
+
+        <button id="loginBtn" onclick="login()">Login</button>
+        <div id="statusMsg" class="status"></div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    emailjs.init("oCSNm-4jMM9RJpB35");
-  </script>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
@@ -982,571 +401,102 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let currentUserEmail = "";
-    let allClients = [];
-    let displayedClients = [];
-    let currentView = "card";
-    let selectedPanePan = null;
-    let editingPan = null;
+    const emailInput = document.getElementById("loginEmail");
+    const passInput = document.getElementById("loginPass");
+    const loginBtn = document.getElementById("loginBtn");
+    const statusMsg = document.getElementById("statusMsg");
 
-    const stages = [
-      "Client registration at office",
-      "Partial submission by client",
-      "Full submission by client",
-      "Work initiated at office",
-      "In progress",
-      "For client approval",
-      "Completed"
-    ];
-
-    function getISTTime() {
-      return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    function setStatus(message = "", type = "") {
+      statusMsg.textContent = message;
+      statusMsg.className = "status" + (type ? ` ${type}` : "");
     }
 
-    function getTodayISOFromIST() {
-      return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })).toISOString().slice(0, 10);
+    function setLoading(isLoading) {
+      loginBtn.disabled = isLoading;
+      loginBtn.textContent = isLoading ? "Signing In..." : "Login";
     }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    function getInputValue(id) {
-      return document.getElementById(id).value.trim();
-    }
-
-    function setInputValue(id, value) {
-      document.getElementById(id).value = value || "";
-    }
-
-    function isCompleted(client) {
-      return (client.stage || "") === "Completed";
-    }
-
-    function getStageClass(stage) {
-      switch (stage) {
-        case "Client registration at office": return "stage-client";
-        case "Partial submission by client": return "stage-partial";
-        case "Full submission by client": return "stage-full";
-        case "Work initiated at office": return "stage-initiated";
-        case "In progress": return "stage-progress";
-        case "For client approval": return "stage-approval";
-        case "Completed": return "stage-completed";
-        default: return "stage-client";
-      }
-    }
-
-    function stageBadge(stage) {
-      return `<span class="stage-badge ${getStageClass(stage)}">${escapeHtml(stage || "-")}</span>`;
-    }
-
-    function stageOptions(selectedStage) {
-      return stages.map(stage =>
-        `<option value="${escapeHtml(stage)}" ${selectedStage === stage ? "selected" : ""}>${escapeHtml(stage)}</option>`
-      ).join("");
-    }
-
-    function updateViewButtons() {
-      document.getElementById("btnList").classList.toggle("active", currentView === "list");
-      document.getElementById("btnCard").classList.toggle("active", currentView === "card");
-      document.getElementById("btnPane").classList.toggle("active", currentView === "pane");
-    }
-
-    function setEditMode(client) {
-      editingPan = client?.pan || null;
-      const banner = document.getElementById("editBanner");
-      const saveBtn = document.getElementById("saveBtn");
-
-      if (editingPan) {
-        banner.className = "status-banner editing";
-        banner.textContent = `Editing client: ${client.name || "-"} (${client.pan || "-"})`;
-        saveBtn.textContent = "Update Client";
-      } else {
-        banner.className = "status-banner";
-        banner.textContent = "";
-        saveBtn.textContent = "Save";
-      }
-    }
-
-    function resetFormFields() {
-      setInputValue("name", "");
-      setInputValue("pb", "");
-      setInputValue("pan", "");
-      setInputValue("mobile", "");
-      setInputValue("email", "");
-      setInputValue("itr", "");
-      setInputValue("fee", "");
-      setInputValue("payment", "Cash");
-      setInputValue("stage", "Client registration at office");
-    }
-
-    function toISODateFromStored(value) {
-      if (!value) return "";
-      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-
-      const match = String(value).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-      if (!match) return "";
-
-      const day = match[1].padStart(2, "0");
-      const month = match[2].padStart(2, "0");
-      const year = match[3];
-      return `${year}-${month}-${day}`;
-    }
-
-    function updateSummary(data) {
-      const total = data.length;
-      const completed = data.filter(isCompleted).length;
-      const pending = total - completed;
-      const completedPercent = total ? Math.round((completed / total) * 100) : 0;
-      const pendingPercent = total ? 100 - completedPercent : 0;
-
-      document.getElementById("sumTotal").textContent = total;
-      document.getElementById("sumPending").textContent = pending;
-      document.getElementById("sumCompleted").textContent = completed;
-      document.getElementById("sumRate").textContent = completedPercent + "%";
-
-      document.getElementById("pendingBar").style.width = pendingPercent + "%";
-      document.getElementById("completedBar").style.width = completedPercent + "%";
-      document.getElementById("pendingCount").textContent = `${pending} clients`;
-      document.getElementById("completedCount").textContent = `${completed} clients`;
-      document.getElementById("pendingPercent").textContent = `${pendingPercent}%`;
-      document.getElementById("completedPercent").textContent = `${completedPercent}%`;
-    }
-
-    function applySort(data) {
-      const sortBy = document.getElementById("sortBy").value;
-      const sorted = [...data];
-
-      if (sortBy === "name") {
-        sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-      } else if (sortBy === "completed") {
-        sorted.sort((a, b) => Number(isCompleted(b)) - Number(isCompleted(a)));
-      } else if (sortBy === "pending") {
-        sorted.sort((a, b) => Number(isCompleted(a)) - Number(isCompleted(b)));
-      } else {
-        sorted.sort((a, b) => {
-          const aDate = toISODateFromStored(a.createdAt) || "";
-          const bDate = toISODateFromStored(b.createdAt) || "";
-          return bDate.localeCompare(aDate);
-        });
-      }
-
-      return sorted;
-    }
-
-    function applyFiltersAndRender() {
-      const q = document.getElementById("search").value.toLowerCase().trim();
-      const createdDateFilter = document.getElementById("createdDateFilter").value;
-      const completedDateFilter = document.getElementById("completedDateFilter").value;
-      const stageFilter = document.getElementById("stageFilter").value;
-
-      let data = allClients.filter(c => {
-        const matchesSearch =
-          (c.name || "").toLowerCase().includes(q) ||
-          (c.pan || "").toLowerCase().includes(q) ||
-          (c.mobile || "").toLowerCase().includes(q) ||
-          (c.email || "").toLowerCase().includes(q);
-
-        const createdISO = c.createdAtISO || toISODateFromStored(c.createdAt);
-        const completedISO = c.completedAtISO || toISODateFromStored(c.completedAt);
-
-        const matchesCreatedDate = !createdDateFilter || createdISO === createdDateFilter;
-        const matchesCompletedDate = !completedDateFilter || completedISO === completedDateFilter;
-        const matchesStage = !stageFilter || (c.stage || "") === stageFilter;
-
-        return matchesSearch && matchesCreatedDate && matchesCompletedDate && matchesStage;
-      });
-
-      data = applySort(data);
-      displayedClients = data;
-
-      if (!data.length) {
-        selectedPanePan = null;
-      } else if (!data.some(c => c.pan === selectedPanePan)) {
-        selectedPanePan = data[0].pan;
-      }
-
-      updateSummary(data);
-      renderClients(data);
-    }
-
-    function renderClients(data) {
-      if (!data.length) {
-        document.getElementById("list").innerHTML = `<div class="empty-state">No client records found for the current search or filters.</div>`;
+    async function redirectByRole(user) {
+      if (!user?.email) {
+        setStatus("Unable to identify this account.", "error");
+        await signOut(auth);
         return;
       }
 
-      if (currentView === "list") {
-        renderListView(data);
-      } else if (currentView === "pane") {
-        renderPaneView(data);
-      } else {
-        renderCardView(data);
+      const userEmail = user.email.trim().toLowerCase();
+      const roleRef = doc(db, "roles", userEmail);
+      const roleSnap = await getDoc(roleRef);
+
+      if (!roleSnap.exists()) {
+        setStatus("No role assigned for this account. Please contact admin.", "error");
+        await signOut(auth);
+        return;
       }
+
+      const roleData = roleSnap.data();
+      const role = String(roleData.role || "").toLowerCase();
+      const active = roleData.active !== false;
+
+      if (!active) {
+        setStatus("This account is inactive. Please contact admin.", "error");
+        await signOut(auth);
+        return;
+      }
+
+      if (role === "admin") {
+        window.location.href = "admin.html";
+        return;
+      }
+
+      if (role === "user") {
+        window.location.href = "user.html";
+        return;
+      }
+
+      setStatus("Invalid role configured for this account.", "error");
+      await signOut(auth);
     }
 
-    function renderCardView(data) {
-      document.getElementById("list").innerHTML = `
-        <div class="cards-grid">
-          ${data.map(c => `
-            <div class="card">
-              <div class="card-top">
-                <div>
-                  <div class="client-name">${escapeHtml(c.name || "-")}</div>
-                  <div class="client-pan">${escapeHtml(c.pan || "-")}</div>
-                </div>
-                <div>${stageBadge(c.stage)}</div>
-              </div>
+    window.login = async () => {
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passInput.value;
 
-              <div class="meta">
-                <div class="meta-row"><div class="meta-label">PB No</div><div>${escapeHtml(c.pb || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">Mobile</div><div>${escapeHtml(c.mobile || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">Email</div><div>${escapeHtml(c.email || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">ITR</div><div>${escapeHtml(c.itr || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">Fee</div><div>₹${escapeHtml(c.fee || 0)}</div></div>
-                <div class="meta-row"><div class="meta-label">Payment</div><div>${escapeHtml(c.payment || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">Created</div><div>${escapeHtml(c.createdAt || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">Completed</div><div>${escapeHtml(c.completedAt || "-")}</div></div>
-              </div>
+      if (!email || !password) {
+        setStatus("Please enter both email and password.", "error");
+        return;
+      }
 
-              <div class="action-row">
-                <select id="stage_${escapeHtml(c.pan)}">
-                  ${stageOptions(c.stage)}
-                </select>
-                <button class="btn-primary" onclick="updateStage('${escapeHtml(c.pan)}')">Update Stage</button>
-                <button class="btn-edit" onclick="editClient('${escapeHtml(c.pan)}')">Edit Client</button>
-              </div>
-            </div>
-          `).join("")}
-        </div>
-      `;
-    }
+      try {
+        setLoading(true);
+        setStatus("Checking your access...", "success");
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        setStatus(error.message || "Login failed.", "error");
+        setLoading(false);
+      }
+    };
 
-    function renderListView(data) {
-      document.getElementById("list").innerHTML = `
-        <div class="list-table-wrap">
-          <table class="list-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>PAN</th>
-                <th>Mobile</th>
-                <th>Email</th>
-                <th>ITR</th>
-                <th>Fee</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Completed</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(c => `
-                <tr>
-                  <td>${escapeHtml(c.name || "-")}</td>
-                  <td>${escapeHtml(c.pan || "-")}</td>
-                  <td>${escapeHtml(c.mobile || "-")}</td>
-                  <td>${escapeHtml(c.email || "-")}</td>
-                  <td>${escapeHtml(c.itr || "-")}</td>
-                  <td>₹${escapeHtml(c.fee || 0)}</td>
-                  <td>${stageBadge(c.stage)}</td>
-                  <td>${escapeHtml(c.createdAt || "-")}</td>
-                  <td>${escapeHtml(c.completedAt || "-")}</td>
-                  <td>
-                    <div class="action-row">
-                      <select id="stage_${escapeHtml(c.pan)}">
-                        ${stageOptions(c.stage)}
-                      </select>
-                      <button class="btn-primary" onclick="updateStage('${escapeHtml(c.pan)}')">Update</button>
-                      <button class="btn-edit" onclick="editClient('${escapeHtml(c.pan)}')">Edit</button>
-                    </div>
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-    function renderPaneView(data) {
-      const selectedClient = data.find(c => c.pan === selectedPanePan) || data[0];
-      selectedPanePan = selectedClient.pan;
-
-      document.getElementById("list").innerHTML = `
-        <div class="pane-layout">
-          <div class="pane-list">
-            ${data.map(c => `
-              <div class="pane-item ${c.pan === selectedPanePan ? "active" : ""}" onclick="selectPaneClient('${escapeHtml(c.pan)}')">
-                <div><strong>${escapeHtml(c.name || "-")}</strong></div>
-                <div class="muted">${escapeHtml(c.pan || "-")}</div>
-                <div style="margin-top:8px;">${stageBadge(c.stage)}</div>
-              </div>
-            `).join("")}
-          </div>
-
-          <div class="pane-detail">
-            <div class="pane-detail-inner">
-              <h2 style="font-size:28px; margin-bottom:12px;">${escapeHtml(selectedClient.name || "-")}</h2>
-              <div>${stageBadge(selectedClient.stage)}</div>
-
-              <div class="detail-grid">
-                <div class="detail-box"><div class="detail-label">PAN</div><div>${escapeHtml(selectedClient.pan || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">PB No</div><div>${escapeHtml(selectedClient.pb || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">Mobile</div><div>${escapeHtml(selectedClient.mobile || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">Email</div><div>${escapeHtml(selectedClient.email || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">ITR Type</div><div>${escapeHtml(selectedClient.itr || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">Fee</div><div>₹${escapeHtml(selectedClient.fee || 0)}</div></div>
-                <div class="detail-box"><div class="detail-label">Payment</div><div>${escapeHtml(selectedClient.payment || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">Created By</div><div>${escapeHtml(selectedClient.createdBy || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">Created At</div><div>${escapeHtml(selectedClient.createdAt || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">Completed At</div><div>${escapeHtml(selectedClient.completedAt || "-")}</div></div>
-              </div>
-
-              <div class="action-row">
-                <select id="stage_${escapeHtml(selectedClient.pan)}">
-                  ${stageOptions(selectedClient.stage)}
-                </select>
-                <button class="btn-primary" onclick="updateStage('${escapeHtml(selectedClient.pan)}')">Update Stage</button>
-                <button class="btn-edit" onclick="editClient('${escapeHtml(selectedClient.pan)}')">Edit Client</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function loadClients() {
-      onSnapshot(collection(db, "clients"), snapshot => {
-        allClients = [];
-        snapshot.forEach(d => allClients.push(d.data()));
-        applyFiltersAndRender();
-      });
-    }
-
-    function fillForm(client) {
-      setInputValue("name", client.name);
-      setInputValue("pb", client.pb);
-      setInputValue("pan", client.pan);
-      setInputValue("mobile", client.mobile);
-      setInputValue("email", client.email);
-      setInputValue("itr", client.itr);
-      setInputValue("fee", client.fee);
-      setInputValue("payment", client.payment || "Cash");
-      setInputValue("stage", client.stage || "Client registration at office");
-    }
-
-    onAuthStateChanged(auth, user => {
-      const loginDiv = document.getElementById("loginDiv");
-      const appDiv = document.getElementById("appDiv");
-
-      if (user) {
-        currentUserEmail = user.email;
-        loginDiv.style.display = "none";
-        appDiv.style.display = "block";
-        loadClients();
-      } else {
-        loginDiv.style.display = "block";
-        appDiv.style.display = "none";
+      try {
+        setStatus("Login successful. Redirecting...", "success");
+        await redirectByRole(user);
+      } catch (error) {
+        setStatus(error.message || "Unable to verify role.", "error");
+        setLoading(false);
+        await signOut(auth);
       }
     });
 
-    window.login = () => signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value, document.getElementById("loginPass").value);
-    window.logout = () => signOut(auth);
-
-    window.setFee = () => {
-      const itr = document.getElementById("itr").value;
-      const feeField = document.getElementById("fee");
-
-      if (itr === "ITR1") feeField.value = 849;
-      else if (itr === "ITR2") feeField.value = 1349;
-      else if (itr === "CONSULT") feeField.value = 199;
-      else feeField.value = "";
-    };
-
-    window.resetForm = () => {
-      resetFormFields();
-      editingPan = null;
-      setEditMode(null);
-    };
-
-    window.editClient = (pan) => {
-      const client = allClients.find(c => c.pan === pan);
-      if (!client) return;
-
-      fillForm(client);
-      setEditMode(client);
-      document.getElementById("entryPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-
-    window.saveClient = async () => {
-      const name = getInputValue("name");
-      const pb = getInputValue("pb");
-      const pan = getInputValue("pan").toUpperCase();
-      const mobile = getInputValue("mobile");
-      const email = getInputValue("email");
-      const itr = document.getElementById("itr").value;
-      const fee = document.getElementById("fee").value;
-      const payment = document.getElementById("payment").value;
-      const stage = document.getElementById("stage").value;
-
-      if (!pan) {
-        alert("PAN required");
-        return;
-      }
-
-      const ref = doc(db, "clients", pan);
-      const snap = await getDoc(ref);
-      const exists = snap.exists();
-      const isEditingSameClient = editingPan && editingPan === pan;
-
-      if (exists && !isEditingSameClient) {
-        const proceed = confirm("This PAN already exists. Saving now will update the existing client record. Do you want to continue?");
-        if (!proceed) return;
-      }
-
-      const existingData = snap.data() || {};
-      const createdAtISO = existingData.createdAtISO || getTodayISOFromIST();
-      let completedAt = existingData.completedAt || "";
-      let completedAtISO = existingData.completedAtISO || "";
-
-      if (stage === "Completed" && !completedAt) {
-        completedAt = getISTTime();
-        completedAtISO = getTodayISOFromIST();
-      }
-
-      const data = {
-        name,
-        pb,
-        pan,
-        mobile,
-        email,
-        itr,
-        fee: Number(fee),
-        payment,
-        stage,
-        createdBy: existingData.createdBy || currentUserEmail,
-        createdAt: existingData.createdAt || getISTTime(),
-        createdAtISO
-      };
-
-      if (completedAt) {
-        data.completedAt = completedAt;
-        data.completedAtISO = completedAtISO;
-      }
-
-      await setDoc(ref, data, { merge: true });
-
-      if (!exists && stage === "Client registration at office") {
-        emailjs.send("service_ns9w7qv", "template_87k6k2w", {
-          name,
-          pan,
-          mobile,
-          itr,
-          fee
-        });
-      }
-
-      alert(exists ? "Client updated successfully" : "Client saved successfully");
-      resetForm();
-    };
-
-    window.updateStage = async (pan) => {
-      const stageSelect = document.getElementById("stage_" + pan);
-      if (!stageSelect) return;
-
-      const newStage = stageSelect.value;
-      const client = allClients.find(c => c.pan === pan);
-      const updateData = { stage: newStage };
-
-      if (newStage === "Completed" && !client?.completedAt) {
-        updateData.completedAt = getISTTime();
-        updateData.completedAtISO = getTodayISOFromIST();
-      }
-
-      await setDoc(doc(db, "clients", pan), updateData, { merge: true });
-      alert("Stage updated successfully");
-    };
-
-    window.setViewMode = (mode) => {
-      currentView = mode;
-      updateViewButtons();
-      renderClients(displayedClients);
-    };
-
-    window.selectPaneClient = (pan) => {
-      selectedPanePan = pan;
-      renderClients(displayedClients);
-    };
-
-    window.clearFilters = () => {
-      document.getElementById("search").value = "";
-      document.getElementById("createdDateFilter").value = "";
-      document.getElementById("completedDateFilter").value = "";
-      document.getElementById("stageFilter").value = "";
-      document.getElementById("sortBy").value = "latest";
-      applyFiltersAndRender();
-    };
-
-    window.applyFiltersAndRender = applyFiltersAndRender;
-
-    window.exportExcel = () => {
-      const formatted = displayedClients.map((c, i) => ({
-        "Sl. No.": i + 1,
-        "Name": c.name,
-        "PB No.": c.pb,
-        "PAN": c.pan,
-        "Mobile Number": c.mobile,
-        "Mail Address": c.email,
-        "Type of ITR": c.itr,
-        "Fees": c.fee,
-        "Status": c.stage,
-        "Created By": c.createdBy,
-        "Created At": c.createdAt,
-        "Completed At": c.completedAt
-      }));
-
-      const ws = XLSX.utils.json_to_sheet(formatted);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Client Report");
-      XLSX.writeFile(wb, "Client_Report.xlsx");
-    };
-
-    window.exportPDF = () => {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF("landscape");
-
-      const headers = [[
-        "Sl.No", "Name", "PB", "PAN", "Mobile", "Email",
-        "ITR", "Fees", "Status", "Created By", "Created", "Completed"
-      ]];
-
-      const rows = displayedClients.map((c, i) => [
-        i + 1,
-        c.name || "",
-        c.pb || "",
-        c.pan || "",
-        c.mobile || "",
-        c.email || "",
-        c.itr || "",
-        c.fee || "",
-        c.stage || "",
-        c.createdBy || "",
-        c.createdAt || "",
-        c.completedAt || ""
-      ]);
-
-      pdf.autoTable({ head: headers, body: rows });
-      pdf.save("Client_Report.pdf");
-    };
-
-    updateViewButtons();
-    setEditMode(null);
+    [emailInput, passInput].forEach((el) => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") login();
+      });
+    });
   </script>
 </body>
 </html>
