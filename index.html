@@ -1,184 +1,75 @@
-                                          <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Client Workflow Tracker</title>
+<meta charset="UTF-8">
+<title>ICKS - CRM System</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+emailjs.init("oCSNm-4jMM9RJpB35");
+</script>
+
+<!-- Export libs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <style>
-  body {
-    margin:0;
-    font-family: Tahoma, Arial, sans-serif;
-    background:#f7f9fc;
-    color:#2d2d2d;
-    line-height:1.5;
-  }
+body{
+font-family:Tahoma;
+background:#f5f7fb;
+margin:0;
+padding:20px;
+}
 
-  /* NAVBAR */
-  .navbar {
-    background:#ffffff;
-    padding:18px 40px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 1px 6px rgba(0,0,0,0.06);
-    font-size:18px;
-    font-weight:600;
-  }
+h2{
+border-left:5px solid #3b82f6;
+padding-left:10px;
+}
 
-  /* 🔥 ANIMATED ICKS LOGO */
-  .logo {
-    font-size:28px;
-    font-weight:700;
-    letter-spacing:1px;
-    background: linear-gradient(90deg, #007bff, #6f42c1, #00c6ff);
-    background-size: 200% auto;
-    color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
-    animation: shimmer 3s linear infinite;
-  }
+input,select{
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:1px solid #ccc;
+}
 
-  @keyframes shimmer {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-  }
+button{
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
 
-  /* SUBTEXT */
-  .logo-sub {
-    font-size:13px;
-    color:#666;
-    margin-left:10px;
-    font-weight:500;
-  }
+.btn-danger{background:#ef4444;color:white;}
+.btn-success{background:#22c55e;color:white;}
 
-  /* CONTAINER */
-  .container {
-    max-width:1100px;
-    margin:auto;
-    padding:30px 20px 40px;
-  }
+.card{
+background:white;
+padding:12px;
+margin:10px 0;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
 
-  h2 {
-    margin-top:40px;
-    margin-bottom:10px;
-    font-size:20px;
-    font-weight:600;
-    color:#1f1f1f;
-  }
-
-  .form-grid {
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap:14px;
-    margin-top:10px;
-  }
-
-  input, select {
-    padding:12px;
-    border-radius:8px;
-    border:1px solid #e0e0e0;
-    width:100%;
-    background:white;
-    font-size:14px;
-    transition:all 0.2s ease;
-  }
-
-  input:focus, select:focus {
-    outline:none;
-    border-color:#007bff;
-    box-shadow:0 0 0 2px rgba(0,123,255,0.1);
-  }
-
-  button {
-    padding:10px 16px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin:6px 4px 0 0;
-    font-size:14px;
-    font-weight:500;
-    transition:all 0.2s ease;
-  }
-
-  .btn-primary { background:#007bff; color:white; }
-  .btn-primary:hover {
-    background:#0062cc;
-    transform:translateY(-1px);
-    box-shadow:0 4px 12px rgba(0,123,255,0.25);
-  }
-
-  .btn-danger { background:#e74c3c; color:white; }
-  .btn-danger:hover { background:#c0392b; transform:translateY(-1px); }
-
-  .btn-success { background:#2ecc71; color:white; }
-  .btn-success:hover { background:#27ae60; transform:translateY(-1px); }
-
-  .btn-export { background:#6f42c1; color:white; }
-  .btn-export:hover { background:#59359c; transform:translateY(-1px); }
-
-  #search {
-    padding:12px;
-    width:320px;
-    border-radius:8px;
-    border:1px solid #e0e0e0;
-  }
-
-  #search:focus {
-    outline:none;
-    border-color:#007bff;
-    box-shadow:0 0 0 2px rgba(0,123,255,0.1);
-  }
-
-  .card {
-    background:white;
-    padding:18px 20px;
-    margin:14px 0;
-    border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    transition:all 0.25s ease;
-    border:1px solid #f0f0f0;
-  }
-
-  .card:hover {
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-  }
-
-  .deleted {
-    background:#fafafa;
-    opacity:0.65;
-  }
-
-  .pending {
-    color:#ff8c00;
-    font-weight:600;
-    margin:6px 0;
-  }
-
+.deleted{
+opacity:0.5;
+}
 </style>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-
 </head>
 
 <body>
 
-<div class="navbar">
-  <div>
-    <span class="logo">ICKS</span>
-    <span class="logo-sub">CRM System</span>
-  </div>
-  <div>Client Tracker</div>
-</div>
-  
-<div class="container">
+<h1>ICKS - CRM System</h1>
 
 <div id="loginDiv">
-  <h2>Login</h2>
-  <input id="loginEmail"><br><br>
-  <input id="loginPass" type="password"><br><br>
-  <button class="btn-primary" onclick="login()">Login</button>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
 </div>
 
 <div id="appDiv" style="display:none;">
@@ -186,59 +77,46 @@
 <h2>Search</h2>
 <input id="search" placeholder="Search..." onkeyup="filterClients()">
 
-<h2>Export</h2>
-<button class="btn-export" onclick="exportExcel()">Excel</button>
-<button class="btn-export" onclick="exportPDF()">PDF</button>
-
 <h2>Client Entry</h2>
 
-<div class="form-grid">
-  <input id="name" placeholder="Name">
-  <input id="pb" placeholder="PB No">
-  <input id="pan" placeholder="PAN">
-  <input id="mobile" placeholder="Mobile">
-  <input id="email" placeholder="Email">
+<input id="name" placeholder="Name">
+<input id="pb" placeholder="PB No">
+<input id="pan" placeholder="PAN">
+<input id="mobile" placeholder="Mobile">
+<input id="email" placeholder="Email">
 
-  <select id="itr" onchange="setFee()">
-    <option value="">Select ITR</option>
-    <option value="ITR1">ITR-1</option>
-    <option value="ITR2">ITR-2/3/4</option>
-    <option value="CONSULT">Consultation</option>
-  </select>
+<select id="itr" onchange="setFee()">
+<option value="">Select ITR</option>
+<option value="ITR1">ITR1</option>
+<option value="ITR2">ITR2</option>
+<option value="CONSULT">Consultation</option>
+</select>
 
-  <input id="fee" readonly placeholder="Fee">
+<input id="fee" placeholder="Fee">
 
-  <select id="payment">
-    <option>Cash</option>
-    <option>UPI</option>
-    <option>Bank</option>
-  </select>
+<select id="payment">
+<option>Cash</option>
+<option>Online</option>
+</select>
 
-  <select id="stage">
-    <option>Client registration at office</option>
-    <option>Partial submission by client</option>
-    <option>Full submission by client</option>
-    <option>Work initiated at office</option>
-    <option>In progress</option>
-    <option>For client approval</option>
-    <option>Completed</option>
-  </select>
-</div>
+<select id="stage">
+<option>Client registration at office</option>
+<option>In Progress</option>
+<option>Filed</option>
+<option>Completed</option>
+</select>
 
-<button class="btn-primary" onclick="saveClient()">Save</button>
+<br>
+<button onclick="saveClient()">Save</button>
 <button onclick="logout()">Logout</button>
 
 <h2>Clients</h2>
+<button onclick="exportExcel()">Export Excel</button>
+<button onclick="exportPDF()">Export PDF</button>
+
 <div id="list"></div>
 
 </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-emailjs.init("oCSNm-4jMM9RJpB35");
-</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -246,110 +124,175 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from
 import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const app = initializeApp({
-  apiKey:"AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
-  authDomain:"client-tracker-tool-5bdf6.firebaseapp.com",
-  projectId:"client-tracker-tool-5bdf6"
+apiKey:"AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
+authDomain:"client-tracker-tool-5bdf6.firebaseapp.com",
+projectId:"client-tracker-tool-5bdf6"
 });
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
 let currentUserEmail="";
 let currentUserRole="user";
 let allClients=[];
 let filteredClients=[];
 
-// =========================
-// 🔥 ROLE FETCH (FIXED HARD)
-// =========================
+// ROLE FIX (SAFE)
 async function getUserRole(email){
-  try{
-    const cleanEmail = email.toLowerCase().trim();
-
-    console.log("Fetching role for:", cleanEmail);
-
-    const ref = doc(db, "roles", cleanEmail);
-    const snap = await getDoc(ref);
-
-    if(snap.exists()){
-      currentUserRole = (snap.data().role || "user").toLowerCase().trim();
-    } else {
-      console.warn("No role document found → default user");
-      currentUserRole = "user";
-    }
-
-    console.log("FINAL ROLE:", currentUserRole);
-
-  } catch(err){
-    console.error("Role fetch error:", err);
-    currentUserRole = "user";
-  }
+const clean=email.toLowerCase().trim();
+const snap=await getDoc(doc(db,"roles",clean));
+currentUserRole=snap.exists()?snap.data().role.toLowerCase().trim():"user";
+console.log("ROLE:",currentUserRole);
 }
 
-// =========================
 // TIME
-// =========================
 function getISTTime(){
-  return new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+return new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
 }
 
-// =========================
 // AUTH
-// =========================
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, async(user)=>{
 if(user){
-
-currentUserEmail = user.email.toLowerCase().trim();
-
+currentUserEmail=user.email.toLowerCase().trim();
 await getUserRole(currentUserEmail);
 
 loginDiv.style.display="none";
 appDiv.style.display="block";
 loadClients();
-
 }else{
 loginDiv.style.display="block";
 appDiv.style.display="none";
 }
 });
 
-// LOGIN / LOGOUT
 window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
 window.logout=()=>signOut(auth);
 
-// =========================
-// DELETE FIX (CRITICAL)
-// =========================
-window.approveDelete=async(pan,requestedBy)=>{
-
-console.log("Role at approval:", currentUserRole);
-
-// 🔥 TEMP BYPASS DEBUG
-if(currentUserRole !== "admin"){
-alert("Blocked → Role detected: " + currentUserRole);
-return;
-}
-
-if(requestedBy===currentUserEmail){
-alert("Cannot approve your own request");
-return;
-}
-
-await setDoc(doc(db,"clients",pan),{
-isDeleted:true,
-deletedBy:currentUserEmail
-},{merge:true});
-
-alert("Deletion approved");
+// FEE
+window.setFee=()=>{
+let v=itr.value;
+fee.value=v==="ITR1"?849:v==="ITR2"?1349:v==="CONSULT"?199:"";
 };
 
-// =========================
-// KEEP REST EXACT SAME
-// =========================
+// SAVE CLIENT
+window.saveClient=async()=>{
+let name=nameInput("name");
+let pb=nameInput("pb");
+let pan=nameInput("pan");
+let mobile=nameInput("mobile");
+let email=nameInput("email");
+let stage=document.getElementById("stage").value;
+let itr=document.getElementById("itr").value;
+let feeVal=document.getElementById("fee").value;
 
-// (NO OTHER CHANGE — YOUR EXISTING FUNCTIONS REMAIN)
+if(!pan){alert("PAN required");return;}
+
+let ref=doc(db,"clients",pan);
+let snap=await getDoc(ref);
+let isNew=!snap.exists();
+
+// COMPLETION CONTROL
+if(stage==="Completed" && currentUserRole!=="admin"){
+await setDoc(doc(db,"requests",pan+"_completion"),{
+pan,requestedBy:currentUserEmail,type:"completion",status:"pending",createdAt:getISTTime()
+});
+alert("Request sent for admin approval");
+return;
+}
+
+let data={
+name,pb,pan,mobile,email,itr,
+fee:Number(feeVal),
+stage,
+isDeleted:false,
+deleteRequested:false,
+requestedBy:"",
+createdBy:currentUserEmail
+};
+
+if(isNew)data.createdAt=getISTTime();
+if(stage==="Completed"&&!snap.data()?.completedAt)data.completedAt=getISTTime();
+
+await setDoc(ref,data,{merge:true});
+
+// EMAIL CREATION
+if(isNew&&stage==="Client registration at office"){
+emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee:feeVal});
+}
+
+alert("Saved");
+};
+
+function nameInput(id){return document.getElementById(id).value.trim();}
+
+// DELETE
+window.requestDelete=async(pan)=>{
+await setDoc(doc(db,"clients",pan),{deleteRequested:true,requestedBy:currentUserEmail},{merge:true});
+emailjs.send("service_ns9w7qv","template_rigq89q",{pan,requestedBy:currentUserEmail});
+};
+
+window.approveDelete=async(pan,requestedBy)=>{
+if(currentUserRole!=="admin"){alert("Only admin can approve deletion");return;}
+if(requestedBy===currentUserEmail){alert("Cannot approve own");return;}
+await setDoc(doc(db,"clients",pan),{isDeleted:true},{merge:true});
+alert("Deleted");
+};
+
+// LOAD
+function loadClients(){
+onSnapshot(collection(db,"clients"),snap=>{
+allClients=[];
+snap.forEach(d=>allClients.push(d.data()));
+filteredClients=[...allClients];
+renderClients(filteredClients);
+});
+}
+
+// SEARCH
+window.filterClients=()=>{
+let q=search.value.toLowerCase();
+renderClients(allClients.filter(c=>c.name?.toLowerCase().includes(q)||c.pan?.toLowerCase().includes(q)));
+};
+
+// RENDER
+function renderClients(data){
+list.innerHTML="";
+data.forEach(c=>{
+list.innerHTML+=`
+<div class="card ${c.isDeleted?'deleted':''}">
+<b>${c.name}</b> (${c.pan})<br>
+Mobile: ${c.mobile}<br>
+Email: ${c.email}<br>
+ITR: ${c.itr}<br>
+Fee: ₹${c.fee}<br>
+Stage: ${c.stage}<br>
+Created: ${c.createdAt||'-'}<br>
+Completed: ${c.completedAt||'-'}<br>
+
+${!c.isDeleted&&!c.deleteRequested?`<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`:''}
+
+${c.deleteRequested&&!c.isDeleted?`Pending (${c.requestedBy})
+<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`:''}
+</div>`;
+});
+}
+
+// EXPORT
+window.exportExcel=()=>{
+let ws=XLSX.utils.json_to_sheet(allClients);
+let wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,"Clients");
+XLSX.writeFile(wb,"report.xlsx");
+};
+
+window.exportPDF=()=>{
+const { jsPDF }=window.jspdf;
+let doc=new jsPDF();
+doc.text(JSON.stringify(allClients,null,2),10,10);
+doc.save("report.pdf");
+};
 
 </script>
-  
+
 </body>
 </html>
