@@ -188,6 +188,32 @@ button {
   }
 }
 
+/* 🔥 Animated ICKS Logo */
+.logo {
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:1px;
+  background: linear-gradient(90deg, #4f8cff, #6aa7ff, #4f8cff);
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+.logo-sub {
+  font-size:13px;
+  color:#6b7280;
+  margin-left:8px;
+  font-weight:500;
+}
+
+/* smooth shimmer */
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+   
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -197,10 +223,9 @@ button {
 
 <body>
 
-<div class="navbar">
   <div>
-    <span class="logo">IC-KS</span>
-    <span class="logo-sub">CRM</span>
+  <span class="logo">ICKS</span>
+  <span class="logo-sub">CRM System</span>
   </div>
   <div>Operations Hub</div>
 </div>
