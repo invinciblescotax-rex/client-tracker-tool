@@ -3,528 +3,469 @@
 <head>
   <title>IC-KS CRM</title>
 
- <style>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+      color: #2c2c2c;
+    }
 
-body {
-  margin:0;
-  font-family: Tahoma, Arial, sans-serif;
-  background: linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
-  color:#2c2c2c;
-}
+    .navbar {
+      background: #ffffff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
 
-/* NAVBAR */
-.navbar {
-  background:#ffffff;
-  padding:16px 32px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 2px 10px rgba(0,0,0,0.06);
-  font-weight:600;
-  letter-spacing:0.3px;
-}
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 25px;
+    }
 
-/* CONTAINER */
-.container {
-  max-width:1200px;
-  margin:auto;
-  padding:25px;
-}
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 10px;
+      border-left: 4px solid #4f8cff;
+      padding-left: 10px;
+      font-weight: 600;
+    }
 
-/* HEADINGS */
-h2 {
-  margin-top:30px;
-  margin-bottom:10px;
-  border-left:4px solid #4f8cff;
-  padding-left:10px;
-  font-weight:600;
-}
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
 
-/* FORM GRID */
-.form-grid {
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:12px;
-}
+    input, select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d6dbe6;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
 
-/* INPUTS */
-input, select {
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #d6dbe6;
-  background:#ffffff;
-  transition:all 0.2s ease;
-}
+    input:focus, select:focus {
+      outline: none;
+      border-color: #4f8cff;
+      box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.15);
+    }
 
-input:focus, select:focus {
-  outline:none;
-  border-color:#4f8cff;
-  box-shadow:0 0 0 2px rgba(79,140,255,0.15);
-}
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 6px 6px 0 0;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
 
-/* BUTTONS */
-button {
-  padding:10px 16px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  margin:6px 6px 0 0;
-  font-weight:500;
-  transition:all 0.2s ease;
-}
+    .btn-primary {
+      background: linear-gradient(135deg, #4f8cff, #6aa7ff);
+      color: white;
+    }
 
-/* PRIMARY */
-.btn-primary {
-  background:linear-gradient(135deg, #4f8cff, #6aa7ff);
-  color:white;
-}
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(79, 140, 255, 0.3);
+    }
 
-.btn-primary:hover {
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(79,140,255,0.3);
-}
+    .btn-export {
+      background: linear-gradient(135deg, #6f42c1, #8e5be8);
+      color: white;
+    }
 
-/* DELETE */
-.btn-danger {
-  background:linear-gradient(135deg, #ff5c5c, #ff7a7a);
-  color:white;
-}
+    .btn-export:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(111, 66, 193, 0.3);
+    }
 
-.btn-danger:hover {
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(255,92,92,0.3);
-}
+    #search {
+      width: 300px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d6dbe6;
+    }
 
-/* SUCCESS */
-.btn-success {
-  background:linear-gradient(135deg, #2ecc71, #5be49b);
-  color:white;
-}
+    .card {
+      background: #ffffff;
+      padding: 18px;
+      margin: 12px 0;
+      border-radius: 12px;
+      border: 1px solid #eef1f6;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-.btn-success:hover {
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(46,204,113,0.3);
-}
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #4f8cff, #6aa7ff);
+      opacity: 0.7;
+    }
 
-/* EXPORT */
-.btn-export {
-  background:linear-gradient(135deg, #6f42c1, #8e5be8);
-  color:white;
-}
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    }
 
-.btn-export:hover {
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(111,66,193,0.3);
-}
+    .card select {
+      margin-top: 8px;
+      border-radius: 6px;
+    }
 
-/* SEARCH */
-#search {
-  width:300px;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #d6dbe6;
-}
+    @media (max-width: 900px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
 
-/* CARDS */
-.card {
-  background:#ffffff;
-  padding:18px;
-  margin:12px 0;
-  border-radius:12px;
-  border:1px solid #eef1f6;
-  box-shadow:0 4px 14px rgba(0,0,0,0.05);
-  transition:all 0.25s ease;
-  position:relative;
-  overflow:hidden;
-}
+    @media (max-width: 500px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
-/* subtle highlight layer (inspired from advanced css) */
-.card::before {
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:4px;
-  background:linear-gradient(90deg,#4f8cff,#6aa7ff);
-  opacity:0.7;
-}
+    .logo {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #4f8cff, #6aa7ff, #4f8cff);
+      background-size: 200% auto;
+      color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
 
-/* hover effect */
-.card:hover {
-  transform:translateY(-4px);
-  box-shadow:0 12px 28px rgba(0,0,0,0.08);
-}
+    .logo-sub {
+      font-size: 13px;
+      color: #6b7280;
+      margin-left: 10px;
+      font-weight: 500;
+    }
 
-/* deleted */
-.deleted {
-  background:#f3f4f6;
-  opacity:0.6;
-}
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+  </style>
 
-/* pending */
-.pending {
-  color:#ff9800;
-  font-weight:600;
-  margin-top:5px;
-}
-
-/* stage dropdown inside cards */
-.card select {
-  margin-top:8px;
-  border-radius:6px;
-}
-
-/* RESPONSIVE */
-@media (max-width:900px){
-  .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width:500px){
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 🔥 Animated ICKS Logo */
-.logo {
-  font-size:30px;
-  font-weight:700;
-  letter-spacing:1px;
-  background: linear-gradient(90deg, #4f8cff, #6aa7ff, #4f8cff);
-  background-size: 200% auto;
-  color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: shimmer 3s linear infinite;
-}
-
-.logo-sub {
-  font-size:13px;
-  color:#6b7280;
-  margin-left:10px;
-  font-weight:500;
-}
-
-/* smooth shimmer */
-@keyframes shimmer {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-   
-</style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-
 </head>
 
 <body>
-
   <div class="navbar">
-  <div>
-    <span class="logo">IC-KS</span>
-    <span class="logo-sub">CRM System</span>
+    <div>
+      <span class="logo">IC-KS</span>
+      <span class="logo-sub">CRM System</span>
+    </div>
+
+    <div class="nav-right">
+      Operations Hub
+    </div>
   </div>
 
-  <div class="nav-right">
-    Operations Hub
+  <div class="container">
+    <div id="loginDiv">
+      <h2>Login</h2>
+      <input id="loginEmail" placeholder="Email"><br><br>
+      <input id="loginPass" type="password" placeholder="Password"><br><br>
+      <button class="btn-primary" onclick="login()">Login</button>
+    </div>
+
+    <div id="appDiv" style="display:none;">
+      <h2>Search</h2>
+      <input id="search" placeholder="Search..." onkeyup="filterClients()">
+
+      <h2>Export</h2>
+      <button class="btn-export" onclick="exportExcel()">Excel</button>
+      <button class="btn-export" onclick="exportPDF()">PDF</button>
+
+      <h2>Client Entry</h2>
+
+      <div class="form-grid">
+        <input id="name" placeholder="Name">
+        <input id="pb" placeholder="PB No">
+        <input id="pan" placeholder="PAN">
+        <input id="mobile" placeholder="Mobile">
+        <input id="email" placeholder="Email">
+
+        <select id="itr" onchange="setFee()">
+          <option value="">Select ITR</option>
+          <option value="ITR1">ITR-1</option>
+          <option value="ITR2">ITR-2/3/4</option>
+          <option value="CONSULT">Consultation</option>
+        </select>
+
+        <input id="fee" readonly placeholder="Fee">
+
+        <select id="payment">
+          <option>Cash</option>
+          <option>UPI</option>
+          <option>Bank</option>
+        </select>
+
+        <select id="stage">
+          <option>Client registration at office</option>
+          <option>Partial submission by client</option>
+          <option>Full submission by client</option>
+          <option>Work initiated at office</option>
+          <option>In progress</option>
+          <option>For client approval</option>
+          <option>Completed</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" onclick="saveClient()">Save</button>
+      <button onclick="logout()">Logout</button>
+
+      <h2>Clients</h2>
+      <div id="list"></div>
+    </div>
   </div>
-</div>
-  
-<div class="container">
 
-<div id="loginDiv">
-  <h2>Login</h2>
-  <input id="loginEmail"><br><br>
-  <input id="loginPass" type="password"><br><br>
-  <button class="btn-primary" onclick="login()">Login</button>
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("oCSNm-4jMM9RJpB35");
+  </script>
 
-<div id="appDiv" style="display:none;">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<h2>Search</h2>
-<input id="search" placeholder="Search..." onkeyup="filterClients()">
+    const app = initializeApp({
+      apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
+      authDomain: "client-tracker-tool-5bdf6.firebaseapp.com",
+      projectId: "client-tracker-tool-5bdf6"
+    });
 
-<h2>Export</h2>
-<button class="btn-export" onclick="exportExcel()">Excel</button>
-<button class="btn-export" onclick="exportPDF()">PDF</button>
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-<h2>Client Entry</h2>
+    let currentUserEmail = "";
+    let allClients = [];
+    let filteredClients = [];
 
-<div class="form-grid">
-  <input id="name" placeholder="Name">
-  <input id="pb" placeholder="PB No">
-  <input id="pan" placeholder="PAN">
-  <input id="mobile" placeholder="Mobile">
-  <input id="email" placeholder="Email">
+    function getISTTime() {
+      return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    }
 
-  <select id="itr" onchange="setFee()">
-    <option value="">Select ITR</option>
-    <option value="ITR1">ITR-1</option>
-    <option value="ITR2">ITR-2/3/4</option>
-    <option value="CONSULT">Consultation</option>
-  </select>
+    function nameInput(id) {
+      return document.getElementById(id).value.trim();
+    }
 
-  <input id="fee" readonly placeholder="Fee">
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserEmail = user.email;
+        loginDiv.style.display = "none";
+        appDiv.style.display = "block";
+        loadClients();
+      } else {
+        loginDiv.style.display = "block";
+        appDiv.style.display = "none";
+      }
+    });
 
-  <select id="payment">
-    <option>Cash</option>
-    <option>UPI</option>
-    <option>Bank</option>
-  </select>
+    window.login = () => signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value);
+    window.logout = () => signOut(auth);
 
-  <select id="stage">
-    <option>Client registration at office</option>
-    <option>Partial submission by client</option>
-    <option>Full submission by client</option>
-    <option>Work initiated at office</option>
-    <option>In progress</option>
-    <option>For client approval</option>
-    <option>Completed</option>
-  </select>
-</div>
+    window.setFee = () => {
+      const itr = document.getElementById("itr").value;
+      if (itr === "ITR1") fee.value = 849;
+      else if (itr === "ITR2") fee.value = 1349;
+      else if (itr === "CONSULT") fee.value = 199;
+      else fee.value = "";
+    };
 
-<button class="btn-primary" onclick="saveClient()">Save</button>
-<button onclick="logout()">Logout</button>
+    window.saveClient = async () => {
+      const name = nameInput("name");
+      const pb = nameInput("pb");
+      const pan = nameInput("pan");
+      const mobile = nameInput("mobile");
+      const email = nameInput("email");
+      const itr = document.getElementById("itr").value;
+      const fee = document.getElementById("fee").value;
+      const payment = document.getElementById("payment").value;
+      const stage = document.getElementById("stage").value;
 
-<h2>Clients</h2>
-<div id="list"></div>
+      if (!pan) {
+        alert("PAN required");
+        return;
+      }
 
-</div>
+      const ref = doc(db, "clients", pan);
+      const snap = await getDoc(ref);
+      const isNew = !snap.exists();
 
-</div>
+      const data = {
+        name,
+        pb,
+        pan,
+        mobile,
+        email,
+        itr,
+        fee: Number(fee),
+        payment,
+        stage,
+        createdBy: currentUserEmail
+      };
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-emailjs.init("oCSNm-4jMM9RJpB35");
-</script>
+      if (isNew) {
+        data.createdAt = getISTTime();
+      }
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      if (stage === "Completed" && !snap.data()?.completedAt) {
+        data.completedAt = getISTTime();
+      }
 
-const app = initializeApp({
-  apiKey:"AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
-  authDomain:"client-tracker-tool-5bdf6.firebaseapp.com",
-  projectId:"client-tracker-tool-5bdf6"
-});
+      await setDoc(ref, data, { merge: true });
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+      if (isNew && stage === "Client registration at office") {
+        emailjs.send("service_ns9w7qv", "template_87k6k2w", {
+          name,
+          pan,
+          mobile,
+          itr,
+          fee
+        });
+      }
 
-let currentUserEmail="";
-let allClients=[];
-let filteredClients=[];
+      alert("Saved");
+    };
 
-function getISTTime(){
-  return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-}
+    function loadClients() {
+      onSnapshot(collection(db, "clients"), (snapshot) => {
+        allClients = [];
+        snapshot.forEach((d) => allClients.push(d.data()));
+        filteredClients = [...allClients];
+        renderClients(filteredClients);
+      });
+    }
 
-onAuthStateChanged(auth,(user)=>{
-if(user){
-currentUserEmail=user.email;
-loginDiv.style.display="none";
-appDiv.style.display="block";
-loadClients();
-}else{
-loginDiv.style.display="block";
-appDiv.style.display="none";
-}
-});
+    window.filterClients = () => {
+      const q = search.value.toLowerCase();
+      filteredClients = allClients.filter((c) =>
+        (c.name || "").toLowerCase().includes(q) ||
+        (c.pan || "").toLowerCase().includes(q)
+      );
+      renderClients(filteredClients);
+    };
 
-window.login=()=>signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value);
-window.logout=()=>signOut(auth);
+    function renderClients(data) {
+      list.innerHTML = "";
 
-window.setFee=()=>{
-const itr=document.getElementById("itr").value;
-if(itr==="ITR1") fee.value=849;
-else if(itr==="ITR2") fee.value=1349;
-else if(itr==="CONSULT") fee.value=199;
-else fee.value="";
-};
+      data.forEach((c) => {
+        list.innerHTML += `
+          <div class="card">
+            <b>${c.name || ""}</b> (${c.pan || ""})<br>
+            Mobile: ${c.mobile || ""}<br>
+            Email: ${c.email || ""}<br>
+            ITR: ${c.itr || ""}<br>
+            Fee: ₹${c.fee || 0}<br>
 
-window.saveClient=async()=>{
-const name=nameInput("name");
-const pb=nameInput("pb");
-const pan=nameInput("pan");
-const mobile=nameInput("mobile");
-const email=nameInput("email");
-const itr=document.getElementById("itr").value;
-const fee=document.getElementById("fee").value;
-const payment=document.getElementById("payment").value;
-const stage=document.getElementById("stage").value;
+            <b>Current Stage:</b> ${c.stage || ""}<br><br>
 
-if(!pan){ alert("PAN required"); return; }
+            <select id="stage_${c.pan}">
+              <option ${c.stage === "Client registration at office" ? "selected" : ""}>Client registration at office</option>
+              <option ${c.stage === "Partial submission by client" ? "selected" : ""}>Partial submission by client</option>
+              <option ${c.stage === "Full submission by client" ? "selected" : ""}>Full submission by client</option>
+              <option ${c.stage === "Work initiated at office" ? "selected" : ""}>Work initiated at office</option>
+              <option ${c.stage === "In progress" ? "selected" : ""}>In progress</option>
+              <option ${c.stage === "For client approval" ? "selected" : ""}>For client approval</option>
+              <option ${c.stage === "Completed" ? "selected" : ""}>Completed</option>
+            </select>
 
-let ref=doc(db,"clients",pan);
-let snap=await getDoc(ref);
-let isNew=!snap.exists();
+            <button onclick="updateStage('${c.pan}')">Update Stage</button>
 
-let data={
-name,pb,pan,mobile,email,itr,
-fee:Number(fee),payment,stage,
-isDeleted:false,deleteRequested:false,requestedBy:"",
-createdBy: currentUserEmail
-};
+            <br><br>
 
-if(isNew){ data.createdAt = getISTTime(); }
-if(stage==="Completed" && !snap.data()?.completedAt){
-data.completedAt = getISTTime();
-}
+            <b>Created:</b> ${c.createdAt || "-"}<br>
+            <b>Completed:</b> ${c.completedAt || "-"}<br>
+          </div>
+        `;
+      });
+    }
 
-await setDoc(ref,data,{merge:true});
+    window.updateStage = async (pan) => {
+      const newStage = document.getElementById("stage_" + pan).value;
 
-if(isNew && stage==="Client registration at office"){
-emailjs.send("service_ns9w7qv","template_87k6k2w",{name,pan,mobile,itr,fee});
-}
+      const updateData = {
+        stage: newStage
+      };
 
-alert("Saved");
-};
+      if (newStage === "Completed") {
+        updateData.completedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      }
 
-function nameInput(id){
-return document.getElementById(id).value.trim();
-}
+      await setDoc(doc(db, "clients", pan), updateData, { merge: true });
+      alert("Stage updated successfully");
+    };
 
-// 🔥 FIXED DELETE WITH EMAIL
-window.requestDelete=async(pan)=>{
-await setDoc(doc(db,"clients",pan),{
-deleteRequested:true,
-requestedBy:currentUserEmail
-},{merge:true});
+    window.exportExcel = () => {
+      const formatted = (filteredClients.length ? filteredClients : allClients).map((c, i) => ({
+        "Sl. No.": i + 1,
+        "Name": c.name,
+        "PB No.": c.pb,
+        "PAN": c.pan,
+        "Mobile Number": c.mobile,
+        "Mail Address": c.email,
+        "Type of ITR": c.itr,
+        "Fees": c.fee,
+        "Status": c.stage,
+        "Created By": c.createdBy,
+        "Created At": c.createdAt,
+        "Completed At": c.completedAt
+      }));
 
-// EMAIL TRIGGER ADDED
-emailjs.send("service_ns9w7qv","template_rigq89q",{
-pan: pan,
-requestedBy: currentUserEmail
-});
-};
+      const ws = XLSX.utils.json_to_sheet(formatted);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Client Report");
+      XLSX.writeFile(wb, "Client_Report.xlsx");
+    };
 
-window.approveDelete=async(pan,requestedBy)=>{
-if(requestedBy===currentUserEmail){
-alert("Cannot approve your own request");
-return;
-}
-await setDoc(doc(db,"clients",pan),{
-isDeleted:true,
-deletedBy:currentUserEmail
-},{merge:true});
-};
+    window.exportPDF = () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("landscape");
 
-function loadClients(){
-onSnapshot(collection(db,"clients"),(snapshot)=>{
-allClients=[];
-snapshot.forEach(d=>allClients.push(d.data()));
-filteredClients=[...allClients];
-renderClients(filteredClients);
-});
-}
+      const headers = [[
+        "Sl.No", "Name", "PB", "PAN", "Mobile", "Email", "ITR", "Fees",
+        "Status", "Created By", "Created", "Completed"
+      ]];
 
-window.filterClients=()=>{
-let q=search.value.toLowerCase();
-filteredClients=allClients.filter(c=>
-(c.name||"").toLowerCase().includes(q) ||
-(c.pan||"").toLowerCase().includes(q)
-);
-renderClients(filteredClients);
-};
+      const rows = (filteredClients.length ? filteredClients : allClients).map((c, i) => [
+        i + 1,
+        c.name,
+        c.pb,
+        c.pan,
+        c.mobile,
+        c.email,
+        c.itr,
+        c.fee,
+        c.stage,
+        c.createdBy,
+        c.createdAt,
+        c.completedAt
+      ]);
 
-function renderClients(data){
-list.innerHTML="";
-
-data.forEach(c=>{
-
-list.innerHTML+=`
-<div class="card ${c.isDeleted?'deleted':''}">
-
-<b>${c.name}</b> (${c.pan})<br>
-Mobile: ${c.mobile}<br>
-Email: ${c.email}<br>
-ITR: ${c.itr}<br>
-Fee: ₹${c.fee}<br>
-
-<b>Current Stage:</b> ${c.stage}<br><br>
-
-<select id="stage_${c.pan}">
-  <option ${c.stage==="Client registration at office"?"selected":""}>Client registration at office</option>
-  <option ${c.stage==="Partial submission by client"?"selected":""}>Partial submission by client</option>
-  <option ${c.stage==="Full submission by client"?"selected":""}>Full submission by client</option>
-  <option ${c.stage==="Work initiated at office"?"selected":""}>Work initiated at office</option>
-  <option ${c.stage==="In progress"?"selected":""}>In progress</option>
-  <option ${c.stage==="For client approval"?"selected":""}>For client approval</option>
-  <option ${c.stage==="Completed"?"selected":""}>Completed</option>
-</select>
-
-<button onclick="updateStage('${c.pan}')">Update Stage</button>
-
-<br><br>
-
-<b>Created:</b> ${c.createdAt || '-'}<br>
-<b>Completed:</b> ${c.completedAt || '-'}<br>
-
-${c.isDeleted ? "<b style='color:red;'>Deleted</b><br>" : ""}
-
-${
-!c.deleteRequested && !c.isDeleted
-? `<button class="btn-danger" onclick="requestDelete('${c.pan}')">Delete</button>`
-: c.deleteRequested && !c.isDeleted
-? `<div class="pending">Pending (${c.requestedBy})</div>
-<button class="btn-success" onclick="approveDelete('${c.pan}','${c.requestedBy}')">Approve</button>`
-: ""
-}
-
-</div>`;
-});
-}
-
-window.updateStage = async (pan) => {
-
-const newStage = document.getElementById("stage_"+pan).value;
-
-let updateData = {
-  stage: newStage
-};
-
-// auto set completion timestamp
-if(newStage === "Completed"){
-  updateData.completedAt = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-}
-
-await setDoc(doc(db,"clients",pan), updateData, {merge:true});
-
-alert("Stage updated successfully");
-
-};
-
-window.exportExcel=()=>{
-let formatted=(filteredClients.length?filteredClients:allClients).map((c,i)=>({
-"Sl. No.":i+1,"Name":c.name,"PB No.":c.pb,"PAN":c.pan,
-"Mobile Number":c.mobile,"Mail Address":c.email,
-"Type of ITR":c.itr,"Fees":c.fee,"Status":c.stage,
-"Created By":c.createdBy,"Created At":c.createdAt,"Completed At":c.completedAt
-}));
-let ws=XLSX.utils.json_to_sheet(formatted);
-let wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,"Client Report");
-XLSX.writeFile(wb,"Client_Report.xlsx");
-};
-
-window.exportPDF=()=>{
-const { jsPDF }=window.jspdf;
-let doc=new jsPDF('landscape');
-
-let headers=[["Sl.No","Name","PB","PAN","Mobile","Email","ITR","Fees","Status","Created By","Created","Completed"]];
-let rows=(filteredClients.length?filteredClients:allClients).map((c,i)=>[
-i+1,c.name,c.pb,c.pan,c.mobile,c.email,c.itr,c.fee,c.stage,c.createdBy,c.createdAt,c.completedAt
-]);
-
-doc.autoTable({head:headers,body:rows});
-doc.save("Client_Report.pdf");
-};
-</script>
-
+      doc.autoTable({ head: headers, body: rows });
+      doc.save("Client_Report.pdf");
+    };
+  </script>
 </body>
 </html>
