@@ -11,30 +11,19 @@
       --bg-2: #eef5ff;
       --bg-3: #f9fcff;
       --surface: rgba(255, 255, 255, 0.8);
-      --surface-strong: rgba(255, 255, 255, 0.94);
       --text: #24324a;
       --text-soft: #60708d;
       --line: rgba(186, 205, 232, 0.45);
       --primary: #5b8def;
       --primary-2: #7fb3ff;
       --teal: #57c6c2;
-      --mint: #7ed7c1;
-      --rose: #f6b7c8;
       --shadow-lg: 0 24px 60px rgba(115, 149, 199, 0.18);
       --shadow-md: 0 14px 34px rgba(122, 152, 199, 0.14);
       --shadow-sm: 0 8px 20px rgba(122, 152, 199, 0.1);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -49,35 +38,7 @@
       overflow-x: hidden;
     }
 
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      filter: blur(60px);
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-
-    body::before {
-      top: -80px;
-      left: -90px;
-      background: rgba(127, 179, 255, 0.24);
-    }
-
-    body::after {
-      right: -100px;
-      bottom: -100px;
-      background: rgba(126, 215, 193, 0.22);
-    }
-
-    .app-shell {
-      position: relative;
-      z-index: 1;
-    }
+    .app-shell { position: relative; z-index: 1; }
 
     .navbar {
       position: sticky;
@@ -120,7 +81,6 @@
       font-weight: 800;
       color: #3b67b7;
       font-size: 15px;
-      letter-spacing: 0.4px;
     }
 
     .brand-text {
@@ -168,21 +128,6 @@
       box-shadow: var(--shadow-sm);
     }
 
-    .nav-pill.role-admin {
-      color: #2c74a3;
-      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(233,247,255,0.9));
-    }
-
-    .nav-pill.role-user {
-      color: #2f7f73;
-      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(236,251,247,0.9));
-    }
-
-    .nav-pill.pending {
-      color: #a86912;
-      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,248,232,0.96));
-    }
-
     .nav-btn {
       height: 42px;
       padding: 0 16px;
@@ -194,11 +139,6 @@
       color: var(--text);
       background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,255,0.92));
       box-shadow: var(--shadow-sm);
-      transition: 0.22s ease;
-    }
-
-    .nav-btn:hover {
-      transform: translateY(-2px);
     }
 
     @keyframes shimmer {
@@ -217,7 +157,7 @@
       background: var(--surface);
       backdrop-filter: blur(16px);
       border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
+      border-radius: 28px;
       box-shadow: var(--shadow-lg);
       padding: 26px;
       margin-bottom: 22px;
@@ -239,18 +179,6 @@
       padding-top: 34px;
     }
 
-    .hero-login::after {
-      content: "";
-      position: absolute;
-      right: -50px;
-      top: -40px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(168,202,255,0.38), transparent 70%);
-      pointer-events: none;
-    }
-
     .section-head {
       display: flex;
       justify-content: space-between;
@@ -265,26 +193,9 @@
       gap: 6px;
     }
 
-    h1, h2, h3 {
-      margin: 0;
-    }
-
-    h1 {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.4px;
-    }
-
-    h2 {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
-
-    h3 {
-      font-size: 18px;
-      font-weight: 800;
-    }
+    h1, h2 { margin: 0; }
+    h1 { font-size: 30px; font-weight: 800; }
+    h2 { font-size: 24px; font-weight: 800; }
 
     .subtle {
       color: var(--text-soft);
@@ -332,14 +243,9 @@
       margin-top: 8px;
     }
 
-    input,
-    select,
-    button {
-      font: inherit;
-    }
+    input, select, button { font: inherit; }
 
-    input,
-    select {
+    input, select {
       width: 100%;
       height: 48px;
       border: 1px solid rgba(190, 208, 233, 0.62);
@@ -352,19 +258,6 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
     }
 
-    input::placeholder {
-      color: #92a2bc;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: rgba(91,141,239,0.78);
-      box-shadow:
-        0 0 0 4px rgba(126, 177, 255, 0.14),
-        0 10px 24px rgba(141, 175, 224, 0.12);
-      transform: translateY(-1px);
-    }
-
     button {
       height: 46px;
       padding: 0 16px;
@@ -372,13 +265,8 @@
       border-radius: 15px;
       cursor: pointer;
       font-weight: 700;
-      letter-spacing: 0.1px;
       transition: 0.22s ease;
       box-shadow: var(--shadow-sm);
-    }
-
-    button:hover {
-      transform: translateY(-2px);
     }
 
     .btn-primary {
@@ -415,7 +303,6 @@
     .btn-view.active {
       color: #fff;
       background: linear-gradient(135deg, #5b8def, #7fb3ff);
-      box-shadow: 0 12px 28px rgba(97, 149, 235, 0.25);
     }
 
     .action-row {
@@ -433,15 +320,12 @@
       display: none;
       font-size: 13px;
       font-weight: 700;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
-    }
-
-    .status-banner.editing {
-      display: block;
       background: linear-gradient(135deg, rgba(126,215,193,0.18), rgba(91,141,239,0.12));
       color: #2f6f77;
       border: 1px solid rgba(126, 215, 193, 0.32);
     }
+
+    .status-banner.editing { display: block; }
 
     .status-message {
       margin-top: 12px;
@@ -450,13 +334,8 @@
       font-weight: 700;
     }
 
-    .status-message.error {
-      color: #c45d73;
-    }
-
-    .status-message.success {
-      color: #2f8d6a;
-    }
+    .status-message.error { color: #c45d73; }
+    .status-message.success { color: #2f8d6a; }
 
     .summary-grid {
       display: grid;
@@ -465,25 +344,15 @@
       margin-top: 16px;
     }
 
-    .summary-card {
-      position: relative;
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.9));
+    .summary-card, .chart-card, .card, .pending-card, .list-table-wrap, .pane-list, .pane-detail, .empty-state {
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
       border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 22px;
-      padding: 18px;
       box-shadow: var(--shadow-md);
-      overflow: hidden;
     }
 
-    .summary-card::after {
-      content: "";
-      position: absolute;
-      right: -24px;
-      top: -24px;
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(168,202,255,0.24), transparent 68%);
+    .summary-card {
+      border-radius: 22px;
+      padding: 18px;
     }
 
     .summary-label {
@@ -496,7 +365,6 @@
     .summary-value {
       font-size: 30px;
       font-weight: 800;
-      letter-spacing: -0.5px;
     }
 
     .summary-note {
@@ -513,11 +381,8 @@
     }
 
     .chart-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,251,255,0.9));
-      border: 1px solid rgba(197, 214, 238, 0.55);
       border-radius: 22px;
       padding: 18px;
-      box-shadow: var(--shadow-md);
     }
 
     .chart-label {
@@ -533,7 +398,6 @@
       border-radius: 999px;
       background: linear-gradient(90deg, rgba(232,239,250,0.9), rgba(241,246,252,0.95));
       overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(130, 158, 196, 0.1);
     }
 
     .bar-fill {
@@ -542,13 +406,8 @@
       transition: width 0.3s ease;
     }
 
-    .bar-fill.pending {
-      background: linear-gradient(90deg, #f6cc7a, #e8ad4d);
-    }
-
-    .bar-fill.completed {
-      background: linear-gradient(90deg, #70d1aa, #46b98b);
-    }
+    .bar-fill.pending { background: linear-gradient(90deg, #f6cc7a, #e8ad4d); }
+    .bar-fill.completed { background: linear-gradient(90deg, #70d1aa, #46b98b); }
 
     .chart-meta {
       display: flex;
@@ -559,101 +418,26 @@
       font-weight: 600;
     }
 
-    .pending-panel {
-      display: none;
-    }
-
-    .pending-grid {
+    .pending-grid, .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
       gap: 16px;
       margin-top: 14px;
     }
 
-    .pending-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,250,241,0.94));
-      border: 1px solid rgba(237, 220, 183, 0.6);
+    .pending-card, .card {
       border-radius: 22px;
       padding: 18px;
-      box-shadow: var(--shadow-md);
     }
 
-    .pending-title {
+    .pending-title, .client-name {
       font-size: 17px;
       font-weight: 800;
-      margin-bottom: 6px;
     }
 
-    .pending-meta {
+    .client-pan, .pending-meta, .muted {
       color: var(--text-soft);
       font-size: 13px;
-      line-height: 1.6;
-      margin: 10px 0 14px;
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .card {
-      position: relative;
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
-      border: 1px solid rgba(197, 214, 238, 0.55);
-      border-radius: 24px;
-      box-shadow: var(--shadow-md);
-      padding: 20px;
-      overflow: hidden;
-      transition: 0.24s ease;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto auto 0;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, rgba(91,141,239,0.85), rgba(87,198,194,0.7), rgba(246,183,200,0.66));
-    }
-
-    .card::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      right: -35px;
-      top: -35px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(168,202,255,0.18), transparent 68%);
-      pointer-events: none;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 22px 46px rgba(122, 154, 199, 0.18);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .client-name {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.2px;
-    }
-
-    .client-pan {
-      color: var(--text-soft);
-      font-size: 13px;
-      margin-top: 5px;
-      font-weight: 600;
     }
 
     .meta {
@@ -667,7 +451,6 @@
       display: grid;
       grid-template-columns: 108px 1fr;
       gap: 8px;
-      align-items: start;
     }
 
     .meta-label {
@@ -678,12 +461,10 @@
     .stage-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
       border-radius: 999px;
       padding: 7px 11px;
       font-size: 12px;
       font-weight: 800;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
       white-space: nowrap;
     }
 
@@ -697,12 +478,9 @@
     .stage-completed { background: #e7f9f1; color: #2f9970; }
 
     .list-table-wrap {
-      margin-top: 16px;
       overflow-x: auto;
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
-      border: 1px solid rgba(197, 214, 238, 0.55);
       border-radius: 24px;
-      box-shadow: var(--shadow-md);
+      margin-top: 16px;
     }
 
     .list-table {
@@ -711,26 +489,12 @@
       border-collapse: collapse;
     }
 
-    .list-table th,
-    .list-table td {
-      padding: 14px 14px;
+    .list-table th, .list-table td {
+      padding: 14px;
       border-bottom: 1px solid rgba(224, 234, 247, 0.9);
       text-align: left;
       vertical-align: top;
       font-size: 14px;
-    }
-
-    .list-table th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: rgba(244, 249, 255, 0.97);
-      color: #64789a;
-      font-weight: 800;
-    }
-
-    .list-table tr:hover td {
-      background: rgba(248, 251, 255, 0.75);
     }
 
     .pane-layout {
@@ -740,25 +504,15 @@
       margin-top: 18px;
     }
 
-    .pane-list,
-    .pane-detail {
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,255,0.92));
-      border: 1px solid rgba(197, 214, 238, 0.55);
+    .pane-list, .pane-detail {
       border-radius: 24px;
-      box-shadow: var(--shadow-md);
       overflow: hidden;
     }
 
     .pane-item {
-      position: relative;
       padding: 16px 18px;
       border-bottom: 1px solid rgba(224, 234, 247, 0.9);
       cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .pane-item:hover {
-      background: rgba(247, 251, 255, 0.8);
     }
 
     .pane-item.active {
@@ -767,9 +521,7 @@
       padding-left: 14px;
     }
 
-    .pane-detail-inner {
-      padding: 24px;
-    }
+    .pane-detail-inner { padding: 24px; }
 
     .detail-grid {
       display: grid;
@@ -783,7 +535,6 @@
       border: 1px solid rgba(221, 232, 246, 0.92);
       border-radius: 18px;
       padding: 14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
     }
 
     .detail-label {
@@ -792,87 +543,31 @@
       margin-bottom: 6px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.7px;
     }
 
     .empty-state {
-      margin-top: 18px;
       padding: 34px 18px;
       text-align: center;
-      color: var(--text-soft);
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.9));
-      border: 1px solid rgba(197, 214, 238, 0.55);
       border-radius: 24px;
-      box-shadow: var(--shadow-md);
       font-weight: 600;
+      margin-top: 18px;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
-    .muted {
-      color: var(--text-soft);
-    }
+    .hidden { display: none !important; }
 
     @media (max-width: 1180px) {
-      .form-grid,
-      .summary-grid,
-      .filters-grid,
-      .chart-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .toolbar-right {
-        justify-content: flex-start;
-      }
-
-      .pane-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
+      .form-grid, .summary-grid, .filters-grid, .chart-grid { grid-template-columns: repeat(2, 1fr); }
+      .toolbar { grid-template-columns: 1fr; }
+      .toolbar-right { justify-content: flex-start; }
+      .pane-layout { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 700px) {
-      .container {
-        padding: 16px 14px 28px;
-      }
-
-      .navbar {
-        padding: 14px;
-      }
-
-      .brand-mark {
-        width: 40px;
-        height: 40px;
-      }
-
-      .logo {
-        font-size: 22px;
-      }
-
-      .form-grid,
-      .summary-grid,
-      .filters-grid,
-      .chart-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .panel {
-        padding: 18px;
-        border-radius: 22px;
-      }
-
-      .hero-login {
-        margin-top: 28px;
-      }
+      .container { padding: 16px 14px 28px; }
+      .navbar { padding: 14px; }
+      .form-grid, .summary-grid, .filters-grid, .chart-grid { grid-template-columns: 1fr; }
+      .panel { padding: 18px; }
     }
   </style>
 
@@ -893,8 +588,8 @@
       </div>
 
       <div class="nav-right">
-        <div id="navRole" class="nav-pill hidden">Role</div>
-        <div id="navPending" class="nav-pill pending hidden">Pending Requests: 0</div>
+        <div id="navRole" class="nav-pill hidden"></div>
+        <div id="navPending" class="nav-pill hidden"></div>
         <button id="navLogout" class="nav-btn hidden" onclick="logout()">Logout</button>
       </div>
     </div>
@@ -904,7 +599,7 @@
         <div class="section-head">
           <div class="section-head-left">
             <h1>Welcome Back</h1>
-            <div class="subtle">Login once and the system will open the correct workspace for admin or user inside this same page.</div>
+            <div class="subtle">Login once and the system will open the correct workspace inside this same page.</div>
           </div>
           <div class="chip">Secure Login</div>
         </div>
@@ -918,11 +613,11 @@
       </div>
 
       <div id="appDiv" class="hidden">
-        <div id="approvalPanel" class="panel pending-panel">
+        <div id="approvalPanel" class="panel hidden">
           <div class="section-head">
             <div class="section-head-left">
               <h2>Pending Requests</h2>
-              <div class="subtle">Completion requests sent by users will appear here for admin approval.</div>
+              <div class="subtle">Completion requests from users appear here for admin approval.</div>
             </div>
             <div class="chip" id="approvalChip">0 Pending</div>
           </div>
@@ -933,7 +628,7 @@
           <div class="section-head">
             <div class="section-head-left">
               <h2>Client Entry</h2>
-              <div class="subtle">Add a new client or edit an existing record while keeping the CRM flow intact.</div>
+              <div class="subtle">Add a new client or edit an existing record.</div>
             </div>
             <div class="chip" id="workspaceChip">Workspace</div>
           </div>
@@ -1086,23 +781,15 @@
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const app = initializeApp({
+    const firebaseConfig = {
       apiKey: "AIzaSyCsxAw40sFLw00PtEas3cvzRMEjkDZ9NJE",
       authDomain: "client-tracker-tool-5bdf6.firebaseapp.com",
       projectId: "client-tracker-tool-5bdf6"
-    });
+    };
 
+    const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
-    let currentUserEmail = "";
-    let currentRole = "";
-    let allClients = [];
-    let displayedClients = [];
-    let currentView = "card";
-    let selectedPanePan = null;
-    let editingPan = null;
-    let unsubscribeClients = null;
 
     const loginDiv = document.getElementById("loginDiv");
     const appDiv = document.getElementById("appDiv");
@@ -1116,6 +803,15 @@
     const approvalChip = document.getElementById("approvalChip");
     const workspaceChip = document.getElementById("workspaceChip");
     const dashboardChip = document.getElementById("dashboardChip");
+
+    let currentUserEmail = "";
+    let currentRole = "";
+    let allClients = [];
+    let displayedClients = [];
+    let currentView = "card";
+    let selectedPanePan = null;
+    let editingPan = null;
+    let unsubscribeClients = null;
 
     const editableStages = [
       "Client registration at office",
@@ -1206,6 +902,13 @@
       ).join("");
     }
 
+    async function getRoleByEmail(email) {
+      const ref = doc(db, "roles", email.toLowerCase());
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return null;
+      return snap.data();
+    }
+
     function updateViewButtons() {
       document.getElementById("btnList").classList.toggle("active", currentView === "list");
       document.getElementById("btnCard").classList.toggle("active", currentView === "card");
@@ -1218,11 +921,11 @@
       const saveBtn = document.getElementById("saveBtn");
 
       if (editingPan) {
-        banner.className = "status-banner editing";
+        banner.classList.add("editing");
         banner.textContent = `Editing client: ${client.name || "-"} (${client.pan || "-"})`;
         saveBtn.textContent = "Update Client";
       } else {
-        banner.className = "status-banner";
+        banner.classList.remove("editing");
         banner.textContent = "";
         saveBtn.textContent = "Save";
       }
@@ -1294,11 +997,11 @@
 
     function renderPendingRequests() {
       if (!isAdmin()) {
-        approvalPanel.style.display = "none";
+        approvalPanel.classList.add("hidden");
         return;
       }
 
-      approvalPanel.style.display = "block";
+      approvalPanel.classList.remove("hidden");
       const pending = getPendingRequests();
       approvalChip.textContent = `${pending.length} Pending`;
 
@@ -1327,17 +1030,6 @@
           `).join("")}
         </div>
       `;
-    }
-
-    function renderClients(data) {
-      if (!data.length) {
-        document.getElementById("list").innerHTML = `<div class="empty-state">No client records found for the current search or filters.</div>`;
-        return;
-      }
-
-      if (currentView === "list") renderListView(data);
-      else if (currentView === "pane") renderPaneView(data);
-      else renderCardView(data);
     }
 
     function renderCardView(data) {
@@ -1471,6 +1163,16 @@
       `;
     }
 
+    function renderClients(data) {
+      if (!data.length) {
+        document.getElementById("list").innerHTML = `<div class="empty-state">No client records found for the current search or filters.</div>`;
+        return;
+      }
+      if (currentView === "list") renderListView(data);
+      else if (currentView === "pane") renderPaneView(data);
+      else renderCardView(data);
+    }
+
     function fillForm(client) {
       setInputValue("name", client.name);
       setInputValue("pb", client.pb);
@@ -1481,71 +1183,6 @@
       setInputValue("fee", client.fee);
       setInputValue("payment", client.payment || "Cash");
       setInputValue("stage", getDropdownStage(client.stage || "Client registration at office"));
-    }
-
-    async function getRoleByEmail(email) {
-      const roleRef = doc(db, "roles", email.toLowerCase());
-      const roleSnap = await getDoc(roleRef);
-      if (!roleSnap.exists()) return null;
-      return roleSnap.data();
-    }
-
-    function updateShellByRole() {
-      navRole.classList.remove("hidden", "role-admin", "role-user");
-      navLogout.classList.remove("hidden");
-
-      if (isAdmin()) {
-        navRole.textContent = "Admin Workspace";
-        navRole.classList.add("role-admin");
-        navPending.classList.remove("hidden");
-        workspaceChip.textContent = "Admin Workspace";
-        dashboardChip.textContent = "Admin Dashboard";
-      } else {
-        navRole.textContent = "User Workspace";
-        navRole.classList.add("role-user");
-        navPending.classList.add("hidden");
-        workspaceChip.textContent = "User Workspace";
-        dashboardChip.textContent = "User Dashboard";
-      }
-    }
-
-    function updatePendingNav() {
-      if (!isAdmin()) {
-        navPending.classList.add("hidden");
-        return;
-      }
-      const count = getPendingRequests().length;
-      navPending.textContent = `Pending Requests: ${count}`;
-      navPending.classList.remove("hidden");
-    }
-
-    function loadClients() {
-      if (unsubscribeClients) unsubscribeClients();
-      unsubscribeClients = onSnapshot(collection(db, "clients"), (snapshot) => {
-        allClients = [];
-        snapshot.forEach((d) => allClients.push(d.data()));
-        applyFiltersAndRender();
-      });
-    }
-
-    function buildCompletionRequest(existingData = {}, fallbackPreviousStage = "For client approval") {
-      return {
-        stage: "Waiting for admin approval",
-        completionRequested: true,
-        completionRequestedBy: currentUserEmail,
-        completionRequestedAt: getISTTime(),
-        approvalStatus: "pending",
-        approvedBy: "",
-        approvedAt: "",
-        completedAt: "",
-        completedAtISO: "",
-        previousStageBeforeApproval:
-          existingData.stage &&
-          existingData.stage !== "Waiting for admin approval" &&
-          existingData.stage !== "Completed"
-            ? existingData.stage
-            : (existingData.previousStageBeforeApproval || fallbackPreviousStage)
-      };
     }
 
     function applyFiltersAndRender() {
@@ -1581,6 +1218,45 @@
       renderClients(data);
       renderPendingRequests();
       updatePendingNav();
+    }
+
+    function updatePendingNav() {
+      if (!isAdmin()) {
+        navPending.classList.add("hidden");
+        return;
+      }
+      const count = getPendingRequests().length;
+      navPending.textContent = `Pending Requests: ${count}`;
+      navPending.classList.remove("hidden");
+    }
+
+    function loadClients() {
+      if (unsubscribeClients) unsubscribeClients();
+      unsubscribeClients = onSnapshot(collection(db, "clients"), snapshot => {
+        allClients = [];
+        snapshot.forEach(d => allClients.push(d.data()));
+        applyFiltersAndRender();
+      });
+    }
+
+    function buildCompletionRequest(existingData = {}, fallbackPreviousStage = "For client approval") {
+      return {
+        stage: "Waiting for admin approval",
+        completionRequested: true,
+        completionRequestedBy: currentUserEmail,
+        completionRequestedAt: getISTTime(),
+        approvalStatus: "pending",
+        approvedBy: "",
+        approvedAt: "",
+        completedAt: "",
+        completedAtISO: "",
+        previousStageBeforeApproval:
+          existingData.stage &&
+          existingData.stage !== "Waiting for admin approval" &&
+          existingData.stage !== "Completed"
+            ? existingData.stage
+            : (existingData.previousStageBeforeApproval || fallbackPreviousStage)
+      };
     }
 
     window.login = async () => {
@@ -1621,7 +1297,6 @@
 
     window.resetForm = () => {
       resetFormFields();
-      editingPan = null;
       setEditMode(null);
     };
 
@@ -1653,9 +1328,8 @@
       const snap = await getDoc(ref);
       const exists = snap.exists();
       const existingData = snap.data() || {};
-      const isEditingSameClient = editingPan && editingPan === pan;
 
-      if (exists && !isEditingSameClient) {
+      if (exists && editingPan !== pan) {
         const proceed = confirm("This PAN already exists. Saving now will update the existing client record. Do you want to continue?");
         if (!proceed) return;
       }
@@ -1696,45 +1370,18 @@
           data.completedAt = existingData.completedAt || getISTTime();
           data.completedAtISO = existingData.completedAtISO || getTodayISOFromIST();
           data.previousStageBeforeApproval = "";
-        } else if (stage !== "Waiting for admin approval") {
-          data.completionRequested = false;
-          data.completionRequestedBy = "";
-          data.completionRequestedAt = "";
-          if (stage !== "Completed") {
-            data.approvalStatus = "";
-            data.approvedBy = "";
-            data.approvedAt = "";
-            data.previousStageBeforeApproval = "";
-          }
         }
       } else {
         if (stage === "Completed") {
           Object.assign(data, buildCompletionRequest(existingData, "For client approval"));
           alert("Sent for admin approval. Check back after a while.");
-        } else {
-          data.stage = stage;
-          if (existingData.stage === "Waiting for admin approval") {
-            data.completionRequested = false;
-            data.completionRequestedBy = "";
-            data.completionRequestedAt = "";
-            data.approvalStatus = "";
-            data.approvedBy = "";
-            data.approvedAt = "";
-            data.previousStageBeforeApproval = "";
-          }
         }
       }
 
       await setDoc(ref, data, { merge: true });
 
       if (!exists && data.stage === "Client registration at office") {
-        emailjs.send("service_ns9w7qv", "template_87k6k2w", {
-          name,
-          pan,
-          mobile,
-          itr,
-          fee
-        });
+        emailjs.send("service_ns9w7qv", "template_87k6k2w", { name, pan, mobile, itr, fee });
       }
 
       alert(exists ? "Client updated successfully" : "Client saved successfully");
@@ -1763,17 +1410,7 @@
           updateData.previousStageBeforeApproval = "";
         } else {
           updateData.stage = requestedStage;
-          if (client.stage === "Waiting for admin approval") {
-            updateData.completionRequested = false;
-            updateData.completionRequestedBy = "";
-            updateData.completionRequestedAt = "";
-            updateData.approvalStatus = "";
-            updateData.approvedBy = "";
-            updateData.approvedAt = "";
-            updateData.previousStageBeforeApproval = "";
-          }
         }
-
         await setDoc(doc(db, "clients", pan), updateData, { merge: true });
         alert("Stage updated successfully");
         return;
@@ -1787,23 +1424,11 @@
       }
 
       updateData.stage = requestedStage;
-
-      if (client.stage === "Waiting for admin approval" && requestedStage !== "Completed") {
-        updateData.completionRequested = false;
-        updateData.completionRequestedBy = "";
-        updateData.completionRequestedAt = "";
-        updateData.approvalStatus = "";
-        updateData.approvedBy = "";
-        updateData.approvedAt = "";
-        updateData.previousStageBeforeApproval = "";
-      }
-
       await setDoc(doc(db, "clients", pan), updateData, { merge: true });
       alert("Stage updated successfully");
     };
 
     window.approveCompletion = async (pan) => {
-      if (!isAdmin()) return;
       const client = allClients.find(c => c.pan === pan);
       if (!client) return;
 
@@ -1824,7 +1449,6 @@
     };
 
     window.rejectCompletion = async (pan) => {
-      if (!isAdmin()) return;
       const client = allClients.find(c => c.pan === pan);
       if (!client) return;
 
@@ -1896,18 +1520,9 @@
       ]];
 
       const rows = displayedClients.map((c, i) => [
-        i + 1,
-        c.name || "",
-        c.pb || "",
-        c.pan || "",
-        c.mobile || "",
-        c.email || "",
-        c.itr || "",
-        c.fee || "",
-        c.stage || "",
-        c.createdBy || "",
-        c.createdAt || "",
-        c.completedAt || ""
+        i + 1, c.name || "", c.pb || "", c.pan || "", c.mobile || "",
+        c.email || "", c.itr || "", c.fee || "", c.stage || "",
+        c.createdBy || "", c.createdAt || "", c.completedAt || ""
       ]);
 
       pdf.autoTable({ head: headers, body: rows });
@@ -1915,65 +1530,72 @@
     };
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        currentUserEmail = "";
-        currentRole = "";
-        allClients = [];
-        displayedClients = [];
-        editingPan = null;
-
-        if (unsubscribeClients) {
-          unsubscribeClients();
+      try {
+        if (!user) {
+          currentUserEmail = "";
+          currentRole = "";
+          allClients = [];
+          displayedClients = [];
+          setEditMode(null);
+          if (unsubscribeClients) unsubscribeClients();
           unsubscribeClients = null;
+
+          loginDiv.classList.remove("hidden");
+          appDiv.classList.add("hidden");
+          navRole.classList.add("hidden");
+          navPending.classList.add("hidden");
+          navLogout.classList.add("hidden");
+          approvalPanel.classList.add("hidden");
+          setLoginLoading(false);
+          return;
         }
 
-        loginDiv.classList.remove("hidden");
-        appDiv.classList.add("hidden");
-        navRole.classList.add("hidden");
-        navPending.classList.add("hidden");
-        navLogout.classList.add("hidden");
-        approvalPanel.style.display = "none";
-        setLoginLoading(false);
-        setLoginStatus("");
-        return;
-      }
-
-      try {
         currentUserEmail = user.email.toLowerCase();
         const roleData = await getRoleByEmail(currentUserEmail);
 
-        if (!roleData || roleData.active === false) {
-          setLoginStatus("No active role is assigned to this account.", "error");
+        if (!roleData) {
+          setLoginStatus("Role record not found in Firestore.", "error");
+          await signOut(auth);
+          return;
+        }
+
+        if (roleData.active !== true) {
+          setLoginStatus("This account is inactive.", "error");
           await signOut(auth);
           return;
         }
 
         currentRole = String(roleData.role || "").toLowerCase();
 
-        if (!["admin", "user"].includes(currentRole)) {
-          setLoginStatus("Invalid role configured for this account.", "error");
+        if (currentRole !== "admin" && currentRole !== "user") {
+          setLoginStatus("Invalid role configured.", "error");
           await signOut(auth);
           return;
         }
 
-        loginDiv.classList.add("hidden");
-        appDiv.classList.remove("hidden");
-
+        navRole.textContent = currentRole === "admin" ? "Admin Workspace" : "User Workspace";
         navRole.classList.remove("hidden");
         navLogout.classList.remove("hidden");
-        navRole.textContent = isAdmin() ? "Admin Workspace" : "User Workspace";
-        navRole.classList.add(isAdmin() ? "role-admin" : "role-user");
-        workspaceChip.textContent = isAdmin() ? "Admin Workspace" : "User Workspace";
-        dashboardChip.textContent = isAdmin() ? "Admin Dashboard" : "User Dashboard";
 
-        setEditMode(null);
+        if (currentRole === "admin") {
+          workspaceChip.textContent = "Admin Workspace";
+          dashboardChip.textContent = "Admin Dashboard";
+          navPending.classList.remove("hidden");
+        } else {
+          workspaceChip.textContent = "User Workspace";
+          dashboardChip.textContent = "User Dashboard";
+          navPending.classList.add("hidden");
+        }
+
+        loginDiv.classList.add("hidden");
+        appDiv.classList.remove("hidden");
         updateViewButtons();
         loadClients();
         setLoginLoading(false);
+        setLoginStatus("");
       } catch (error) {
-        setLoginStatus(error.message || "Unable to verify access.", "error");
+        setLoginStatus(error.message || "Login flow failed.", "error");
         setLoginLoading(false);
-        await signOut(auth);
       }
     });
 
