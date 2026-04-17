@@ -223,10 +223,17 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1.35fr 0.85fr auto;
+      grid-template-columns: 1.5fr 0.8fr auto;
       gap: 12px;
       align-items: center;
       margin-bottom: 14px;
+    }
+
+    .search-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
     }
 
     .toolbar-right {
@@ -558,6 +565,7 @@
     @media (max-width: 1180px) {
       .form-grid, .summary-grid, .filters-grid, .chart-grid { grid-template-columns: repeat(2, 1fr); }
       .toolbar { grid-template-columns: 1fr; }
+      .search-wrap { grid-template-columns: 1fr; }
       .toolbar-right { justify-content: flex-start; }
       .pane-layout { grid-template-columns: 1fr; }
       .detail-grid { grid-template-columns: 1fr; }
@@ -628,7 +636,7 @@
           <div class="section-head">
             <div class="section-head-left">
               <h2>Client Entry</h2>
-              <div class="subtle">Add a new client or edit an existing record.</div>
+              <div class="subtle">All fields are mandatory before saving a client.</div>
             </div>
             <div class="chip" id="workspaceChip">Workspace</div>
           </div>
@@ -636,28 +644,30 @@
           <div id="editBanner" class="status-banner"></div>
 
           <div class="form-grid" style="margin-top:14px;">
-            <input id="name" placeholder="Name" />
-            <input id="pb" placeholder="PB No" />
-            <input id="pan" placeholder="PAN" />
-            <input id="mobile" placeholder="Mobile" />
-            <input id="email" placeholder="Email" />
+            <input id="name" placeholder="Name" required />
+            <input id="pb" placeholder="PB No" required />
+            <input id="pan" placeholder="PAN" required />
+            <input id="mobile" placeholder="Mobile" required />
+            <input id="email" placeholder="Email" required />
 
-            <select id="itr" onchange="setFee()">
+            <select id="itr" onchange="setFee()" required>
               <option value="">Select ITR</option>
               <option value="ITR1">ITR-1</option>
               <option value="ITR2">ITR-2/3/4</option>
               <option value="CONSULT">Consultation</option>
             </select>
 
-            <input id="fee" readonly placeholder="Fee" />
+            <input id="fee" readonly placeholder="Fee" required />
 
-            <select id="payment">
+            <select id="payment" required>
+              <option value="">Select Payment Mode</option>
               <option>Cash</option>
               <option>UPI</option>
               <option>Bank</option>
             </select>
 
-            <select id="stage">
+            <select id="stage" required>
+              <option value="">Select Stage</option>
               <option>Client registration at office</option>
               <option>Partial submission by client</option>
               <option>Full submission by client</option>
@@ -684,7 +694,10 @@
           </div>
 
           <div class="toolbar">
-            <input id="search" placeholder="Search by name, PAN, mobile or email..." onkeyup="applyFiltersAndRender()" />
+            <div class="search-wrap">
+              <input id="search" placeholder="Search by name, PAN, mobile or email..." />
+              <button class="btn-primary" onclick="applyFiltersAndRender()">Search</button>
+            </div>
 
             <select id="sortBy" onchange="applyFiltersAndRender()">
               <option value="latest">Sort: Latest</option>
@@ -939,8 +952,26 @@
       setInputValue("email", "");
       setInputValue("itr", "");
       setInputValue("fee", "");
-      setInputValue("payment", "Cash");
-      setInputValue("stage", "Client registration at office");
+      setInputValue("payment", "");
+      setInputValue("stage", "");
+    }
+
+    function validateMandatoryFields() {
+      const name = getInputValue("name");
+      const pb = getInputValue("pb");
+      const pan = getInputValue("pan");
+      const mobile = getInputValue("mobile");
+      const email = getInputValue("email");
+      const itr = document.getElementById("itr").value;
+      const fee = document.getElementById("fee").value;
+      const payment = document.getElementById("payment").value;
+      const stage = document.getElementById("stage").value;
+
+      if (!name || !pb || !pan || !mobile || !email || !itr || !fee || !payment || !stage) {
+        alert("All fields are mandatory. Please fill every field before saving.");
+        return false;
+      }
+      return true;
     }
 
     function toISODateFromStored(value) {
@@ -1046,6 +1077,7 @@
               </div>
 
               <div class="meta">
+                <div class="meta-row"><div class="meta-label">PAN</div><div>${escapeHtml(c.pan || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">PB No</div><div>${escapeHtml(c.pb || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">Mobile</div><div>${escapeHtml(c.mobile || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">Email</div><div>${escapeHtml(c.email || "-")}</div></div>
@@ -1181,8 +1213,8 @@
       setInputValue("email", client.email);
       setInputValue("itr", client.itr);
       setInputValue("fee", client.fee);
-      setInputValue("payment", client.payment || "Cash");
-      setInputValue("stage", getDropdownStage(client.stage || "Client registration at office"));
+      setInputValue("payment", client.payment || "");
+      setInputValue("stage", getDropdownStage(client.stage || ""));
     }
 
     function applyFiltersAndRender() {
@@ -1309,6 +1341,8 @@
     };
 
     window.saveClient = async () => {
+      if (!validateMandatoryFields()) return;
+
       const name = getInputValue("name");
       const pb = getInputValue("pb");
       const pan = getInputValue("pan").toUpperCase();
@@ -1318,11 +1352,6 @@
       const fee = document.getElementById("fee").value;
       const payment = document.getElementById("payment").value;
       let stage = document.getElementById("stage").value;
-
-      if (!pan) {
-        alert("PAN required");
-        return;
-      }
 
       const ref = doc(db, "clients", pan);
       const snap = await getDoc(ref);
@@ -1603,6 +1632,10 @@
       document.getElementById(id).addEventListener("keydown", (e) => {
         if (e.key === "Enter") login();
       });
+    });
+
+    document.getElementById("search").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyFiltersAndRender();
     });
   </script>
 </body>
