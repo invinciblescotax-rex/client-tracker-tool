@@ -139,6 +139,7 @@
       color: var(--text);
       background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,255,0.92));
       box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
 
     @keyframes shimmer {
@@ -272,8 +273,18 @@
       border-radius: 15px;
       cursor: pointer;
       font-weight: 700;
-      transition: 0.22s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
       box-shadow: var(--shadow-sm);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(122, 152, 199, 0.18);
+      filter: brightness(1.02);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     .btn-primary {
@@ -696,7 +707,7 @@
           <div class="toolbar">
             <div class="search-wrap">
               <input id="search" placeholder="Search by name, PAN, mobile or email..." />
-              <button class="btn-primary" onclick="applyFiltersAndRender()">Search</button>
+              <button id="searchBtn" class="btn-primary" type="button">Search</button>
             </div>
 
             <select id="sortBy" onchange="applyFiltersAndRender()">
@@ -816,6 +827,8 @@
     const approvalChip = document.getElementById("approvalChip");
     const workspaceChip = document.getElementById("workspaceChip");
     const dashboardChip = document.getElementById("dashboardChip");
+    const searchInput = document.getElementById("search");
+    const searchBtn = document.getElementById("searchBtn");
 
     let currentUserEmail = "";
     let currentRole = "";
@@ -1218,7 +1231,7 @@
     }
 
     function applyFiltersAndRender() {
-      const q = document.getElementById("search").value.toLowerCase().trim();
+      const q = searchInput.value.toLowerCase().trim();
       const createdDateFilter = document.getElementById("createdDateFilter").value;
       const completedDateFilter = document.getElementById("completedDateFilter").value;
       const stageFilter = document.getElementById("stageFilter").value;
@@ -1509,13 +1522,15 @@
     };
 
     window.clearFilters = () => {
-      document.getElementById("search").value = "";
+      searchInput.value = "";
       document.getElementById("createdDateFilter").value = "";
       document.getElementById("completedDateFilter").value = "";
       document.getElementById("stageFilter").value = "";
       document.getElementById("sortBy").value = "latest";
       applyFiltersAndRender();
     };
+
+    window.applyFiltersAndRender = applyFiltersAndRender;
 
     window.exportExcel = () => {
       const formatted = displayedClients.map((c, i) => ({
@@ -1634,9 +1649,11 @@
       });
     });
 
-    document.getElementById("search").addEventListener("keydown", (e) => {
+    searchInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") applyFiltersAndRender();
     });
+
+    searchBtn.addEventListener("click", applyFiltersAndRender);
   </script>
 </body>
 </html>
