@@ -1,3 +1,6 @@
+Below is the full replacement HTML. You can replace your existing code entirely with this.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,31 +60,15 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .brand-mark {
       width: 46px;
-      height: 60px;          /* better for rabbit */
+      height: 60px;
       object-fit: contain;
     }
-    
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-   
-    .brand-mark::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      color: #3b67b7;
-      font-size: 15px;
-    }
+
     .brand-text {
       display: flex;
       flex-direction: column;
@@ -171,8 +158,8 @@
       width: 100%;
       height: 6px;
       background: linear-gradient(90deg, rgba(91,141,239,0.85), rgba(87,198,194,0.75), rgba(246,183,200,0.7));
-      border-top-left-radius: 28px;   /* ✅ IMPORTANT */
-      border-top-right-radius: 28px;  /* ✅ IMPORTANT */
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
     }
 
     .hero-login {
@@ -267,6 +254,12 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
     }
 
+    input:disabled {
+      color: #8d99aa;
+      background: linear-gradient(180deg, rgba(236,242,250,0.95), rgba(228,236,247,0.92));
+      cursor: not-allowed;
+    }
+
     button {
       height: 46px;
       padding: 0 16px;
@@ -284,9 +277,7 @@
       filter: brightness(1.02);
     }
 
-    button:active {
-      transform: translateY(0);
-    }
+    button:active { transform: translateY(0); }
 
     .btn-primary {
       color: #fff;
@@ -468,7 +459,7 @@
 
     .meta-row {
       display: grid;
-      grid-template-columns: 108px 1fr;
+      grid-template-columns: 118px 1fr;
       gap: 8px;
     }
 
@@ -504,7 +495,7 @@
 
     .list-table {
       width: 100%;
-      min-width: 1180px;
+      min-width: 1280px;
       border-collapse: collapse;
     }
 
@@ -588,6 +579,7 @@
       .navbar { padding: 14px; }
       .form-grid, .summary-grid, .filters-grid, .chart-grid { grid-template-columns: 1fr; }
       .panel { padding: 18px; }
+      .section-head { align-items: flex-start; flex-direction: column; }
     }
   </style>
 
@@ -596,11 +588,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
+
 <body>
   <div class="app-shell">
     <div class="navbar">
       <div class="brand">
-        <img src="https://raw.githubusercontent.com/invinciblescotax-rex/client-tracker-tool/main/whiper.jpg" class="brand-mark" />
+        <img src="https://raw.githubusercontent.com/invinciblescotax-rex/client-tracker-tool/main/whiper.jpg" class="brand-mark" alt="V.I.P.E.R logo" />
         <div class="brand-text">
           <span class="logo">V.I.P.E.R</span>
           <span class="logo-sub">Vault for Income, Profit & Equity Records</span>
@@ -648,7 +641,7 @@
           <div class="section-head">
             <div class="section-head-left">
               <h2>Client Entry</h2>
-              <div class="subtle">All fields are mandatory before saving a client.</div>
+              <div class="subtle">All fields are mandatory before saving a client. PB No is required only for HAL clients.</div>
             </div>
             <div class="chip" id="workspaceChip">Workspace</div>
           </div>
@@ -657,16 +650,23 @@
 
           <div class="form-grid" style="margin-top:14px;">
             <input id="name" placeholder="Name" required />
+
+            <select id="halType" onchange="handleHalTypeChange()" required>
+              <option value="">HAL / Non-HAL</option>
+              <option value="HAL">HAL</option>
+              <option value="Non-HAL">Non-HAL</option>
+            </select>
+
             <input id="pb" placeholder="PB No" required />
-            <input id="pan" placeholder="PAN" required />
-            <input id="mobile" placeholder="Mobile" required />
-            <input id="email" placeholder="Email" required />
+            <input id="pan" placeholder="PAN" maxlength="10" required />
+            <input id="mobile" placeholder="Mobile" maxlength="10" required />
+            <input id="email" type="email" placeholder="Email" required />
 
             <select id="itr" onchange="setFee()" required>
               <option value="">Select ITR</option>
               <option value="ITR1">ITR-1</option>
-              <option value="ITR2">ITR-2/3/4</option>
-              <option value="CONSULT">Consultation</option>
+              <option value="ITR2">ITR-2</option>
+              <option value="ITR34">ITR-3/4</option>
             </select>
 
             <input id="fee" readonly placeholder="Fee" required />
@@ -707,7 +707,7 @@
 
           <div class="toolbar">
             <div class="search-wrap">
-              <input id="search" placeholder="Search by name, PAN, mobile or email..." />
+              <input id="search" placeholder="Search by name, PAN, mobile, email, HAL or Non-HAL..." />
               <button id="searchBtn" class="btn-primary" type="button">Search</button>
             </div>
 
@@ -929,6 +929,60 @@
       ).join("");
     }
 
+    function normalizeItrLabel(itr) {
+      if (itr === "ITR1") return "ITR-1";
+      if (itr === "ITR2") return "ITR-2";
+      if (itr === "ITR34") return "ITR-3/4";
+      return itr || "-";
+    }
+
+    function getClientHalType(client = {}) {
+      return client.halType || client.customerType || client.halStatus || (client.pb ? "HAL" : "Non-HAL");
+    }
+
+    function getFeeForSelection(halType, itr) {
+      if (itr === "ITR1" && halType === "HAL") return 999;
+      if (itr === "ITR1" && halType === "Non-HAL") return 1499;
+      if (itr === "ITR2" && halType === "HAL") return 1499;
+      if (itr === "ITR2" && halType === "Non-HAL") return 1999;
+      if (itr === "ITR34") return 2499;
+      return "";
+    }
+
+    function validatePAN(pan) {
+      const cleanPan = pan.toUpperCase();
+
+      if (cleanPan.length !== 10) {
+        alert("PAN must be exactly 10 characters long.");
+        return false;
+      }
+
+      if (!/^[A-Z]{5}/.test(cleanPan)) {
+        alert("PAN first 5 characters must be alphabets only.");
+        return false;
+      }
+
+      if (cleanPan.charAt(3) !== "P") {
+        alert("Contact Thanmayi or, Tanooj for Non Individual filings");
+        return false;
+      }
+
+      if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(cleanPan)) {
+        alert("PAN format is invalid. Correct format is 5 alphabets, 4 numbers, and 1 alphabet.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function validateMobile(mobile) {
+      if (!/^[0-9]{10}$/.test(mobile)) {
+        alert("Mobile number must be exactly 10 digits and numbers only.");
+        return false;
+      }
+      return true;
+    }
+
     async function getRoleByEmail(email) {
       const ref = doc(db, "roles", email.toLowerCase());
       const snap = await getDoc(ref);
@@ -960,6 +1014,7 @@
 
     function resetFormFields() {
       setInputValue("name", "");
+      setInputValue("halType", "");
       setInputValue("pb", "");
       setInputValue("pan", "");
       setInputValue("mobile", "");
@@ -968,12 +1023,15 @@
       setInputValue("fee", "");
       setInputValue("payment", "");
       setInputValue("stage", "");
+      document.getElementById("pb").disabled = false;
+      document.getElementById("pb").required = true;
     }
 
     function validateMandatoryFields() {
       const name = getInputValue("name");
+      const halType = document.getElementById("halType").value;
       const pb = getInputValue("pb");
-      const pan = getInputValue("pan");
+      const pan = getInputValue("pan").toUpperCase();
       const mobile = getInputValue("mobile");
       const email = getInputValue("email");
       const itr = document.getElementById("itr").value;
@@ -981,10 +1039,19 @@
       const payment = document.getElementById("payment").value;
       const stage = document.getElementById("stage").value;
 
-      if (!name || !pb || !pan || !mobile || !email || !itr || !fee || !payment || !stage) {
+      if (!name || !halType || !pan || !mobile || !email || !itr || !fee || !payment || !stage) {
         alert("All fields are mandatory. Please fill every field before saving.");
         return false;
       }
+
+      if (halType === "HAL" && !pb) {
+        alert("PB No is mandatory for HAL clients.");
+        return false;
+      }
+
+      if (!validatePAN(pan)) return false;
+      if (!validateMobile(mobile)) return false;
+
       return true;
     }
 
@@ -1063,6 +1130,7 @@
               <div>${stageBadge(c.stage)}</div>
               <div class="pending-meta">
                 PAN: ${escapeHtml(c.pan || "-")}<br>
+                HAL / Non-HAL: ${escapeHtml(getClientHalType(c) || "-")}<br>
                 Requested By: ${escapeHtml(c.completionRequestedBy || "-")}<br>
                 Requested At: ${escapeHtml(c.completionRequestedAt || "-")}<br>
                 Previous Stage: ${escapeHtml(c.previousStageBeforeApproval || "-")}
@@ -1091,11 +1159,12 @@
               </div>
 
               <div class="meta">
+                <div class="meta-row"><div class="meta-label">HAL / Non-HAL</div><div>${escapeHtml(getClientHalType(c) || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">PAN</div><div>${escapeHtml(c.pan || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">PB No</div><div>${escapeHtml(c.pb || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">Mobile</div><div>${escapeHtml(c.mobile || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">Email</div><div>${escapeHtml(c.email || "-")}</div></div>
-                <div class="meta-row"><div class="meta-label">ITR</div><div>${escapeHtml(c.itr || "-")}</div></div>
+                <div class="meta-row"><div class="meta-label">ITR</div><div>${escapeHtml(normalizeItrLabel(c.itr))}</div></div>
                 <div class="meta-row"><div class="meta-label">Fee</div><div>₹${escapeHtml(c.fee || 0)}</div></div>
                 <div class="meta-row"><div class="meta-label">Payment</div><div>${escapeHtml(c.payment || "-")}</div></div>
                 <div class="meta-row"><div class="meta-label">Created</div><div>${escapeHtml(c.createdAt || "-")}</div></div>
@@ -1122,6 +1191,8 @@
             <thead>
               <tr>
                 <th>Name</th>
+                <th>HAL / Non-HAL</th>
+                <th>PB No</th>
                 <th>PAN</th>
                 <th>Mobile</th>
                 <th>Email</th>
@@ -1137,10 +1208,12 @@
               ${data.map(c => `
                 <tr>
                   <td>${escapeHtml(c.name || "-")}</td>
+                  <td>${escapeHtml(getClientHalType(c) || "-")}</td>
+                  <td>${escapeHtml(c.pb || "-")}</td>
                   <td>${escapeHtml(c.pan || "-")}</td>
                   <td>${escapeHtml(c.mobile || "-")}</td>
                   <td>${escapeHtml(c.email || "-")}</td>
-                  <td>${escapeHtml(c.itr || "-")}</td>
+                  <td>${escapeHtml(normalizeItrLabel(c.itr))}</td>
                   <td>₹${escapeHtml(c.fee || 0)}</td>
                   <td>${stageBadge(c.stage)}</td>
                   <td>${escapeHtml(c.createdAt || "-")}</td>
@@ -1173,6 +1246,7 @@
               <div class="pane-item ${c.pan === selectedPanePan ? "active" : ""}" onclick="selectPaneClient('${escapeHtml(c.pan)}')">
                 <div><strong>${escapeHtml(c.name || "-")}</strong></div>
                 <div class="muted">${escapeHtml(c.pan || "-")}</div>
+                <div class="muted">${escapeHtml(getClientHalType(c) || "-")}</div>
                 <div style="margin-top:8px;">${stageBadge(c.stage)}</div>
               </div>
             `).join("")}
@@ -1184,11 +1258,12 @@
               <div>${stageBadge(selectedClient.stage)}</div>
 
               <div class="detail-grid">
+                <div class="detail-box"><div class="detail-label">HAL / Non-HAL</div><div>${escapeHtml(getClientHalType(selectedClient) || "-")}</div></div>
                 <div class="detail-box"><div class="detail-label">PAN</div><div>${escapeHtml(selectedClient.pan || "-")}</div></div>
                 <div class="detail-box"><div class="detail-label">PB No</div><div>${escapeHtml(selectedClient.pb || "-")}</div></div>
                 <div class="detail-box"><div class="detail-label">Mobile</div><div>${escapeHtml(selectedClient.mobile || "-")}</div></div>
                 <div class="detail-box"><div class="detail-label">Email</div><div>${escapeHtml(selectedClient.email || "-")}</div></div>
-                <div class="detail-box"><div class="detail-label">ITR Type</div><div>${escapeHtml(selectedClient.itr || "-")}</div></div>
+                <div class="detail-box"><div class="detail-label">ITR Type</div><div>${escapeHtml(normalizeItrLabel(selectedClient.itr))}</div></div>
                 <div class="detail-box"><div class="detail-label">Fee</div><div>₹${escapeHtml(selectedClient.fee || 0)}</div></div>
                 <div class="detail-box"><div class="detail-label">Payment</div><div>${escapeHtml(selectedClient.payment || "-")}</div></div>
                 <div class="detail-box"><div class="detail-label">Created By</div><div>${escapeHtml(selectedClient.createdBy || "-")}</div></div>
@@ -1220,15 +1295,19 @@
     }
 
     function fillForm(client) {
+      const halType = getClientHalType(client);
       setInputValue("name", client.name);
+      setInputValue("halType", halType);
       setInputValue("pb", client.pb);
       setInputValue("pan", client.pan);
       setInputValue("mobile", client.mobile);
       setInputValue("email", client.email);
-      setInputValue("itr", client.itr);
+      setInputValue("itr", client.itr === "ITR2/3/4" ? "ITR34" : client.itr);
       setInputValue("fee", client.fee);
       setInputValue("payment", client.payment || "");
       setInputValue("stage", getDropdownStage(client.stage || ""));
+      handleHalTypeChange();
+      setFee();
     }
 
     function applyFiltersAndRender() {
@@ -1238,11 +1317,14 @@
       const stageFilter = document.getElementById("stageFilter").value;
 
       let data = allClients.filter(c => {
+        const halType = getClientHalType(c);
+
         const matchesSearch =
           (c.name || "").toLowerCase().includes(q) ||
           (c.pan || "").toLowerCase().includes(q) ||
           (c.mobile || "").toLowerCase().includes(q) ||
-          (c.email || "").toLowerCase().includes(q);
+          (c.email || "").toLowerCase().includes(q) ||
+          (halType || "").toLowerCase().includes(q);
 
         const createdISO = c.createdAtISO || toISODateFromStored(c.createdAt);
         const completedISO = c.completedAtISO || toISODateFromStored(c.completedAt);
@@ -1332,13 +1414,29 @@
       await signOut(auth);
     };
 
+    window.handleHalTypeChange = () => {
+      const halType = document.getElementById("halType").value;
+      const pbField = document.getElementById("pb");
+
+      if (halType === "Non-HAL") {
+        pbField.value = "";
+        pbField.disabled = true;
+        pbField.required = false;
+        pbField.placeholder = "PB No disabled for Non-HAL";
+      } else {
+        pbField.disabled = false;
+        pbField.required = true;
+        pbField.placeholder = "PB No";
+      }
+
+      setFee();
+    };
+
     window.setFee = () => {
+      const halType = document.getElementById("halType").value;
       const itr = document.getElementById("itr").value;
       const feeField = document.getElementById("fee");
-      if (itr === "ITR1") feeField.value = 849;
-      else if (itr === "ITR2") feeField.value = 1349;
-      else if (itr === "CONSULT") feeField.value = 199;
-      else feeField.value = "";
+      feeField.value = getFeeForSelection(halType, itr);
     };
 
     window.resetForm = () => {
@@ -1358,7 +1456,8 @@
       if (!validateMandatoryFields()) return;
 
       const name = getInputValue("name");
-      const pb = getInputValue("pb");
+      const halType = document.getElementById("halType").value;
+      const pb = halType === "Non-HAL" ? "" : getInputValue("pb");
       const pan = getInputValue("pan").toUpperCase();
       const mobile = getInputValue("mobile");
       const email = getInputValue("email");
@@ -1379,6 +1478,7 @@
 
       const data = {
         name,
+        halType,
         pb,
         pan,
         mobile,
@@ -1424,7 +1524,15 @@
       await setDoc(ref, data, { merge: true });
 
       if (!exists && data.stage === "Client registration at office") {
-        emailjs.send("service_ns9w7qv", "template_87k6k2w", { name, pan, mobile, itr, fee });
+        emailjs.send("service_ns9w7qv", "template_87k6k2w", {
+          name,
+          halType,
+          pb,
+          pan,
+          mobile,
+          itr: normalizeItrLabel(itr),
+          fee
+        });
       }
 
       alert(exists ? "Client updated successfully" : "Client saved successfully");
@@ -1537,11 +1645,12 @@
       const formatted = displayedClients.map((c, i) => ({
         "Sl. No.": i + 1,
         "Name": c.name,
+        "HAL / Non-HAL": getClientHalType(c),
         "PB No.": c.pb,
         "PAN": c.pan,
         "Mobile Number": c.mobile,
         "Mail Address": c.email,
-        "Type of ITR": c.itr,
+        "Type of ITR": normalizeItrLabel(c.itr),
         "Fees": c.fee,
         "Status": c.stage,
         "Created By": c.createdBy,
@@ -1560,14 +1669,24 @@
       const pdf = new jsPDF("landscape");
 
       const headers = [[
-        "Sl.No", "Name", "PB", "PAN", "Mobile", "Email",
+        "Sl.No", "Name", "HAL/Non-HAL", "PB", "PAN", "Mobile", "Email",
         "ITR", "Fees", "Status", "Created By", "Created", "Completed"
       ]];
 
       const rows = displayedClients.map((c, i) => [
-        i + 1, c.name || "", c.pb || "", c.pan || "", c.mobile || "",
-        c.email || "", c.itr || "", c.fee || "", c.stage || "",
-        c.createdBy || "", c.createdAt || "", c.completedAt || ""
+        i + 1,
+        c.name || "",
+        getClientHalType(c) || "",
+        c.pb || "",
+        c.pan || "",
+        c.mobile || "",
+        c.email || "",
+        normalizeItrLabel(c.itr),
+        c.fee || "",
+        c.stage || "",
+        c.createdBy || "",
+        c.createdAt || "",
+        c.completedAt || ""
       ]);
 
       pdf.autoTable({ head: headers, body: rows });
@@ -1650,6 +1769,21 @@
       });
     });
 
+    document.getElementById("pan").addEventListener("input", (e) => {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+    });
+
+    document.getElementById("pan").addEventListener("blur", (e) => {
+      const pan = e.target.value.trim().toUpperCase();
+      if (pan && pan.length >= 4 && pan.charAt(3) !== "P") {
+        alert("Contact Thanmayi or, Tanooj for Non Individual filings");
+      }
+    });
+
+    document.getElementById("mobile").addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    });
+
     searchInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") applyFiltersAndRender();
     });
@@ -1658,3 +1792,4 @@
   </script>
 </body>
 </html>
+```
